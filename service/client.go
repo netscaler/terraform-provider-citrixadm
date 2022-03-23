@@ -16,12 +16,11 @@ import (
 )
 
 type NitroRequestParams struct {
-	ResourcePath       string
-	Method             string
-	Headers            map[string]string
-	Resource           string
-	ResourceData       interface{}
-	ResourceID         string
+	ResourcePath string
+	Method       string
+	Headers      map[string]string
+	Resource     string
+	ResourceData interface{}
 	SuccessStatusCodes []int
 }
 
@@ -49,7 +48,7 @@ type NitroClient struct {
 	id           string
 	secret       string
 	client       *http.Client
-	customerid   string
+	CustomerID   string
 	// sessionidMux sync.RWMutex
 	// sessionid    string
 	// timeout      int
@@ -73,7 +72,7 @@ func NewNitroClientFromParams(params NitroParams) (*NitroClient, error) {
 	c.secret = params.Secret
 	c.headers = params.Headers
 	c.hostLocation = params.HostLocation
-	c.customerid = params.CustomerID
+	c.CustomerID = params.CustomerID
 	c.client = &http.Client{}
 
 	// Get New Token
@@ -150,14 +149,12 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 	var err error
 
 	if n.Method == "POST" || n.Method == "PUT" {
-		n.ResourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerid, n.Resource)
 		payload := map[string]interface{}{n.Resource: n.ResourceData}
 		buff, err = JSONMarshal(payload)
 		if err != nil {
 			return nil, err
 		}
 	} else if n.Method == "GET" || n.Method == "DELETE" {
-		n.ResourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerid, n.Resource, n.ResourceID)
 		buff = []byte{}
 	}
 

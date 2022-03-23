@@ -3,6 +3,7 @@ package citrixadm
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"terraform-provider-citrixadm/service"
@@ -13,307 +14,181 @@ import (
 
 func resourceNsDeviceProfile() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Configuration for Device profile for  Citrix ADC(MPX/VPX/CPX/Gateway) instances  resource",
 		CreateContext: resourceNsDeviceProfileCreate,
 		ReadContext:   resourceNsDeviceProfileRead,
+		UpdateContext: resourceNsDeviceProfileUpdate,
 		DeleteContext: resourceNsDeviceProfileDelete,
 		Schema: map[string]*schema.Schema{
-
-			//       name:
-			//         description: "Profile Name"
-			//         type: string
-			//         format: string
-			//         minLength: 1
-			//         maxLength: 128
 			"name": {
-				// This description is used by the documentation generator and the language server.
 				Description: "Profile Name",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 			},
-
-			//       svm_ns_comm:
-			//         description: "Communication protocol (http or https) with Instances"
-			//         type: string
-			//         format: string
-			//         minLength: 1
-			//         maxLength: 10
 			"svm_ns_comm": {
-				// This description is used by the documentation generator and the language server.
 				Description: "Communication protocol (http or https) with Instances",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-
-			//       use_global_setting_for_communication_with_ns:
-			//         description: "True, if the communication with Instance needs to be global and not device specific"
-			//         type: boolean
-			//         format: boolean
 			"use_global_setting_for_communication_with_ns": {
-				// This description is used by the documentation generator and the language server.
 				Description: "True, if the communication with Instance needs to be global and not device specific",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       type:
-			//         description: "Profile Type, This must be with in specified supported instance types: blx,sdvanvw,ns,nssdx,cbwanopt,cpx"
-			//         type: string
-			//         format: string
-			//         minLength: 1
-			//         maxLength: 128
 			"type": {
-				// This description is used by the documentation generator and the language server.
 				Description: "Profile Type, This must be with in specified supported instance types: blx,sdvanvw,ns,nssdx,cbwanopt,cpx",
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 			},
-			//       snmpsecurityname:
-			//         description: "SNMP v3 security name for this profile"
-			//         type: string
-			//         format: string
-			//         maxLength: 31
 			"snmpsecurityname": {
-				// This description is used by the documentation generator and the language server.
 				Description: "SNMP v3 security name for this profile",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 			},
-			//       snmpauthprotocol:
-			//         description: "SNMP v3 auth protocol for this profile"
-			//         type: string
-			//         format: string
 			"snmpauthprotocol": {
-				// This description is used by the documentation generator and the language server.
 				Description: "SNMP v3 auth protocol for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 			},
-			//       ssl_private_key:
-			//         description: "SSL Private Key for key based authentication"
-			//         type: string
-			//         format: password
 			"ssl_private_key": {
-				// This description is used by the documentation generator and the language server.
 				Description: "SSL Private Key for key based authentication",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       ssl_cert:
-			//         description: "SSL Certificate for certificate based authentication"
-			//         type: string
-			//         format: string
 			"ssl_cert": {
 				Description: "SSL Certificate for certificate based authentication",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       http_port:
-			//         description: "HTTP port to connect to the device"
-			//         type: integer
-			//         format: int32
 			"http_port": {
 				Description: "HTTP port to connect to the device",
 				Type:        schema.TypeInt,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       ns_profile_name:
-			//         description: "Profile Name, This is one of the already created Citrix ADC profiles"
-			//         type: string
-			//         format: string
 			"ns_profile_name": {
 				Description: "Profile Name, This is one of the already created Citrix ADC profiles",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 			},
-			//       ssh_port:
-			//         description: "SSH port to connect to the device"
-			//         type: string
-			//         format: string
 			"ssh_port": {
 				Description: "SSH port to connect to the device",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       password:
-			//         description: "Instance credentials.Password for this profile"
-			//         type: string
-			//         format: password
-			//         minLength: 1
-			//         maxLength: 127
 			"password": {
 				Description: "Instance credentials.Password for this profile",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
-				// sensitive
-				Sensitive: true,
+				Sensitive:   true,
 			},
-
-			//       snmpsecuritylevel:
-			//         description: "SNMP v3 security level for this profile"
-			//         type: string
-			//         format: string
 			"snmpsecuritylevel": {
 				Description: "SNMP v3 security level for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 			},
-			//       snmpcommunity:
-			//         description: "SNMP community for this profile"
-			//         type: string
-			//         format: string
-			//         maxLength: 31
 			"snmpcommunity": {
 				Description: "SNMP community for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 			},
-			//       passphrase:
-			//         description: "Passphrase with which private key is encrypted"
-			//         type: string
-			//         format: password
 			"passphrase": {
 				Description: "Passphrase with which private key is encrypted",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 				Sensitive:   true,
 			},
-			//       snmpprivprotocol:
-			//         description: "SNMP v3 priv protocol for this profile"
-			//         type: string
-			//         format: string
 			"snmpprivprotocol": {
 				Description: "SNMP v3 priv protocol for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 			},
-			//       https_port:
-			//         description: "HTTPS port to connect to the device"
-			//         type: integer
-			//         format: int32
 			"https_port": {
 				Description: "HTTPS port to connect to the device",
 				Type:        schema.TypeInt,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       username:
-			//         description: "Instance credentials.Username provided in the profile will be used to contact the instance"
-			//         type: string
-			//         format: string
-			//         minLength: 1
-			//         maxLength: 127
 			"username": {
 				Description: "Instance credentials.Username provided in the profile will be used to contact the instance",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
-			//       host_password:
-			//         description: "Host Password for this profile.Used for BLX form factor of ADC"
-			//         type: string
-			//         format: password
-			//         minLength: 1
-			//         maxLength: 127
 			"host_password": {
 				Description: "Host Password for this profile.Used for BLX form factor of ADC",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       max_wait_time_reboot:
-			//         description: "Max waiting time to reboot Citrix ADC"
-			//         type: string
-			//         format: string
 			"max_wait_time_reboot": {
 				Description: "Max waiting time to reboot Citrix ADC",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       snmpprivpassword:
-			//         description: "SNMP v3 priv password for this profile"
-			//         type: string
-			//         format: password
-			//         minLength: 8
-			//         maxLength: 31
 			"snmpprivpassword": {
 				Description: "SNMP v3 priv password for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 				Sensitive:   true,
 			},
-			//       snmpversion:
-			//         description: "SNMP version for this profile"
-			//         type: string
-			//         format: string
 			"snmpversion": {
 				Description: "SNMP version for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 			},
-			//       cb_profile_name:
-			//         description: "Profile Name, This is one of the already created Citrix SD-WAN profiles"
-			//         type: string
-			//         format: string
 			"cb_profile_name": {
 				Description: "Profile Name, This is one of the already created Citrix SD-WAN profiles",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
-			//       snmpauthpassword:
-			//         description: "SNMP v3 auth password for this profile"
-			//         type: string
-			//         format: password
-			//         minLength: 8
-			//         maxLength: 31
 			"snmpauthpassword": {
 				Description: "SNMP v3 auth password for this profile",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
 				Sensitive:   true,
 			},
-			//       host_username:
-			//         description: "Host User Name for this profile.Used for BLX form factor of ADC"
-			//         type: string
-			//         format: string
-			//         minLength: 1
-			//         maxLength: 127
 			"host_username": {
 				Description: "Host User Name for this profile.Used for BLX form factor of ADC",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
 		},
 	}
 }
 
-func resourceNsDeviceProfileCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// Warning or errors can be collected in a slice type
-	log.Printf("In resourceNsDeviceProfileCreate")
-	var diags diag.Diagnostics
-
-	c := m.(*service.NitroClient)
-
+func getNsDeviceProfilePayload(d *schema.ResourceData) []interface{} {
+	//
 	data := make(map[string]interface{})
 
 	if v, ok := d.GetOk("name"); ok {
@@ -348,7 +223,7 @@ func resourceNsDeviceProfileCreate(ctx context.Context, d *schema.ResourceData, 
 		data["ns_profile_name"] = v.(string)
 	}
 	if v, ok := d.GetOk("ssh_port"); ok {
-		data["ssh_port"] = v.(int)
+		data["ssh_port"] = v.(string)
 	}
 	if v, ok := d.GetOk("password"); ok {
 		data["password"] = v.(string)
@@ -396,14 +271,22 @@ func resourceNsDeviceProfileCreate(ctx context.Context, d *schema.ResourceData, 
 	var payload []interface{}
 	payload = append(payload, data)
 
+	return payload
+
+}
+
+func resourceNsDeviceProfileCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceNsDeviceProfileCreate")
+
+	c := m.(*service.NitroClient)
+
 	endpoint := "ns_device_profile"
 
 	n := service.NitroRequestParams{
 		Resource: endpoint,
 
-		// ResourcePath:       https://adm.cloud.com/massvc/{{customerid}}/nitro/v2/config/ns_device_profile
-		// ResourcePath:       fmt.Sprintf("%s/massvc/%s/nitro/v2/config/%s", c.host, c.customerid, endpoint),
-		ResourceData:       payload,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, endpoint),
+		ResourceData:       getNsDeviceProfilePayload(d),
 		Method:             "POST",
 		SuccessStatusCodes: []int{200, 201},
 	}
@@ -425,13 +308,10 @@ func resourceNsDeviceProfileCreate(ctx context.Context, d *schema.ResourceData, 
 
 	d.SetId(resourceID)
 
-	resourceNsDeviceProfileRead(ctx, d, m)
-
-	return diags
+	return resourceNsDeviceProfileRead(ctx, d, m)
 }
 
 func resourceNsDeviceProfileRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// Warning or errors can be collected in a slice type
 	log.Printf("In resourceNsDeviceProfileRead")
 	var diags diag.Diagnostics
 	c := m.(*service.NitroClient)
@@ -440,11 +320,9 @@ func resourceNsDeviceProfileRead(ctx context.Context, d *schema.ResourceData, m 
 	endpoint := "ns_device_profile"
 
 	n := service.NitroRequestParams{
-		// ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerid, endpoint),
-		Method: "GET",
-		// Headers:            map[string]string{},
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
+		Method:             "GET",
 		Resource:           endpoint,
-		ResourceID:         resourceID,
 		ResourceData:       d,
 		SuccessStatusCodes: []int{200},
 	}
@@ -460,49 +338,14 @@ func resourceNsDeviceProfileRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 	log.Printf("return data %v", returnData)
-	// {
-	// 	"ns_device_profile": [
-	// 		{
-	// 			"type": "ns",
-	// 			"is_default": "true",
-	// 			"svm_ns_comm": "https",
-	// 			"tenant_id": "",
-	// 			"id": "cbd6cf21-b654-498d-9475-89c12f7b27c0",
-	// 			"is_backup": "false",
-	// 			"name": "ns_nsroot_profile",
-	// 			"use_global_setting_for_communication_with_ns": "true",
-	// 			"snmpsecuritylevel": "",
-	// 			"act_id": "",
-	// 			"ssl_cert": "",
-	// 			"host_username": "",
-	// 			"sync_operation": "true",
-	// 			"ns_profile_name": "",
-	// 			"cb_profile_name": "",
-	// 			"snmpsecurityname": "",
-	// 			"https_port": "443",
-	// 			"username": "nsroot",
-	// 			"snmpauthprotocol": "",
-	// 			"ssh_port": "22",
-	// 			"snmpversion": "",
-	// 			"max_wait_time_reboot": "1800",
-	// 			"http_port": "80",
-	// 			"snmpprivprotocol": "",
-	// 			"snmpcommunity": ""
-	// 		}
-	// 	]
-	// }
 	getResponseData := returnData[endpoint].([]interface{})[0].(map[string]interface{})
 
 	log.Println("getResponseData", getResponseData)
 
-	// d.Set("act_id", getResponseData["act_id"].(string))
 	d.Set("cb_profile_name", getResponseData["cb_profile_name"].(string))
 	d.Set("host_username", getResponseData["host_username"].(string))
-	d.Set("http_port", getResponseData["http_port"].(string)) // FIXME: Ask George: panic: interface conversion: interface {} is string, not int
-	d.Set("https_port", getResponseData["https_port"].(string))
-	// d.Set("id", getResponseData["id"].(string))
-	// d.Set("is_backup", getResponseData["is_backup"].(string))
-	// d.Set("is_default", getResponseData["is_default"].(string))
+	d.Set("http_port", getResponseData["http_port"].(string))   // FIXME: Though API schema defines this as int, the GET response returns as string
+	d.Set("https_port", getResponseData["https_port"].(string)) // FIXME: Though API schema defines this as int, the GET response returns as string
 	d.Set("max_wait_time_reboot", getResponseData["max_wait_time_reboot"].(string))
 	d.Set("name", getResponseData["name"].(string))
 	d.Set("ns_profile_name", getResponseData["ns_profile_name"].(string))
@@ -515,18 +358,46 @@ func resourceNsDeviceProfileRead(ctx context.Context, d *schema.ResourceData, m 
 	d.Set("ssh_port", getResponseData["ssh_port"].(string))
 	d.Set("ssl_cert", getResponseData["ssl_cert"].(string))
 	d.Set("svm_ns_comm", getResponseData["svm_ns_comm"].(string))
-	// d.Set("sync_operation", getResponseData["sync_operation"].(string))
-	// d.Set("tenant_id", getResponseData["tenant_id"].(string))
 	d.Set("type", getResponseData["type"].(string))
-	d.Set("use_global_setting_for_communication_with_ns", getResponseData["use_global_setting_for_communication_with_ns"].(string)) // FIXME: panic: interface conversion: interface {} is string, not bool
+	d.Set("use_global_setting_for_communication_with_ns", getResponseData["use_global_setting_for_communication_with_ns"].(string)) // FIXME: Though API schema defines this as bool, the GET response returns as string
 	d.Set("username", getResponseData["username"].(string))
 
 	return diags
 }
 
+func resourceNsDeviceProfileUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceNsDeviceProfileUpdate")
+	c := m.(*service.NitroClient)
+
+	resourceID := d.Id()
+	endpoint := "ns_device_profile"
+
+	n := service.NitroRequestParams{
+		Resource:           endpoint,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
+		ResourceData:       getNsDeviceProfilePayload(d),
+		Method:             "PUT",
+		SuccessStatusCodes: []int{200, 201},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	var returnData map[string]interface{}
+
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	log.Printf("return data %v", returnData)
+
+	return resourceNsDeviceProfileRead(ctx, d, m)
+
+}
+
 func resourceNsDeviceProfileDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("In resourceNsDeviceProfileDelete")
-	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
 	c := m.(*service.NitroClient)
@@ -535,10 +406,9 @@ func resourceNsDeviceProfileDelete(ctx context.Context, d *schema.ResourceData, 
 	resourceID := d.Id()
 
 	n := service.NitroRequestParams{
-		// ResourcePath:       fmt.Sprintf("adcaas/nitro/v1/config/endpoints/%s", environmentId),
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
 		Method:             "DELETE",
 		Resource:           endpoint,
-		ResourceID:         resourceID,
 		SuccessStatusCodes: []int{200, 204},
 	}
 
