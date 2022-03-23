@@ -1,0 +1,770 @@
+swagger: '2.0'
+info:
+  description: Configuration for Device profile for  Citrix ADC(MPX/VPX/CPX/Gateway) instances  resource.
+  version: 'v2'
+  title: ns_device_profile
+host: 'adm.cloud.com'
+schemes:
+ - https
+# tags are used for organizing operations
+tags:
+  - name: ns_device_profile
+    description: Device profile for  Citrix ADC(MPX/VPX/CPX/Gateway) instances 
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  UserSecurity:
+    type: basic
+security:
+  - UserSecurity: []
+parameters:
+  idParam:
+   name: id
+   in: path
+   type: string
+   description: Id is system generated key for all the device profiles
+   required: true
+  authParam:
+      in: header
+      name: Authorization
+      type: string
+      required: true
+      description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+  cloudParam:
+      in: header
+      name: isCloud
+      type: string
+      required: true
+      description: set the value to true in case of Cloud services, false for on-prem deployment
+paths:
+  /massvc/{customerid}/nitro/v2/config/ns_device_profile:
+    get:
+      tags:
+        - ns_device_profile
+      summary: GET all ns_device_profile
+      operationId: getall_ns_device_profile
+      description: Use this operation to get device profiles
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+        - in: query
+          name: filter
+          type: string
+          required: false
+          description: "Use this query-parameter to get the filtered set of vm_device resources configured on the system. You can set a filter on any property of the resource.Example:  property-name1:property-value1 "
+        - in: query
+          name: pagesize
+          type: integer
+          required: false
+          description: Use this query-parameter to get the ns_device_profile resources in chunks.To be used along with pageno query parameter.
+        - in: query
+          name: pageno
+          type: integer
+          required: false
+          description: Use this query-parameter to get the ns_device_profile resources in chunks.To be used along with pagesize query parameter.
+        - in: query
+          name: count
+          type: string
+          required: false
+          description: Use this query-parameter to get the count of ns_device_profile resources.
+          enum:
+            - yes
+      responses:
+        200:
+          description:  for ns_device_profile
+          schema: 
+              $ref: '#/definitions/getns_device_profilesResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+    post:
+      tags:
+        - ns_device_profile
+      summary: POST operation for ns_device_profile
+      operationId: post_ns_device_profile
+      description: POST operation for ns_device_profile
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+        - in: query
+          name: onerror
+          description: Use this parameter to set the onerror status for nitro request. Applicable only for bulk requests.
+          required: false
+          type: string
+          default: CONTINUE
+          enum:
+            - EXIT
+            - CONTINUE
+        - in: body
+          name: ns_device_profile
+          description: ns_device_profile object
+          schema:
+              $ref: '#/definitions/addns_device_profileRequest'
+      responses:
+        200:
+          description: add for ns_device_profile
+          schema: 
+              $ref: '#/definitions/addns_device_profileResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+  /massvc/{customerid}/nitro/v2/config/ns_device_profile/{id}:
+    get:
+      tags:
+        - ns_device_profile
+      summary: GET by key for ns_device_profile
+      operationId: getbykey_ns_device_profile
+      description: Use this operation to get device profiles
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/idParam'
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+      responses:
+        200:
+          description: add for ns_device_profile
+          schema: 
+              $ref: '#/definitions/getns_device_profileResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+    put:
+      tags:
+        - ns_device_profile
+      summary: PUT for ns_device_profile
+      operationId: putbykey_ns_device_profile
+      description: Use this operation to modify device profile
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/idParam'
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+        - in: body
+          name: ns_device_profile
+          description: ns_device_profile object
+          schema:
+              $ref: '#/definitions/modifyns_device_profileRequest'
+      responses:
+        200:
+          description: add for ns_device_profile
+          schema: 
+              $ref: '#/definitions/modifyns_device_profileResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+    delete:
+      tags:
+        - ns_device_profile
+      summary: Delete for ns_device_profile
+      operationId: deletebykey_ns_device_profile
+      description: Use this operation to delete device profile(s)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/idParam'
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+      responses:
+        204:
+          description: add for ns_device_profile
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+definitions:
+  addns_device_profileRequest:
+    type: object
+    required:
+      - ns_device_profile
+    properties:
+      ns_device_profile:
+        $ref: '#/definitions/ns_device_profile_readwrite'
+    title: addns_device_profileRequest
+    example:
+      ns_device_profile:
+        name: "ns_nsroot_profile"
+        svm_ns_comm: "https"
+        use_global_setting_for_communication_with_ns: "true"
+        type: "string_value"
+        snmpsecurityname: "snuser"
+        snmpauthprotocol: "MD5"
+        ssl_private_key: "string_value"
+        ssl_cert: "string_value"
+        http_port: "80"
+        ns_profile_name: "ns_nsroot_profile"
+        ssh_port: "22"
+        password: "password"
+        snmpsecuritylevel: "AuthPriv"
+        snmpcommunity: "public"
+        passphrase: "string_value"
+        snmpprivprotocol: "DES"
+        https_port: "443"
+        username: "nsroot"
+        host_password: "password"
+        max_wait_time_reboot: "1800"
+        snmpprivpassword: "password"
+        snmpversion: "v3"
+        cb_profile_name: "sdwan_profile"
+        snmpauthpassword: "password"
+        host_username: "root"
+
+  addns_device_profileResponse:
+    type: object
+    required:
+      - ns_device_profile
+    properties:
+      ns_device_profile:
+        $ref: '#/definitions/ns_device_profile'
+    title: addns_device_profileResponse
+    example:
+      ns_device_profile:
+        name: "ns_nsroot_profile"
+        svm_ns_comm: "https"
+        use_global_setting_for_communication_with_ns: "true"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        is_default: "false"
+        type: "string_value"
+        tenant_id: "7ed7946f-4af7-11e9-99d2-b6fe81a85d18"
+        snmpsecurityname: "snuser"
+        snmpauthprotocol: "MD5"
+        ssl_private_key: "string_value"
+        ssl_cert: "string_value"
+        http_port: "80"
+        ns_profile_name: "ns_nsroot_profile"
+        ssh_port: "22"
+        password: "password"
+        snmpsecuritylevel: "AuthPriv"
+        snmpcommunity: "public"
+        passphrase: "string_value"
+        snmpprivprotocol: "DES"
+        https_port: "443"
+        username: "nsroot"
+        host_password: "password"
+        max_wait_time_reboot: "1800"
+        snmpprivpassword: "password"
+        snmpversion: "v3"
+        cb_profile_name: "sdwan_profile"
+        snmpauthpassword: "password"
+        host_username: "root"
+
+  getns_device_profileResponse:
+    type: object
+    required:
+      - ns_device_profile
+    properties:
+      ns_device_profile:
+        $ref: '#/definitions/ns_device_profile'
+    title: getns_device_profileResponse
+    example:
+      ns_device_profile:
+        name: "ns_nsroot_profile"
+        svm_ns_comm: "https"
+        use_global_setting_for_communication_with_ns: "true"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        is_default: "false"
+        type: "string_value"
+        tenant_id: "7ed7946f-4af7-11e9-99d2-b6fe81a85d18"
+        snmpsecurityname: "snuser"
+        snmpauthprotocol: "MD5"
+        ssl_private_key: "string_value"
+        ssl_cert: "string_value"
+        http_port: "80"
+        ns_profile_name: "ns_nsroot_profile"
+        ssh_port: "22"
+        password: "password"
+        snmpsecuritylevel: "AuthPriv"
+        snmpcommunity: "public"
+        passphrase: "string_value"
+        snmpprivprotocol: "DES"
+        https_port: "443"
+        username: "nsroot"
+        host_password: "password"
+        max_wait_time_reboot: "1800"
+        snmpprivpassword: "password"
+        snmpversion: "v3"
+        cb_profile_name: "sdwan_profile"
+        snmpauthpassword: "password"
+        host_username: "root"
+
+  getns_device_profilesResponse:
+    type: object
+    required:
+      - ns_device_profile
+    properties:
+      ns_device_profile:
+        type: array
+        items:
+          $ref: '#/definitions/ns_device_profile'
+    title: getns_device_profilesResponse
+    example:
+      ns_device_profile:
+        name: "ns_nsroot_profile"
+        svm_ns_comm: "https"
+        use_global_setting_for_communication_with_ns: "true"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        is_default: "false"
+        type: "string_value"
+        tenant_id: "7ed7946f-4af7-11e9-99d2-b6fe81a85d18"
+        snmpsecurityname: "snuser"
+        snmpauthprotocol: "MD5"
+        ssl_private_key: "string_value"
+        ssl_cert: "string_value"
+        http_port: "80"
+        ns_profile_name: "ns_nsroot_profile"
+        ssh_port: "22"
+        password: "password"
+        snmpsecuritylevel: "AuthPriv"
+        snmpcommunity: "public"
+        passphrase: "string_value"
+        snmpprivprotocol: "DES"
+        https_port: "443"
+        username: "nsroot"
+        host_password: "password"
+        max_wait_time_reboot: "1800"
+        snmpprivpassword: "password"
+        snmpversion: "v3"
+        cb_profile_name: "sdwan_profile"
+        snmpauthpassword: "password"
+        host_username: "root"
+
+  modifyns_device_profileRequest:
+    type: object
+    required:
+      - ns_device_profile
+    properties:
+      ns_device_profile:
+        $ref: '#/definitions/ns_device_profile_readwrite'
+    title: modifyns_device_profileRequest
+    example:
+      ns_device_profile:
+        name: "ns_nsroot_profile"
+        svm_ns_comm: "https"
+        use_global_setting_for_communication_with_ns: "true"
+        type: "string_value"
+        snmpsecurityname: "snuser"
+        snmpauthprotocol: "MD5"
+        ssl_private_key: "string_value"
+        ssl_cert: "string_value"
+        http_port: "80"
+        ns_profile_name: "ns_nsroot_profile"
+        ssh_port: "22"
+        password: "password"
+        snmpsecuritylevel: "AuthPriv"
+        snmpcommunity: "public"
+        passphrase: "string_value"
+        snmpprivprotocol: "DES"
+        https_port: "443"
+        username: "nsroot"
+        host_password: "password"
+        max_wait_time_reboot: "1800"
+        snmpprivpassword: "password"
+        snmpversion: "v3"
+        cb_profile_name: "sdwan_profile"
+        snmpauthpassword: "password"
+        host_username: "root"
+
+  modifyns_device_profileResponse:
+    type: object
+    required:
+      - ns_device_profile
+    properties:
+      ns_device_profile:
+        $ref: '#/definitions/ns_device_profile'
+    title: modifyns_device_profileResponse
+    example:
+      ns_device_profile:
+        name: "ns_nsroot_profile"
+        svm_ns_comm: "https"
+        use_global_setting_for_communication_with_ns: "true"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        is_default: "false"
+        type: "string_value"
+        tenant_id: "7ed7946f-4af7-11e9-99d2-b6fe81a85d18"
+        snmpsecurityname: "snuser"
+        snmpauthprotocol: "MD5"
+        ssl_private_key: "string_value"
+        ssl_cert: "string_value"
+        http_port: "80"
+        ns_profile_name: "ns_nsroot_profile"
+        ssh_port: "22"
+        password: "password"
+        snmpsecuritylevel: "AuthPriv"
+        snmpcommunity: "public"
+        passphrase: "string_value"
+        snmpprivprotocol: "DES"
+        https_port: "443"
+        username: "nsroot"
+        host_password: "password"
+        max_wait_time_reboot: "1800"
+        snmpprivpassword: "password"
+        snmpversion: "v3"
+        cb_profile_name: "sdwan_profile"
+        snmpauthpassword: "password"
+        host_username: "root"
+
+  ns_device_profile_readwrite:
+    type: object
+    properties:
+      name:
+        description: "Profile Name"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      svm_ns_comm:
+        description: "Communication protocol (http or https) with Instances"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 10
+      use_global_setting_for_communication_with_ns:
+        description: "True, if the communication with Instance needs to be global and not device specific"
+        type: boolean
+        format: boolean
+      type:
+        description: "Profile Type, This must be with in specified supported instance types: blx,sdvanvw,ns,nssdx,cbwanopt,cpx"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      snmpsecurityname:
+        description: "SNMP v3 security name for this profile"
+        type: string
+        format: string
+        maxLength: 31
+      snmpauthprotocol:
+        description: "SNMP v3 auth protocol for this profile"
+        type: string
+        format: string
+      ssl_private_key:
+        description: "SSL Private Key for key based authentication"
+        type: string
+        format: password
+      ssl_cert:
+        description: "SSL Certificate for certificate based authentication"
+        type: string
+        format: string
+      http_port:
+        description: "HTTP port to connect to the device"
+        type: integer
+        format: int32
+      ns_profile_name:
+        description: "Profile Name, This is one of the already created Citrix ADC profiles"
+        type: string
+        format: string
+      ssh_port:
+        description: "SSH port to connect to the device"
+        type: string
+        format: string
+      password:
+        description: "Instance credentials.Password for this profile"
+        type: string
+        format: password
+        minLength: 1
+        maxLength: 127
+      snmpsecuritylevel:
+        description: "SNMP v3 security level for this profile"
+        type: string
+        format: string
+      snmpcommunity:
+        description: "SNMP community for this profile"
+        type: string
+        format: string
+        maxLength: 31
+      passphrase:
+        description: "Passphrase with which private key is encrypted"
+        type: string
+        format: password
+      snmpprivprotocol:
+        description: "SNMP v3 priv protocol for this profile"
+        type: string
+        format: string
+      https_port:
+        description: "HTTPS port to connect to the device"
+        type: integer
+        format: int32
+      username:
+        description: "Instance credentials.Username provided in the profile will be used to contact the instance"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 127
+      host_password:
+        description: "Host Password for this profile.Used for BLX form factor of ADC"
+        type: string
+        format: password
+        minLength: 1
+        maxLength: 127
+      max_wait_time_reboot:
+        description: "Max waiting time to reboot Citrix ADC"
+        type: string
+        format: string
+      snmpprivpassword:
+        description: "SNMP v3 priv password for this profile"
+        type: string
+        format: password
+        minLength: 8
+        maxLength: 31
+      snmpversion:
+        description: "SNMP version for this profile"
+        type: string
+        format: string
+      cb_profile_name:
+        description: "Profile Name, This is one of the already created Citrix SD-WAN profiles"
+        type: string
+        format: string
+      snmpauthpassword:
+        description: "SNMP v3 auth password for this profile"
+        type: string
+        format: password
+        minLength: 8
+        maxLength: 31
+      host_username:
+        description: "Host User Name for this profile.Used for BLX form factor of ADC"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 127
+
+  ns_device_profile:
+    allOf:
+      -
+        properties:
+          id:
+            description: Id is system generated key for all the device profiles
+            type: string
+            format: uuid
+          is_default:
+             description: "True, if this profile is system generated and can not be deleted"
+             type: boolean
+             format: boolean
+          tenant_id:
+             description: "Tenant Id of device profile"
+             type: string
+             format: uuid
+             minLength: 1
+             maxLength: 128
+      - $ref: '#/definitions/ns_device_profile_readwrite'
+
+  Error:
+    properties:
+      errorcode:
+        type: number
+        format: int32
+        example: 1001
+      errormessage:
+        type: string
+        format: string
+        example: "id cannot be found"
