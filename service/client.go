@@ -11,16 +11,17 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 )
 
 type NitroRequestParams struct {
-	ResourcePath string
-	Method       string
-	Headers      map[string]string
-	Resource     string
-	ResourceData interface{}
+	ResourcePath       string
+	Method             string
+	Headers            map[string]string
+	Resource           string
+	ResourceData       interface{}
 	SuccessStatusCodes []int
 }
 
@@ -52,9 +53,10 @@ type NitroClient struct {
 	// sessionidMux sync.RWMutex
 	// sessionid    string
 	// timeout      int
-	headers     map[string]string
-	logger      hclog.Logger
-	accessToken string
+	headers         map[string]string
+	logger          hclog.Logger
+	accessToken     string
+	ActivityTimeout int
 }
 
 //NewNitroClientFromParams returns a usable NitroClient. Does not check validity of supplied parameters
@@ -74,6 +76,7 @@ func NewNitroClientFromParams(params NitroParams) (*NitroClient, error) {
 	c.hostLocation = params.HostLocation
 	c.CustomerID = params.CustomerID
 	c.client = &http.Client{}
+	c.ActivityTimeout = 120 // seconds to wait for activity to complete (manged_device)
 
 	// Get New Token
 	if err := c.GetNewToken(); err != nil {
@@ -218,4 +221,53 @@ func JSONMarshal(t interface{}) ([]byte, error) {
 	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(t)
 	return buffer.Bytes(), err
+}
+
+func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.Duration) error {
+	start := time.Now()
+	for {
+		if time.Since(start) > timeout {
+			return errors.New("timeout")
+		}
+		time.Sleep(time.Second * 5)
+		// activity, err := c.GetActivity(activityID)
+
+		body, err := c.MakeNitroRequest(NitroRequestParams{
+			Method:       "GET",
+			ResourcePath: fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, "activity_status", activityID),
+			Resource:     "activity_status",
+			ResourceData: nil,
+			SuccessStatusCodes: []int{
+				200,
+			},
+			Headers: map[string]string{
+				"Content-Type": "application/json",
+			},
+		})
+		if err != nil {
+			return err
+		}
+		var returnData map[string]interface{}
+
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return err
+		}
+
+		activityStatus := returnData["activity_status"].([]interface{})
+
+		log.Println("Activity Status", activityStatus)
+
+		// check for "is_last" key in activityStatus array and if it is true, then check for "status" key. And if the value of "status" key is "Completed" or "Failed" then return the activityStatus
+		for _, activity := range activityStatus {
+			if activity.(map[string]interface{})["is_last"].(string) == "true" {
+				if activity.(map[string]interface{})["status"].(string) == "Completed" {
+					return nil
+				}
+				if activity.(map[string]interface{})["status"].(string) == "Failed" {
+					return fmt.Errorf("ActivityID: %s FAILED", activityID)
+				}
+			}
+		}
+	}
 }

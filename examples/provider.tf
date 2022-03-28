@@ -3,10 +3,7 @@ terraform {
 	  citrixadm = {
 		source = "citrix/citrixadm"
 	  }
-    random = {
-      source = "hashicorp/random"
-      version = "3.1.2"
-    }
+
 	}
   }
   provider "citrixadm" {
@@ -16,7 +13,3 @@ terraform {
 	host_location = "us" // eu
 	customer_id = "vbd3nm32fn5w"
   }
-
-provider "random" {
-  # Configuration options
-}
