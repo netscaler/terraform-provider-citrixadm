@@ -1,0 +1,1625 @@
+swagger: '2.0'
+info:
+  description: Configuration for MPS Agent information resource.
+  version: 'v2'
+  title: mps_agent
+host: 'adm.cloud.com'
+schemes:
+ - https
+# tags are used for organizing operations
+tags:
+  - name: mps_agent
+    description: MPS Agent information
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  UserSecurity:
+    type: basic
+security:
+  - UserSecurity: []
+parameters:
+  idParam:
+   name: id
+   in: path
+   type: string
+   description: Id is system generated key for agent registered with NMX Cloud.
+   required: true
+  authParam:
+      in: header
+      name: Authorization
+      type: string
+      required: true
+      description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+  cloudParam:
+      in: header
+      name: isCloud
+      type: string
+      required: true
+      description: set the value to true in case of Cloud services, false for on-prem deployment
+paths:
+  /massvc/{customerid}/nitro/v2/config/mps_agent:
+    get:
+      tags:
+        - mps_agent
+      summary: GET all mps_agent
+      operationId: getall_mps_agent
+      description: Use this operation to get Agent information
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+        - in: query
+          name: filter
+          type: string
+          required: false
+          description: "Use this query-parameter to get the filtered set of vm_device resources configured on the system. You can set a filter on any property of the resource.Example:  property-name1:property-value1 "
+        - in: query
+          name: pagesize
+          type: integer
+          required: false
+          description: Use this query-parameter to get the mps_agent resources in chunks.To be used along with pageno query parameter.
+        - in: query
+          name: pageno
+          type: integer
+          required: false
+          description: Use this query-parameter to get the mps_agent resources in chunks.To be used along with pagesize query parameter.
+        - in: query
+          name: count
+          type: string
+          required: false
+          description: Use this query-parameter to get the count of mps_agent resources.
+          enum:
+            - yes
+      responses:
+        200:
+          description:  for mps_agent
+          schema: 
+              $ref: '#/definitions/getmps_agentsResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+  /massvc/{customerid}/nitro/v2/config/mps_agent/{id}:
+    get:
+      tags:
+        - mps_agent
+      summary: GET by key for mps_agent
+      operationId: getbykey_mps_agent
+      description: Use this operation to get Agent information
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/idParam'
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+      responses:
+        200:
+          description:  for mps_agent
+          schema: 
+              $ref: '#/definitions/getmps_agentResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+    post:
+      tags:
+        - mps_agent
+      summary: POST operation with actions for mps_agent
+      operationId: post_mps_agent_actions
+      description: POST operation with actions for mps_agent
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/idParam'
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+        - in: query
+          name: action
+          type: string
+          required: true
+          enum: [restart,reboot]
+          description: >
+            actions:
+              * `restart` - Use this operation to restart of Agent daemons
+              * `reboot` - Use this operation to reboot the Agent
+
+        - in: body
+          name: mps_agent
+          description: mps_agent object
+          schema:
+              $ref: '#/definitions/addmps_agentRequest'
+      responses:
+        200:
+          description: reboot for mps_agent
+          schema: 
+              $ref: '#/definitions/addmps_agentResponse'
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+    delete:
+      tags:
+        - mps_agent
+      summary: Delete for mps_agent
+      operationId: deletebykey_mps_agent
+      description: Use this operation to delete Agent information
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/idParam'
+        - in: path
+          name: customerid
+          type: string
+          required: true
+          description: Customer Id of the user
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Session Id for authentication.Should be mentioned in the format CwsAuth bearer=sessionIdValue
+        - in: header
+          name: isCloud
+          type: string
+          required: true
+          description: set the value to true in case of Cloud services, false for on-prem deployment
+      responses:
+        204:
+          description: reboot for mps_agent
+        400:
+          description: Bad input parameter
+          schema: 
+              $ref: '#/definitions/Error'
+        401:
+          description: Failed Authentication
+          schema: 
+              $ref: '#/definitions/Error'
+        403:
+          description: Unauthorized
+          schema: 
+              $ref: '#/definitions/Error'
+        404:
+          description: Item not found
+          schema: 
+              $ref: '#/definitions/Error'
+        409:
+          description: Resource Conflict
+          schema: 
+              $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema: 
+              $ref: '#/definitions/Error'
+        504:
+          description: Gateway Timeout
+          schema: 
+              $ref: '#/definitions/Error'
+
+definitions:
+  addmps_agentRequest:
+    type: object
+    required:
+      - mps_agent
+    properties:
+      mps_agent:
+        $ref: '#/definitions/mps_agent_readwrite'
+    title: addmps_agentRequest
+    example:
+      mps_agent:
+        deployment_status: "false"
+        hostname: "test"
+        down_count: "0"
+        state: "Down"
+        password: "password"
+        tenant: "string_value"
+        public_key: "PKEY"
+        platform: "string_value"
+        instance_id: "string_value"
+        provision_request_id: "48f867d1-3d10-4bfa-8498-604a57e67bc5"
+        version: "v2"
+        datacenter_id: "string_value"
+        name: "threshold_config"
+        rpt_sample_time: "1580722245"
+        discovery_time: "number_value"
+        username: "nsroot"
+        certificate: "string_value"
+        connector_ips: "string_value"
+        bulk_request_ipaddress: "string_value"
+        upgrade_version: "string_value"
+        registered_devices: [{        instance_classifier: "integer_value"
+,        hostname: "string_value"
+,        std_bw_config: "integer_value"
+,        gateway_deployment: "boolean_value"
+,        gateway_ipv6: "string_value"
+,        instance_available: "integer_value"
+,        device_finger_print: "string_value"
+,        name: "string_value"
+,        ent_bw_available: "integer_value"
+,        description: "string_value"
+,        is_autoscale_group: "boolean_value"
+,        geo_support: "boolean_value"
+,        sslvpn_config: "integer_value"
+,        mastools_version: "string_value"
+,        sysservices: "number_value"
+,        ent_bw_total: "integer_value"
+,        vcpu_config: "integer_value"
+,        netmask: "string_value"
+,        autoprovisioned: "boolean_value"
+,        ent_bw_config: "integer_value"
+,        datacenter_id: "string_value"
+,        instance_config: "integer_value"
+,        is_managed: "boolean_value"
+,        discovery_time: "number_value"
+,        instance_mode: "string_value"
+,        instance_total: "integer_value"
+,        is_ha_configured: "boolean_value"
+,        trust_id: "string_value"
+,        ipv4_address: "string_value"
+,        profile_name: "string_value"
+,        std_bw_available: "integer_value"
+,        servicepackage: "string_value"
+,        last_updated_time: "number_value"
+,        plt_bw_total: "integer_value"
+,        id: "string_value"
+,        mgmt_ip_address: "string_value"
+,        ipv6_address: "string_value"
+,        partition_id: "string_value"
+,        license_edition: "string_value"
+,        plt_bw_available: "integer_value"
+,        device_family: "string_value"
+,        template_interval: "integer_value"
+,        type: "string_value"
+,        gateway: "string_value"
+,        internal_annotation: "string_value"
+,        config_type: "integer_value"
+,        node_id: "string_value"
+,        isolation_policy: "string_value"
+,        ip_address: "string_value"
+,        provision_request_id: "string_value"
+,        httpxforwardedfor: "string_value"
+,        std_bw_total: "integer_value"
+,        display_name: "string_value"
+,        plt_bw_config: "integer_value"
+,        partition_name: "string_value"
+,        agent_id: "string_value"
+,        sslvpn_total: "integer_value"
+,        peer_device_ip: "string_value"
+,        profile_password: "string_value"
+,        file_name: "string_value"
+,        profile_username: "string_value"
+,        file_location_path: "string_value"
+,        peer_host_device_ip: "string_value"
+,        device_host_ip: "string_value"
+,        tr_task_id: "string_value"
+,        entity_tag: [{        prop_value: "string_value"
+,        prop_key: "string_value"
+}]
+}]
+        bulk_request_port: "integer_value"
+        city: "Santa Clara"
+        act_id: "fce5b825-9217-4e58-b80c-48cfe8f0c6b3"
+        mas_version: "string_value"
+        url: "string_value"
+        country: "USA"
+        region: "LA"
+        new_password: "string_value"
+        port: "49"
+        zipcode: "string_value"
+        server_time: "0"
+        loc: "string_value"
+        agent_msg_router_url: "string_value"
+
+  addmps_agentResponse:
+    type: object
+    required:
+      - mps_agent
+    properties:
+      mps_agent:
+        $ref: '#/definitions/mps_agent'
+    title: addmps_agentResponse
+    example:
+      mps_agent:
+        deployment_status: "false"
+        hostname: "test"
+        down_count: "0"
+        state: "Down"
+        password: "password"
+        tenant: "string_value"
+        public_key: "PKEY"
+        platform: "string_value"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        instance_id: "string_value"
+        provision_request_id: "48f867d1-3d10-4bfa-8498-604a57e67bc5"
+        version: "v2"
+        datacenter_id: "string_value"
+        name: "threshold_config"
+        rpt_sample_time: "1580722245"
+        discovery_time: "number_value"
+        username: "nsroot"
+        certificate: "string_value"
+        connector_ips: "string_value"
+        bulk_request_ipaddress: "string_value"
+        upgrade_version: "string_value"
+        registered_devices: [{        instance_classifier: "integer_value"
+,        subnet_id: "string_value"
+,        manufacturedate: "string_value"
+,        is_grace: "boolean_value"
+,        hostname: "string_value"
+,        std_bw_config: "integer_value"
+,        gateway_deployment: "boolean_value"
+,        is_fips_pooled_license_type: "integer_value"
+,        gateway_ipv6: "string_value"
+,        ha_master_state: "string_value"
+,        instance_available: "integer_value"
+,        vpc_id: "string_value"
+,        device_finger_print: "string_value"
+,        instance_state: "string_value"
+,        region: "string_value"
+,        reason: "string_value"
+,        name: "string_value"
+,        ent_bw_available: "integer_value"
+,        description: "string_value"
+,        is_autoscale_group: "boolean_value"
+,        geo_support: "boolean_value"
+,        is_pooled_license: "boolean_value"
+,        upsince: "string_value"
+,        sslvpn_config: "integer_value"
+,        security_group: "string_value"
+,        private_dns: "string_value"
+,        user_driven: "boolean_value"
+,        zone: "string_value"
+,        mastools_version: "string_value"
+,        model_id: "string_value"
+,        sysservices: "number_value"
+,        ent_bw_total: "integer_value"
+,        vcpu_config: "integer_value"
+,        tenant_id: "string_value"
+,        device_uuid: "string_value"
+,        netmask: "string_value"
+,        do_config: "boolean_value"
+,        autoprovisioned: "boolean_value"
+,        ent_bw_config: "integer_value"
+,        datacenter_id: "string_value"
+,        host_id: "string_value"
+,        version: "string_value"
+,        instance_config: "integer_value"
+,        is_managed: "boolean_value"
+,        discovery_time: "number_value"
+,        instance_mode: "string_value"
+,        public_dns: "string_value"
+,        instance_total: "integer_value"
+,        is_ha_configured: "boolean_value"
+,        trust_id: "string_value"
+,        ipv4_address: "string_value"
+,        instance_type: "string_value"
+,        profile_name: "string_value"
+,        seq_no: "number_value"
+,        std_bw_available: "integer_value"
+,        sysid: "string_value"
+,        servicepackage: "string_value"
+,        last_updated_time: "number_value"
+,        cloud: "string_value"
+,        encoded_serialnumber: "string_value"
+,        instance_unique_id: "integer_value"
+,        plt_bw_total: "integer_value"
+,        uptime: "string_value"
+,        private_ip: "string_value"
+,        id: "string_value"
+,        mgmt_ip_address: "string_value"
+,        ipv6_address: "string_value"
+,        partition_id: "string_value"
+,        license_edition: "string_value"
+,        cpu_license_type: "integer_value"
+,        cpufrequncy: "integer_value"
+,        plt_bw_available: "integer_value"
+,        device_family: "string_value"
+,        location: "string_value"
+,        template_interval: "integer_value"
+,        contactperson: "string_value"
+,        ha_sync: "string_value"
+,        public_ip: "string_value"
+,        ha_ip_address: "string_value"
+,        bmcrevision: "string_value"
+,        type: "string_value"
+,        gateway: "string_value"
+,        status: "string_value"
+,        internal_annotation: "string_value"
+,        systemname: "string_value"
+,        config_type: "integer_value"
+,        geo_location: "string_value"
+,        node_id: "string_value"
+,        isolation_policy: "string_value"
+,        ip_address: "string_value"
+,        provision_request_id: "string_value"
+,        ping_state: "integer_value"
+,        httpxforwardedfor: "string_value"
+,        std_bw_total: "integer_value"
+,        display_name: "string_value"
+,        ami_id: "string_value"
+,        plt_bw_config: "integer_value"
+,        partition_name: "string_value"
+,        agent_id: "string_value"
+,        sslvpn_total: "integer_value"
+,        serialnumber: "string_value"
+,        peer_device_ip: "string_value"
+,        parent_inventory: "boolean_value"
+,        profile_password: "string_value"
+,        register_failed_device: "boolean_value"
+,        act_id: "string_value"
+,        file_name: "string_value"
+,        do_instance_config: "boolean_value"
+,        profile_username: "string_value"
+,        default_password: "string_value"
+,        file_location_path: "string_value"
+,        sync_operation: "boolean_value"
+,        peer_host_device_ip: "string_value"
+,        device_host_ip: "string_value"
+,        tr_task_id: "string_value"
+,        entity_tag: [{        prop_value: "string_value"
+,        prop_key: "string_value"
+}]
+,        force_password_change: "boolean_value"
+}]
+        bulk_request_port: "integer_value"
+        city: "Santa Clara"
+        act_id: "fce5b825-9217-4e58-b80c-48cfe8f0c6b3"
+        mas_version: "string_value"
+        url: "string_value"
+        country: "USA"
+        region: "LA"
+        new_password: "string_value"
+        port: "49"
+        zipcode: "string_value"
+        server_time: "0"
+        loc: "string_value"
+        agent_msg_router_url: "string_value"
+
+  getmps_agentResponse:
+    type: object
+    required:
+      - mps_agent
+    properties:
+      mps_agent:
+        $ref: '#/definitions/mps_agent'
+    title: getmps_agentResponse
+    example:
+      mps_agent:
+        deployment_status: "false"
+        hostname: "test"
+        down_count: "0"
+        state: "Down"
+        password: "password"
+        tenant: "string_value"
+        public_key: "PKEY"
+        platform: "string_value"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        instance_id: "string_value"
+        provision_request_id: "48f867d1-3d10-4bfa-8498-604a57e67bc5"
+        version: "v2"
+        datacenter_id: "string_value"
+        name: "threshold_config"
+        rpt_sample_time: "1580722245"
+        discovery_time: "number_value"
+        username: "nsroot"
+        certificate: "string_value"
+        connector_ips: "string_value"
+        bulk_request_ipaddress: "string_value"
+        upgrade_version: "string_value"
+        registered_devices: [{        instance_classifier: "integer_value"
+,        subnet_id: "string_value"
+,        manufacturedate: "string_value"
+,        is_grace: "boolean_value"
+,        hostname: "string_value"
+,        std_bw_config: "integer_value"
+,        gateway_deployment: "boolean_value"
+,        is_fips_pooled_license_type: "integer_value"
+,        gateway_ipv6: "string_value"
+,        ha_master_state: "string_value"
+,        instance_available: "integer_value"
+,        vpc_id: "string_value"
+,        device_finger_print: "string_value"
+,        instance_state: "string_value"
+,        region: "string_value"
+,        reason: "string_value"
+,        name: "string_value"
+,        ent_bw_available: "integer_value"
+,        description: "string_value"
+,        is_autoscale_group: "boolean_value"
+,        geo_support: "boolean_value"
+,        is_pooled_license: "boolean_value"
+,        upsince: "string_value"
+,        sslvpn_config: "integer_value"
+,        security_group: "string_value"
+,        private_dns: "string_value"
+,        user_driven: "boolean_value"
+,        zone: "string_value"
+,        mastools_version: "string_value"
+,        model_id: "string_value"
+,        sysservices: "number_value"
+,        ent_bw_total: "integer_value"
+,        vcpu_config: "integer_value"
+,        tenant_id: "string_value"
+,        device_uuid: "string_value"
+,        netmask: "string_value"
+,        do_config: "boolean_value"
+,        autoprovisioned: "boolean_value"
+,        ent_bw_config: "integer_value"
+,        datacenter_id: "string_value"
+,        host_id: "string_value"
+,        version: "string_value"
+,        instance_config: "integer_value"
+,        is_managed: "boolean_value"
+,        discovery_time: "number_value"
+,        instance_mode: "string_value"
+,        public_dns: "string_value"
+,        instance_total: "integer_value"
+,        is_ha_configured: "boolean_value"
+,        trust_id: "string_value"
+,        ipv4_address: "string_value"
+,        instance_type: "string_value"
+,        profile_name: "string_value"
+,        seq_no: "number_value"
+,        std_bw_available: "integer_value"
+,        sysid: "string_value"
+,        servicepackage: "string_value"
+,        last_updated_time: "number_value"
+,        cloud: "string_value"
+,        encoded_serialnumber: "string_value"
+,        instance_unique_id: "integer_value"
+,        plt_bw_total: "integer_value"
+,        uptime: "string_value"
+,        private_ip: "string_value"
+,        id: "string_value"
+,        mgmt_ip_address: "string_value"
+,        ipv6_address: "string_value"
+,        partition_id: "string_value"
+,        license_edition: "string_value"
+,        cpu_license_type: "integer_value"
+,        cpufrequncy: "integer_value"
+,        plt_bw_available: "integer_value"
+,        device_family: "string_value"
+,        location: "string_value"
+,        template_interval: "integer_value"
+,        contactperson: "string_value"
+,        ha_sync: "string_value"
+,        public_ip: "string_value"
+,        ha_ip_address: "string_value"
+,        bmcrevision: "string_value"
+,        type: "string_value"
+,        gateway: "string_value"
+,        status: "string_value"
+,        internal_annotation: "string_value"
+,        systemname: "string_value"
+,        config_type: "integer_value"
+,        geo_location: "string_value"
+,        node_id: "string_value"
+,        isolation_policy: "string_value"
+,        ip_address: "string_value"
+,        provision_request_id: "string_value"
+,        ping_state: "integer_value"
+,        httpxforwardedfor: "string_value"
+,        std_bw_total: "integer_value"
+,        display_name: "string_value"
+,        ami_id: "string_value"
+,        plt_bw_config: "integer_value"
+,        partition_name: "string_value"
+,        agent_id: "string_value"
+,        sslvpn_total: "integer_value"
+,        serialnumber: "string_value"
+,        peer_device_ip: "string_value"
+,        parent_inventory: "boolean_value"
+,        profile_password: "string_value"
+,        register_failed_device: "boolean_value"
+,        act_id: "string_value"
+,        file_name: "string_value"
+,        do_instance_config: "boolean_value"
+,        profile_username: "string_value"
+,        default_password: "string_value"
+,        file_location_path: "string_value"
+,        sync_operation: "boolean_value"
+,        peer_host_device_ip: "string_value"
+,        device_host_ip: "string_value"
+,        tr_task_id: "string_value"
+,        entity_tag: [{        prop_value: "string_value"
+,        prop_key: "string_value"
+}]
+,        force_password_change: "boolean_value"
+}]
+        bulk_request_port: "integer_value"
+        city: "Santa Clara"
+        act_id: "fce5b825-9217-4e58-b80c-48cfe8f0c6b3"
+        mas_version: "string_value"
+        url: "string_value"
+        country: "USA"
+        region: "LA"
+        new_password: "string_value"
+        port: "49"
+        zipcode: "string_value"
+        server_time: "0"
+        loc: "string_value"
+        agent_msg_router_url: "string_value"
+
+  getmps_agentsResponse:
+    type: object
+    required:
+      - mps_agent
+    properties:
+      mps_agent:
+        type: array
+        items:
+          $ref: '#/definitions/mps_agent'
+    title: getmps_agentsResponse
+    example:
+      mps_agent:
+        deployment_status: "false"
+        hostname: "test"
+        down_count: "0"
+        state: "Down"
+        password: "password"
+        tenant: "string_value"
+        public_key: "PKEY"
+        platform: "string_value"
+        id: "c970e730-6bc5-44c2-a2bf-8dd1382ffb5f"
+        instance_id: "string_value"
+        provision_request_id: "48f867d1-3d10-4bfa-8498-604a57e67bc5"
+        version: "v2"
+        datacenter_id: "string_value"
+        name: "threshold_config"
+        rpt_sample_time: "1580722245"
+        discovery_time: "number_value"
+        username: "nsroot"
+        certificate: "string_value"
+        connector_ips: "string_value"
+        bulk_request_ipaddress: "string_value"
+        upgrade_version: "string_value"
+        registered_devices: [{        instance_classifier: "integer_value"
+,        subnet_id: "string_value"
+,        manufacturedate: "string_value"
+,        is_grace: "boolean_value"
+,        hostname: "string_value"
+,        std_bw_config: "integer_value"
+,        gateway_deployment: "boolean_value"
+,        is_fips_pooled_license_type: "integer_value"
+,        gateway_ipv6: "string_value"
+,        ha_master_state: "string_value"
+,        instance_available: "integer_value"
+,        vpc_id: "string_value"
+,        device_finger_print: "string_value"
+,        instance_state: "string_value"
+,        region: "string_value"
+,        reason: "string_value"
+,        name: "string_value"
+,        ent_bw_available: "integer_value"
+,        description: "string_value"
+,        is_autoscale_group: "boolean_value"
+,        geo_support: "boolean_value"
+,        is_pooled_license: "boolean_value"
+,        upsince: "string_value"
+,        sslvpn_config: "integer_value"
+,        security_group: "string_value"
+,        private_dns: "string_value"
+,        user_driven: "boolean_value"
+,        zone: "string_value"
+,        mastools_version: "string_value"
+,        model_id: "string_value"
+,        sysservices: "number_value"
+,        ent_bw_total: "integer_value"
+,        vcpu_config: "integer_value"
+,        tenant_id: "string_value"
+,        device_uuid: "string_value"
+,        netmask: "string_value"
+,        do_config: "boolean_value"
+,        autoprovisioned: "boolean_value"
+,        ent_bw_config: "integer_value"
+,        datacenter_id: "string_value"
+,        host_id: "string_value"
+,        version: "string_value"
+,        instance_config: "integer_value"
+,        is_managed: "boolean_value"
+,        discovery_time: "number_value"
+,        instance_mode: "string_value"
+,        public_dns: "string_value"
+,        instance_total: "integer_value"
+,        is_ha_configured: "boolean_value"
+,        trust_id: "string_value"
+,        ipv4_address: "string_value"
+,        instance_type: "string_value"
+,        profile_name: "string_value"
+,        seq_no: "number_value"
+,        std_bw_available: "integer_value"
+,        sysid: "string_value"
+,        servicepackage: "string_value"
+,        last_updated_time: "number_value"
+,        cloud: "string_value"
+,        encoded_serialnumber: "string_value"
+,        instance_unique_id: "integer_value"
+,        plt_bw_total: "integer_value"
+,        uptime: "string_value"
+,        private_ip: "string_value"
+,        id: "string_value"
+,        mgmt_ip_address: "string_value"
+,        ipv6_address: "string_value"
+,        partition_id: "string_value"
+,        license_edition: "string_value"
+,        cpu_license_type: "integer_value"
+,        cpufrequncy: "integer_value"
+,        plt_bw_available: "integer_value"
+,        device_family: "string_value"
+,        location: "string_value"
+,        template_interval: "integer_value"
+,        contactperson: "string_value"
+,        ha_sync: "string_value"
+,        public_ip: "string_value"
+,        ha_ip_address: "string_value"
+,        bmcrevision: "string_value"
+,        type: "string_value"
+,        gateway: "string_value"
+,        status: "string_value"
+,        internal_annotation: "string_value"
+,        systemname: "string_value"
+,        config_type: "integer_value"
+,        geo_location: "string_value"
+,        node_id: "string_value"
+,        isolation_policy: "string_value"
+,        ip_address: "string_value"
+,        provision_request_id: "string_value"
+,        ping_state: "integer_value"
+,        httpxforwardedfor: "string_value"
+,        std_bw_total: "integer_value"
+,        display_name: "string_value"
+,        ami_id: "string_value"
+,        plt_bw_config: "integer_value"
+,        partition_name: "string_value"
+,        agent_id: "string_value"
+,        sslvpn_total: "integer_value"
+,        serialnumber: "string_value"
+,        peer_device_ip: "string_value"
+,        parent_inventory: "boolean_value"
+,        profile_password: "string_value"
+,        register_failed_device: "boolean_value"
+,        act_id: "string_value"
+,        file_name: "string_value"
+,        do_instance_config: "boolean_value"
+,        profile_username: "string_value"
+,        default_password: "string_value"
+,        file_location_path: "string_value"
+,        sync_operation: "boolean_value"
+,        peer_host_device_ip: "string_value"
+,        device_host_ip: "string_value"
+,        tr_task_id: "string_value"
+,        entity_tag: [{        prop_value: "string_value"
+,        prop_key: "string_value"
+}]
+,        force_password_change: "boolean_value"
+}]
+        bulk_request_port: "integer_value"
+        city: "Santa Clara"
+        act_id: "fce5b825-9217-4e58-b80c-48cfe8f0c6b3"
+        mas_version: "string_value"
+        url: "string_value"
+        country: "USA"
+        region: "LA"
+        new_password: "string_value"
+        port: "49"
+        zipcode: "string_value"
+        server_time: "0"
+        loc: "string_value"
+        agent_msg_router_url: "string_value"
+
+  mps_agent_readwrite:
+    type: object
+    properties:
+      deployment_status:
+        description: "Deployment status of this node."
+        type: boolean
+        format: boolean
+      hostname:
+        description: "Hostname of the agent"
+        type: string
+        format: string
+      down_count:
+        description: "Shows for how long agent was down, each value of count increases after every 10 seconds"
+        type: integer
+        format: int32
+      state:
+        description: "Agent state"
+        type: string
+        format: string
+      password:
+        description: "Password"
+        type: string
+        format: password
+        minLength: 1
+        maxLength: 128
+      tenant:
+        description: "Tenant"
+        type: string
+        format: string
+      public_key:
+        description: "public key for agent"
+        type: string
+        format: string
+      platform:
+        description: "Platform"
+        type: string
+        format: string
+      instance_id:
+        description: "Unique ID of device provided by Global Trust Service"
+        type: string
+        format: string
+      provision_request_id:
+        description: "Value is set only if the instance was provisioned from MAS"
+        type: string
+        format: string
+      version:
+        description: "version."
+        type: string
+        format: string
+      datacenter_id:
+        description: "Datacenter Id is system generated key for data center"
+        type: string
+        format: string
+      name:
+        description: "Agent IP Address"
+        type: string
+        format: string
+      rpt_sample_time:
+        description: "Report Sample time."
+        type: number
+        format: int64
+      discovery_time:
+        description: "discovery time"
+        type: number
+        format: int64
+      username:
+        description: "username configured on DB node."
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      certificate:
+        description: "Name of ABDP Certificate File"
+        type: string
+        format: string
+      connector_ips:
+        description: "Comma separated list of connector node IPs."
+        type: string
+        format: string
+      bulk_request_ipaddress:
+        description: "ABDP IP Address."
+        type: string
+        format: IP Address
+        minLength: 1
+        maxLength: 64
+      upgrade_version:
+        description: "Represents the next version the agent should upgrade to"
+        type: string
+        format: string
+      registered_devices:
+        type: array
+        items:
+          $ref: '#/definitions/managed_device_readwrite'
+      bulk_request_port:
+        description: "Port number for ABDP"
+        type: integer
+        format: int32
+      city:
+        description: "City"
+        type: string
+        format: string
+      act_id:
+        description: "Activity Id"
+        type: string
+        format: string
+      mas_version:
+        description: "Citrix ADM server's current version"
+        type: string
+        format: string
+      url:
+        description: "URL of ABDP Certificate File Location"
+        type: string
+        format: string
+      country:
+        description: "Country"
+        type: string
+        format: string
+      region:
+        description: "Region"
+        type: string
+        format: string
+      new_password:
+        description: "new password"
+        type: string
+        format: password
+      port:
+        description: "Port number for ABDP Certificate file location"
+        type: integer
+        format: int32
+      zipcode:
+        description: "Zipcode of location"
+        type: string
+        format: string
+        maxLength: 32
+      server_time:
+        description: "Citrix ADM server's Epoch time"
+        type: number
+        format: int64
+      loc:
+        description: "Location - latitude and longitude"
+        type: string
+        format: string
+      agent_msg_router_url:
+        description: "URL for router"
+        type: string
+        format: string
+
+  mps_agent:
+    allOf:
+      -
+        properties:
+          id:
+            description: Id is system generated key for agent registered with NMX Cloud.
+            type: string
+            format: string
+      - $ref: '#/definitions/mps_agent_readwrite'
+
+  managed_device_readwrite:
+    type: object
+    properties:
+      instance_classifier:
+        description: "Value based on which certain features may be enabled/disabled in ADM for the instance"
+        type: integer
+        format: int32
+      hostname:
+        description: "Assign hostname to managed device, if this is not provided, name will be set as host name "
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 256
+      std_bw_config:
+        description: "Standard Bandwidth running"
+        type: integer
+        format: int32
+      gateway_deployment:
+        description: "Is this device acting as Gateway."
+        type: boolean
+        format: boolean
+      gateway_ipv6:
+        description: "Gateway IPv6 Address"
+        type: string
+        format: string
+      instance_available:
+        description: "Instance license available"
+        type: integer
+        format: int32
+      device_finger_print:
+        description: "Fingerprint/thumb-print from UMS public certificate for SSL communication"
+        type: string
+        format: string
+      name:
+        description: "Name of managed device"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      ent_bw_available:
+        description: "Enterprise Bandwidth configured"
+        type: integer
+        format: int32
+      description:
+        description: "Description of managed device"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 512
+      is_autoscale_group:
+        description: "Does this device belong to an Autoscale Group."
+        type: boolean
+        format: boolean
+      geo_support:
+        description: "Is this device configured to support GEO location."
+        type: boolean
+        format: boolean
+      sslvpn_config:
+        description: "sslvpn license maximum"
+        type: integer
+        format: int32
+      mastools_version:
+        description: "Mastools version if the device is embedded agent"
+        type: string
+        format: string
+      sysservices:
+        description: "System Services"
+        type: number
+        format: int64
+      ent_bw_total:
+        description: "Enterprise Bandwidth Total"
+        type: integer
+        format: int32
+      vcpu_config:
+        description: "Number of vCPU allocated for the device"
+        type: integer
+        format: int32
+      netmask:
+        description: "Netmask of managed device"
+        type: string
+        format: IP Address
+        minLength: 1
+        maxLength: 64
+      autoprovisioned:
+        description: "Device is auto-provisioned or not"
+        type: boolean
+        format: boolean
+      ent_bw_config:
+        description: "Enterprise Bandwidth configured"
+        type: integer
+        format: int32
+      datacenter_id:
+        description: "Datacenter Id is system generated key for data center"
+        type: string
+        format: string
+      instance_config:
+        description: "Instance license running"
+        type: integer
+        format: int32
+      is_managed:
+        description: "Is Managed"
+        type: boolean
+        format: boolean
+      discovery_time:
+        description: "discovery time"
+        type: number
+        format: int64
+      instance_mode:
+        description: "Denotes state- primary,secondary,clip,clusternode"
+        type: string
+        format: string
+      instance_total:
+        description: "Instance license"
+        type: integer
+        format: int32
+      is_ha_configured:
+        description: "Is HA configured"
+        type: boolean
+        format: boolean
+      trust_id:
+        description: "Device ID obtained from trust service"
+        type: string
+        format: string
+      ipv4_address:
+        description: "IPv4 Address"
+        type: string
+        format: IP Address
+        minLength: 1
+        maxLength: 64
+      profile_name:
+        description: "Device Profile Name that is attached with this managed device"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      std_bw_available:
+        description: "Standard Bandwidth Available"
+        type: integer
+        format: int32
+      servicepackage:
+        description: "Service Package Name of the device"
+        type: string
+        format: string
+      last_updated_time:
+        description: "Last Updated Time"
+        type: number
+        format: int64
+      plt_bw_total:
+        description: "Total Platinum Bandwidth"
+        type: integer
+        format: int32
+      mgmt_ip_address:
+        description: "Management IP Address for this Managed Device"
+        type: string
+        format: IP Address
+        minLength: 1
+        maxLength: 64
+      ipv6_address:
+        description: "IPv6 Address"
+        type: string
+        format: string
+      partition_id:
+        description: "ID of admin partition"
+        type: string
+        format: string
+      license_edition:
+        description: "Edition of instance"
+        type: string
+        format: string
+      plt_bw_available:
+        description: "Platinum Bandwidth Available"
+        type: integer
+        format: int32
+      device_family:
+        description: "Device Family"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 64
+      template_interval:
+        description: "Template refresh interval"
+        type: integer
+        format: int32
+      type:
+        description: "Type of device, (Xen | NS)"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 64
+      gateway:
+        description: "Default Gateway of managed device"
+        type: string
+        format: IP Address
+        minLength: 1
+        maxLength: 64
+      internal_annotation:
+        description: "Internal annotation used by ADM.Example, if a device is marked for delete"
+        type: string
+        format: string
+      config_type:
+        description: "Configuration Type. Values: 0: IPv4, 1: IPv6, 2: Both"
+        type: integer
+        format: int32
+      node_id:
+        description: "Node identification of a device"
+        type: string
+        format: string
+      isolation_policy:
+        description: "Isolation Policy of the Device"
+        type: string
+        format: string
+      ip_address:
+        description: "IP Address for this managed device"
+        type: string
+        format: IP Address
+        minLength: 1
+        maxLength: 64
+      provision_request_id:
+        description: "Value is set only if the instance was provisioned from Citrix ADM"
+        type: string
+        format: uuid
+      httpxforwardedfor:
+        description: "HTTP x-Forwardedfor header flag."
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 10
+      std_bw_total:
+        description: "Standard Bandwidth"
+        type: integer
+        format: int32
+      display_name:
+        description: "Display Name for this managed device. For HA pair it will be A-B, and for Cluster it will be CLIP"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      plt_bw_config:
+        description: "Platinum Bandwidth configured"
+        type: integer
+        format: int32
+      partition_name:
+        description: "Citrix ADC Admin Partition Name"
+        type: string
+        format: string
+        maxLength: 512
+      agent_id:
+        description: "Agent Id"
+        type: string
+        format: string
+      sslvpn_total:
+        description: "sslvpn license"
+        type: integer
+        format: int32
+      peer_device_ip:
+        description: "Peer Device IP address for instance of type BLX ADC."
+        type: string
+        format: ipaddress
+        minLength: 1
+        maxLength: 64
+      profile_password:
+        description: "Password specified by the user for this Citrix ADC Instance."
+        type: string
+        format: password
+        minLength: 1
+        maxLength: 128
+      file_name:
+        description: "File name which contains comma separated instances to be  discovered"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      profile_username:
+        description: "User Name specified by the user for this Citrix ADC Instance."
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+      file_location_path:
+        description: "File Location on Client for upload/download"
+        type: string
+        format: string
+        minLength: 1
+      peer_host_device_ip:
+        description: "Peer Host Device IP Address for instance of type BLX ADC."
+        type: string
+        format: ipaddress
+        minLength: 1
+        maxLength: 64
+      device_host_ip:
+        description: "Device Host IP Address for instance of type BLX ADC."
+        type: string
+        format: ipaddress
+        minLength: 1
+        maxLength: 64
+      tr_task_id:
+        description: "Task Id used by Triton to identify NS"
+        type: string
+        format: string
+      entity_tag:
+        type: array
+        items:
+          $ref: '#/definitions/property_map_readwrite'
+
+  managed_device:
+    allOf:
+      -
+        properties:
+          id:
+            description: Id is system generated key for all the managed devices
+            type: string
+            format: string
+          subnet_id:
+             description: "in which the instance was launched. Subnet is a Range of IP addresses in a VPC (if hosted on AWS)"
+             type: string
+             format: string
+          manufacturedate:
+             description: "Manufacture Date"
+             type: string
+             format: string
+          is_fips_pooled_license_type:
+             description: "FIPS BW license : 0 = No FIPS BW License, 1 = FIPS BW Pool license"
+             type: integer
+             format: int32
+          ha_master_state:
+             description: "Master State (Primary/Secondary)"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 32
+          vpc_id:
+             description: "VPC ID of the managed device"
+             type: string
+             format: string
+          instance_state:
+             description: "State of device, UP only if device accessible"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          region:
+             description: "Region in which the managed device is hosted"
+             type: string
+             format: string
+          reason:
+             description: "Reason of failure for this managed device"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 1024
+          upsince:
+             description: "Upsince of managed device"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 128
+          security_group:
+             description: "virtual firewall that controls the traffic for one or more managed devices (if hosted on AWS)"
+             type: string
+             format: string
+          private_dns:
+             description: "Private DNS of the managed device"
+             type: string
+             format: string
+          zone:
+             description: "Zone in which the managed device is hosted"
+             type: string
+             format: string
+          model_id:
+             description: "Device Model Id"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          tenant_id:
+             description: "Tenant ID"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 128
+          device_uuid:
+             description: "Device UUID"
+             type: string
+             format: string
+          do_config:
+             description: "Do default config for managed device"
+             type: boolean
+             format: boolean
+          host_id:
+             description: "Host ID"
+             type: string
+             format: string
+          version:
+             description: "Device Version"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 256
+          public_dns:
+             description: "Public DNS of the managed device"
+             type: string
+             format: string
+          instance_type:
+             description: "Instance type indicates the deployment type of CPX"
+             type: string
+             format: string
+          sysid:
+             description: "System ID"
+             type: string
+             format: string
+          cloud:
+             description: "Cloud on which the managed device is hosted"
+             type: string
+             format: string
+          encoded_serialnumber:
+             description: "Encoded Serial Number"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          instance_unique_id:
+             description: "32 bit unique Integer id generated by Citrix ADM for this device"
+             type: integer
+             format: int32
+          uptime:
+             description: "Uptime of device"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 128
+          private_ip:
+             description: "Private IP of the managed device"
+             type: string
+             format: string
+          cpu_license_type:
+             description: "VCPU license 0 = No VCPU License, 1 = VCPU Pool license"
+             type: integer
+             format: int32
+          cpufrequncy:
+             description: "CPU Frequency (MHZ)"
+             type: integer
+             format: int32
+          location:
+             description: "Device Location"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 127
+          contactperson:
+             description: "Device contact person"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          ha_sync:
+             description: "HA Synchronization State"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          public_ip:
+             description: "Public IP of the managed device"
+             type: string
+             format: string
+          ha_ip_address:
+             description: "Peer IP Address"
+             type: string
+             format: IP Address
+             minLength: 1
+             maxLength: 64
+          bmcrevision:
+             description: "BMC Firmware Version"
+             type: string
+             format: string
+          status:
+             description: "Status of managed device"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          systemname:
+             description: "Device System Name"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          geo_location:
+             description: "Geo location of the managed device"
+             type: string
+             format: string
+          ami_id:
+             description: "AMI ID of the managed device (if hosted on AWS)"
+             type: string
+             format: string
+          serialnumber:
+             description: "Device Serial Number"
+             type: string
+             format: string
+             minLength: 1
+             maxLength: 64
+          act_id:
+             description: "Activity Id"
+             type: string
+             format: uuid
+      - $ref: '#/definitions/managed_device_readwrite'
+
+  property_map_readwrite:
+    type: object
+    properties:
+      prop_value:
+        description: "Property value"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 512
+      prop_key:
+        description: "Property key"
+        type: string
+        format: string
+        minLength: 1
+        maxLength: 128
+
+  property_map:
+    allOf:
+      - $ref: '#/definitions/property_map_readwrite'
+
+  Error:
+    properties:
+      errorcode:
+        type: number
+        format: int32
+        example: 1001
+      errormessage:
+        type: string
+        format: string
+        example: "id cannot be found"

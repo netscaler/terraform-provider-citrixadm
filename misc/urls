@@ -1,6 +1,4 @@
 endpoints url:
-1. ns_device_profile: https://developer.cloud.com/app-delivery-and-security/citrix-application-delivery-management-service/ns_device_profile/docs/overview
-2. Managed Device: https://developer.cloud.com/app-delivery-and-security/citrix-application-delivery-management-service/managed_device/docs/overview
 
 
 
@@ -13,3 +11,17 @@ url encoded POST
 
 vscode+terraform provider development:
     https://dev.to/drewmullen/vscode-terraform-provider-development-setup-debugging-6bn
+
+Terraform provider for ADM and ADMS . Scope of the jira would be :
+1. Authentication to ADM/ADMS - Charumathi
+    Get Token: https://developer.cloud.com/citrix-cloud/citrix-cloud-api-overview/docs/get-started-with-citrix-cloud-apis
+2. Onboard ADC onto ADM/ADMS - Charumathi
+    Managed Device: https://developer.cloud.com/app-delivery-and-security/citrix-application-delivery-management-service/managed_device/docs/overview
+    ns_device_profile: https://developer.cloud.com/app-delivery-and-security/citrix-application-delivery-management-service/ns_device_profile/docs/overview
+    activity_status: https://developer.cloud.com/app-delivery-and-security/citrix-application-delivery-management-service/activity_status/docs/overview
+
+3.Provision Agent - Sujo
+    mps_agent: https://developer.cloud.com/app-delivery-and-security/citrix-application-delivery-management-service/mps_agent/apis/mps_agent/post_mps_agent_actions
+4.Licensing [Pool Licensing] - Sujo
+5. Stylebooks - Megha Byali, Rahul Kurpad
+    a. Creating, Triggering Stylebooks, Updating Configpacks

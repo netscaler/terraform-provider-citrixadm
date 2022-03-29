@@ -44,7 +44,9 @@ func Provider() *schema.Provider {
 			"citrixadm_managed_device":    resourceManagedDevice(),
 			"citrixadm_ns_device_profile": resourceNsDeviceProfile(),
 		},
-		DataSourcesMap:       map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"citrixadm_mps_agent": dataSourceMpsAgent(),
+		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }

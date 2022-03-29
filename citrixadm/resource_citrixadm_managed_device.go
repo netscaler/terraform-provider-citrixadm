@@ -2,9 +2,7 @@ package citrixadm
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -216,7 +214,6 @@ func getManagedDevicePayload(d *schema.ResourceData) []interface{} {
 	payload = append(payload, data)
 
 	return payload
-
 }
 func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("In resourceManagedDeviceCreate")
@@ -225,25 +222,7 @@ func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 
 	endpoint := "managed_device"
 
-	n := service.NitroRequestParams{
-		Resource:           endpoint,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, endpoint),
-		ResourceData:       getManagedDevicePayload(d),
-		Method:             "POST",
-		SuccessStatusCodes: []int{200, 201},
-	}
-
-	body, err := c.MakeNitroRequest(n)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	var returnData map[string]interface{}
-
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	log.Printf("return data %v", returnData)
+	returnData, err := c.AddResource(endpoint, getManagedDevicePayload(d))
 
 	activityStatusID := returnData[endpoint].([]interface{})[0].(map[string]interface{})["act_id"].(string)
 
@@ -255,23 +234,11 @@ func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	resourceID := func() string {
-		n := service.NitroRequestParams{
-			Resource:           endpoint,
-			Method:             "GET",
-			ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, endpoint),
-			SuccessStatusCodes: []int{200},
-		}
-		body, err := c.MakeNitroRequest(n)
-		if err != nil {
-			return ""
-		}
-		var returnData map[string]interface{}
 
-		err = json.Unmarshal(body, &returnData)
+		returnData, err := c.GetAllResource(endpoint)
 		if err != nil {
 			return ""
 		}
-		log.Printf("return data %v", returnData)
 
 		for _, v := range returnData[endpoint].([]interface{}) {
 			if v.(map[string]interface{})["ip_address"].(string) == d.Get("ip_address").(string) {
@@ -287,6 +254,25 @@ func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 
 	log.Printf("id %s", resourceID)
 
+	// allocate_license
+	// check for license_edition and plt_bw_config if preent in d
+	data := make(map[string]interface{})
+
+	if v, ok := d.GetOk("license_edition"); ok {
+		data["license_edition"] = v.(string)
+	}
+	if v, ok := d.GetOk("plt_bw_config"); ok {
+		data["plt_bw_config"] = v.(int)
+	}
+	data["id"] = resourceID
+	var payload []interface{}
+	payload = append(payload, data)
+
+	_, err = c.AddResourceWithActionParams(endpoint, payload, "allocate_license")
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	d.SetId(resourceID)
 	return resourceManagedDeviceRead(ctx, d, m)
 }
@@ -299,25 +285,11 @@ func resourceManagedDeviceRead(ctx context.Context, d *schema.ResourceData, m in
 	resourceID := d.Id()
 	endpoint := "managed_device"
 
-	n := service.NitroRequestParams{
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
-		Method:             "GET",
-		Resource:           endpoint,
-		ResourceData:       d,
-		SuccessStatusCodes: []int{200},
-	}
-
-	body, err := c.MakeNitroRequest(n)
+	returnData, err := c.GetResource(endpoint, resourceID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	var returnData map[string]interface{}
 
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	log.Printf("return data %v", returnData)
 	getResponseData := returnData[endpoint].([]interface{})[0].(map[string]interface{})
 
 	log.Println("getResponseData", getResponseData)
@@ -356,25 +328,12 @@ func resourceManagedDeviceUpdate(ctx context.Context, d *schema.ResourceData, m 
 	resourceID := d.Id()
 	endpoint := "managed_device"
 
-	n := service.NitroRequestParams{
-		Resource:           endpoint,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
-		ResourceData:       getManagedDevicePayload(d),
-		Method:             "PUT",
-		SuccessStatusCodes: []int{200, 201},
-	}
+	_, err := c.UpdateResource(endpoint, getManagedDevicePayload(d), resourceID)
 
-	body, err := c.MakeNitroRequest(n)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	var returnData map[string]interface{}
 
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	log.Printf("return data %v", returnData)
 	return resourceManagedDeviceRead(ctx, d, m)
 }
 
@@ -387,19 +346,7 @@ func resourceManagedDeviceDelete(ctx context.Context, d *schema.ResourceData, m 
 	endpoint := "managed_device"
 	resourceID := d.Id()
 
-	n := service.NitroRequestParams{
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
-		Method:             "DELETE",
-		Resource:           endpoint,
-		SuccessStatusCodes: []int{200, 204},
-	}
-
-	body, err := c.MakeNitroRequest(n)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	log.Printf("delete response %v", body)
+	c.DeleteResource(endpoint, resourceID)
 
 	d.SetId("")
 

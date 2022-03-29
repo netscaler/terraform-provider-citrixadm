@@ -23,6 +23,7 @@ type NitroRequestParams struct {
 	Resource           string
 	ResourceData       interface{}
 	SuccessStatusCodes []int
+	ActionParams       string
 }
 
 //NitroParams encapsulates options to create a NitroClient
@@ -148,11 +149,22 @@ func (c *NitroClient) GetNewToken() error {
 
 // MakeNitroRequest makes a API request to the NetScaler
 func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
+	log.Println("MakeNitroRequest", n)
 	var buff []byte
 	var err error
 
 	if n.Method == "POST" || n.Method == "PUT" {
 		payload := map[string]interface{}{n.Resource: n.ResourceData}
+		// update the payload with below params if n.ActionParams is not empty
+		//  "params": {
+		// 	"action": "allocate_license"
+		// },
+		if n.ActionParams != "" {
+			payload["params"] = map[string]interface{}{
+				"action": n.ActionParams,
+			}
+		}
+		log.Println("MakeNitroRequest payload", payload)
 		buff, err = JSONMarshal(payload)
 		if err != nil {
 			return nil, err
@@ -270,4 +282,141 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 			}
 		}
 	}
+}
+
+func (c *NitroClient) AddResource(resource string, resourceData []interface{}) (map[string]interface{}, error) {
+	log.Println("AddResource method:", resource, resourceData)
+	var returnData map[string]interface{}
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource),
+		ResourceData:       resourceData,
+		Method:             "POST",
+		SuccessStatusCodes: []int{200, 201},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return returnData, err
+	}
+	log.Printf("return data %v", returnData)
+	return returnData, nil
+}
+
+func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData []interface{}, actionParam string) (map[string]interface{}, error) {
+	log.Println("AddResourceWithActionParams method:", resource, resourceData, actionParam)
+	var returnData map[string]interface{}
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource),
+		ResourceData:       resourceData,
+		ActionParams:       actionParam,
+		Method:             "POST",
+		SuccessStatusCodes: []int{200, 201},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return returnData, err
+	}
+	log.Printf("return data %v", returnData)
+	return returnData, nil
+}
+func (c *NitroClient) UpdateResource(resource string, resourceData []interface{}, resourceID string) (map[string]interface{}, error) {
+	log.Println("UpdateResource method:", resource, resourceData, resourceID)
+	var returnData map[string]interface{}
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID),
+		ResourceData:       resourceData,
+		Method:             "PUT",
+		SuccessStatusCodes: []int{200, 201},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return returnData, err
+	}
+	log.Printf("return data %v", returnData)
+	return returnData, nil
+}
+
+// delete resource
+func (c *NitroClient) DeleteResource(resource string, resourceID string) error {
+	log.Println("DeleteResource method:", resource, resourceID)
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID),
+		Method:             "DELETE",
+		SuccessStatusCodes: []int{200, 204},
+	}
+
+	deleteResponse, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return err
+	}
+	log.Printf("delete response %v", deleteResponse)
+	return nil
+}
+
+// get resource
+func (c *NitroClient) GetResource(resource string, resourceID string) (map[string]interface{}, error) {
+	log.Println("GetResource method:", resource, resourceID)
+	var returnData map[string]interface{}
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID),
+		Method:             "GET",
+		SuccessStatusCodes: []int{200},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return returnData, err
+	}
+	log.Printf("return data %v", returnData)
+	return returnData, nil
+}
+
+func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, error) {
+	log.Println("GetAllResource method:", resource)
+	var returnData map[string]interface{}
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource),
+		Method:             "GET",
+		SuccessStatusCodes: []int{200},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return returnData, err
+	}
+	log.Printf("return data %v", returnData)
+	return returnData, nil
 }
