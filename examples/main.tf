@@ -1,41 +1,54 @@
-data "citrixadm_mps_agent" agent1 {
+data "citrixadm_mps_agent" "agent1" {
   name = "10.0.1.91"
 }
 
-# resource "citrixadm_ns_device_profile" "profile1" {
-#     name = "tf_test_profile"
-#     username = "nsroot"
-#     password = "tfnsroot"
-# }
+resource "citrixadm_ns_device_profile" "profile1" {
+  name     = "tf_test_profile2"
+  username = "nsroot"
+  password = "notnsroot"
+}
 
-# resource "citrixadm_managed_device" "device1" {
-#   ip_address    = "10.0.1.145"
-#   profile_name  = "sumanth-adms-terraform-provider-standalone-RegisterADC2ADMServiceStack-QKEVDOTC2VMRK0J"
-#   datacenter_id = "bcbf82f7-5451-4e48-8261-caec673c18e1"
-#   agent_id      = "e485c7d7-b54d-4a7a-a078-3c4150d1117d" # FIXME: Ask George if we need to get the ID or Agent IP and then find the ID internally?
-# #   description   = "VPX managed device description" # FIXME: API problem. API returns always an empty string
-#   entity_tag { # FIXME: API problem. API stores the tags' keys and values in lowercase and if we pass in mixedcase, it's a new update everytime
-#     prop_key   = "project"
-#     prop_value = "adms"
+resource "citrixadm_managed_device" "device1" {
+  ip_address    = "10.0.1.145"
+  profile_name  = citrixadm_ns_device_profile.profile1.name
+  datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+  agent_id      = data.citrixadm_mps_agent.agent1.id
+  #   description   = "VPX managed device description" # FIXME: API problem. API returns always an empty string
+  entity_tag { # FIXME: API problem. API stores the tags' keys and values in lowercase and if we pass in mixedcase, it's a new update everytime
+    prop_key   = "project"
+    prop_value = "adms"
 
-#   }
-#   entity_tag {
-#     prop_key   = "environment"
-#     prop_value = "staging"
-#   }
+  }
+  entity_tag {
+    prop_key   = "environment"
+    prop_value = "staging"
+  }
 
-#   license_edition= "Platinum"
-#   plt_bw_config= 30
+  # license_edition= "Platinum"
+  # plt_bw_config= 30
 
-# }
+}
 
 resource "citrixadm_managed_device" "device2" {
   ip_address    = "10.0.1.215"
-  profile_name  = "nsroot_notnsroot_profile"
-  datacenter_id = citrixadm_mps_agent.agent1.datacenter_id
-  agent_id      = citrixadm_mps_agent.agent1.id
+  profile_name  = citrixadm_ns_device_profile.profile1.name
+  datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+  agent_id      = data.citrixadm_mps_agent.agent1.id
 
-  license_edition= "Platinum"
-  plt_bw_config= 400
+  # license_edition= "Platinum"
+  # plt_bw_config= 500
 
+}
+
+resource "citrixadm_managed_device" "device3" {
+  ip_address    = "10.0.1.233"
+  profile_name  = citrixadm_ns_device_profile.profile1.name
+  datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+  agent_id      = data.citrixadm_mps_agent.agent1.id
+}
+resource "citrixadm_managed_device" "device4" {
+  ip_address    = "10.0.1.144"
+  profile_name  = citrixadm_ns_device_profile.profile1.name
+  datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+  agent_id      = data.citrixadm_mps_agent.agent1.id
 }

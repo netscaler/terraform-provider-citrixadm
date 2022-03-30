@@ -25,3 +25,11 @@ Terraform provider for ADM and ADMS . Scope of the jira would be :
 4.Licensing [Pool Licensing] - Sujo
 5. Stylebooks - Megha Byali, Rahul Kurpad
     a. Creating, Triggering Stylebooks, Updating Configpacks
+    a. Get all Configpacks: https://adm.cloud.com/massvc/{{customerid}}/stylebook/nitro/v1/config/configpacks
+    b. Create configpack: https://adm.cloud.com/massvc/{{customerid}}/stylebook/nitro/v1/config/stylebooks/{{STYLEBOOK_NAMESPACE}}/{{STYLEBOOK_VERSION}}/{{STYLEBOOK_NAME}}/configpacks
+        STYLEBOOK_NAMESPACE: com.citrix.adc.stylebooks
+        STYLEBOOK_VERSION: 1.1
+        STYLEBOOK_NAME: lb
+
+
+    https://cocoa.adm.cloud.com/stylebook/nitro/v1/config/stylebooks/com.citrix.adc.stylebooks/1.1/lb/configpacks?mode=async

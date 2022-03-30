@@ -1,0 +1,2003 @@
+swagger: '2.0'
+info:
+  version: ADM 13.0
+  title: ADM StyleBooks APIs
+  description: StyleBooks REST APIs
+host: 'adm.cloud.com'
+#basePath: /stylebook/nitro/v1/config
+schemes:
+  #- http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  authHeaderParam:
+    in: header
+    name: Authorization
+    type: string
+    required: true
+    description: Session Id for authentication.Should be mentioned in the format CwcAuth bearer=sessionIdValue.
+  iscloudHeaderParam:
+    in: header
+    name: isCloud
+    type: string
+    description: set the value to true in case of Cloud services, false for on-prem deployment
+    required: true
+  namespaceParam:
+    name: namespace
+    in: path
+    type: string
+    description: namespace of the StyleBook
+    required: true
+  versionParam:
+    name: version
+    in: path
+    type: string
+    description: version of the StyleBook
+    required: true
+  nameParam:
+    name: name
+    in: path
+    type: string
+    description: name of the StyleBook
+    required: true
+  configpackIDParam:
+    name: configpack-id
+    in: path
+    type: string
+    description: ConfigPack ID
+    required: true
+  labelNameParam:
+    name: tag-name
+    in: path
+    type: string
+    description: Label name
+    required: true
+  repositoryNameParam:
+    name: repository-name
+    in: path
+    type: string
+    description: Repository name
+    required: true
+  customerid:
+    in: path
+    name: customerid
+    type: string
+    required: true
+    description: Customer Id of the user
+  modeOfMethod:
+    name: mode
+    in: query
+    type: string
+    description: Mode of the method can be dry_run, async or sync
+    required: false
+  pageNo:
+    name: pageno
+    in: query
+    type: number
+    description: Page Number to be fetched for the request 
+    required: false
+  pageSize:
+    name: pagesize
+    in: query
+    type: number
+    description: Page Size to be fetched for the request 
+    required: false
+  forceOperation:
+    name: force
+    in: query
+    type: boolean
+    description: Process the request despite any exceptions
+    required: false
+  countResponse:
+    name: count
+    in: query
+    type: boolean
+    description: Retrieve count of the objects in the response
+    required: false
+  bestEffort:
+    name: best_effort
+    in: query
+    type: boolean
+    description: Ensure that the request is served on best_effort service
+    required: false
+  skipSaveOnTargets:
+    name: skip_save_on_targets
+    in: query
+    type: boolean
+    description: Skip saving the config in ns conf of the ADC instance
+    required: false
+  dependencies:
+    name: dependencies
+    in: query
+    type: string
+    description: Get the dependencies of a stylebook being retieved
+    required: false
+paths:
+  /massvc/{customerid}/stylebook/nitro/v1/config/stylebooks:
+    get:
+      description: Retrieves description of all StyleBooks in the system
+      operationId: GetAllStylebooks
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of all StyleBooks in the system
+          schema:
+            $ref: '#/definitions/GetAllStyleBooksResponseBody'
+    post:
+      description: Uploads (Imports) a new StyleBook
+      operationId: ImportStylebook
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/ImportStyleBookRequestBody'
+      responses:
+        '200':
+          description: Successful creation of a ConfigPack
+          schema:
+            $ref: '#/definitions/ImportStyleBookResponseBody'
+  /massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/actions/validate:
+    post:
+      description: Validates the contents of a StyleBook
+      operationId: ValidateStylebook
+      produces:
+        - application/json
+      tags:
+        - actions
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/ValidateStyleBookRequestBody'
+      responses:
+        '200':
+          description: Valid StyleBook
+          schema:
+            $ref: '#/definitions/ValidateStyleBookResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/namespaces':
+    get:
+      description: Retrieves distinct Namespaces of all StyleBooks in the system
+      operationId: GetDistinctNamespacesStylebooks
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of all distinct Namespaces of StyleBooks in the system
+          schema:
+            $ref: '#/definitions/GetDistinctNamespacesStyleBooksResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/namespaces/{namespace}':
+    get:
+      description: Retrieves all StyleBooks belonging to the required namespace in the system
+      operationId: GetStylebooksofNamespace
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      responses:
+        '200':
+          description: Successful retrieval of all StyleBooks belonging to the required namespace in the system
+          schema:
+            $ref: '#/definitions/GetStylebooksofNamespaceResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/versions':
+    get:
+      description: Retrieves distinct Versions of all StyleBooks in the system
+      operationId: GetDistinctVersionsStylebooks
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of all distinct Versions of StyleBooks in the system
+          schema:
+            $ref: '#/definitions/GetDistinctVersionsStyleBooksResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/versions/{version}':
+    get:
+      description: Retrieves all StyleBooks belonging to the required version in the system
+      operationId: GetStylebooksofVersion
+      parameters:
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      responses:
+        '200':
+          description: Successful retrieval of all StyleBooks belonging to the required version in the system
+          schema:
+            $ref: '#/definitions/GetStylebooksofVersionResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}':
+    get:
+      description: Retrieve a StyleBook
+      operationId: GetStylebook
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      tags:
+        - stylebooks
+      responses:
+        '200':
+          description: Successful retrieval of a StyleBook definition
+          schema:
+            $ref: '#/definitions/GetStyleBookResponseBody'
+    delete:
+      description: >-
+        Deletes a StyleBook from the system. Only imported StyleBooks can be
+        deleted.
+      operationId: DeleteStylebook
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful removal of a StyleBook
+          schema:
+            $ref: '#/definitions/DeleteStyleBookResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/schema':
+    get:
+      description: Retrieve the schema for a StyleBook (its Parameters description)
+      operationId: GetStylebookSchema
+      produces:
+        - application/json
+      tags:
+        - stylebooks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of a StyleBook schema
+          schema:
+            $ref: '#/definitions/GetStyleBookSchemaResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/configpacks/{configpack-id}/graph':
+    get:
+      description: Retrieve the objects created for a configpack
+      operationId: GetGraphSchema
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of a StyleBook schema
+          schema:
+            $ref: '#/definitions/GetObjectsResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/configpacks':
+    get:
+      description: Retrieve all Configpacks of a StyleBook
+      operationId: GetConfigpacks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      responses:
+        '200':
+          description: Retrieve all ConfigPacks of a StyleBook
+          schema:
+            $ref: '#/definitions/GetConfigpacksResponseBody'
+    post:
+      description: Create a ConfigPack from a StyleBook
+      operationId: CreateConfigpack
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/CreateConfigpackRequestBody'
+      responses:
+        '200':
+          description: Successful creation of a ConfigPack
+          schema:
+            $ref: '#/definitions/CreateConfigpackResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/configpacks/{configpack-id}/actions/upgrade':
+    post:
+      description: Upgrade the Configpack from current StyleBook to another StyleBook
+      operationId: UpgradeConfigpack
+      produces:
+        - application/json
+      tags:
+        - actions
+      parameters:
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/UpgradeConfigpackRequestBody'
+      responses:
+        '200':
+          description: Successful creation of a ConfigPack
+          schema:
+            $ref: '#/definitions/UpgradeConfigpackResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/configpacks/{configpack-id}/actions/audit':
+    post:
+      description: Audit the Configpack for the objects present
+      operationId: AuditConfigpack
+      parameters:
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - actions
+      responses:
+        '200':
+          description: Successful Audit of a ConfigPack
+          schema:
+            $ref: '#/definitions/AuditConfigpackResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/configpacks/{configpack-id}/audit':
+    get:
+      description: Gets the audit data of Configpack for the objects present
+      operationId: GetAuditConfigpack
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      parameters:
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of the Audit data of a ConfigPack
+          schema:
+            $ref: '#/definitions/GetAuditConfigpackResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/configpacks':
+    get:
+      description: Retrieve all ConfigPacks in the system
+      operationId: GetAllConfigpacks
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Retrieve all ConfigPacks of a StyleBook
+          schema:
+            $ref: '#/definitions/GetConfigpacksResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/configpacks/{configpack-id}':
+    get:
+      description: Retrieve a ConfigPack of a StyleBook
+      operationId: GetConfigpack
+      parameters:
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      responses:
+        '200':
+          description: Successful retrieval of the Configpack
+          schema:
+            $ref: '#/definitions/GetConfigpackResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/configpacks/{configpack-id}':
+    get:
+      description: Retrieve a ConfigPack of a StyleBook
+      operationId: GetConfigpackWithNameNamespaceVersion
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      responses:
+        '200':
+          description: Successful retrieval of the Configpack
+          schema:
+            $ref: '#/definitions/GetConfigpackResponseBody'
+    put:
+      description: Update a ConfigPack
+      operationId: UpdateConfigpack
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/UpdateConfigpackRequestBody'
+      responses:
+        '200':
+          description: Successful Update of a ConfigPack
+          schema:
+            $ref: '#/definitions/UpdateConfigpackResponseBody'
+    delete:
+      description: Delete a ConfigPack
+      operationId: DeleteConfigpack
+      produces:
+        - application/json
+      tags:
+        - configpacks
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful removal of a ConfigPack
+          schema:
+            $ref: '#/definitions/DeleteConfigpackResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/jobs/{configpack-id}':
+    get:
+      description: Retrieve the progress of an asynchronous operation on a ConfigPack
+      operationId: GetAsyncJobStatus
+      produces:
+        - application/json
+      tags:
+        - jobs
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '202':
+          description: Successful retrieval of progress on a ConfigPack operation
+          schema:
+            $ref: '#/definitions/GetAsyncJobStatusResponseBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/jobs/{configpack-id}':
+    get:
+      description: Retrieve the progress of an asynchronous operation on a ConfigPack
+      operationId: GetJobsAsyncJobStatus
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      tags:
+        - jobs
+      responses:
+        '202':
+          description: Successful retrieval of progress on a ConfigPack operation
+          schema:
+            $ref: '#/definitions/GetAsyncJobStatusResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/tags':
+    get:
+      description: >-
+          Retrieves all the labels, if any, associated with   StyleBooks imported by the user in the ADM GUI.
+      operationId: GetLabels
+      produces:
+        - application/json
+      tags:
+        - tags
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of labels of the StyleBook
+          schema:
+            $ref: '#/definitions/GetLabelsResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/tags/{tag-name}':
+    get:
+      description: >-
+          Retrieves all the labels, if any, associated with   StyleBooks imported by the user in the ADM GUI.
+      operationId: GetLabelValue
+      parameters:
+        - $ref: '#/parameters/labelNameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - tags
+      responses:
+        '200':
+          description: Successful retrieval of labels of the StyleBook
+          schema:
+            $ref: '#/definitions/GetLabelValueResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/configpacks/{configpack-id}/tags':
+    get:
+      description: >-
+          Retrieves all the tags, if any, associated with configpack imported by the user in the ADM GUI.
+      operationId: GetLabelConfigpackValue
+      parameters:
+        - $ref: '#/parameters/labelNameParam'
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - tags
+      responses:
+        '200':
+          description: Successful retrieval of labels of the StyleBook
+          schema:
+            $ref: '#/definitions/CreateConfigLabelBody'
+    post:
+      description: >-
+        Create labels, if any, associated with configpack imported by the user in the ADM GUI.
+      operationId: CreateLabel
+      parameters:
+        - $ref: '#/parameters/labelNameParam'
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - tags
+      responses:
+        '200':
+          description: Successful retrieval of label for the Default configpack.
+          schema:
+            $ref: '#/definitions/CreateLabelBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/configpacks/{configpack-id}/tags/inherit':
+    post:
+      description: >-
+        Introduce tag inherit configuration data to be associated with configpack imported by the user in the ADM GUI.
+      operationId: CreateLabelInheritance
+      parameters:
+        - $ref: '#/parameters/labelNameParam'
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - tags
+      responses:
+        '200':
+          description: Successful retrieval of the inheritance data for the Default configpack.
+          schema:
+            $ref: '#/definitions/InheritLabelData'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/tags':
+    get:
+      description: >-
+          Retrieves all the labels, if any, associated with stylebooks imported by the user in the ADM GUI.
+      operationId: GetLabelStylebookValue
+      parameters:
+        - $ref: '#/parameters/labelNameParam'
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - tags
+      responses:
+        '200':
+          description: Successful retrieval of labels of the StyleBook
+          schema:
+            $ref: '#/definitions/CreateLabelBody'
+    post:
+      description: >-
+        Create labels, if any, associated with stylebooks imported by the user in the ADM GUI.
+      operationId: CreateLabelStylebook
+      parameters:
+        - $ref: '#/parameters/labelNameParam'
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/configpackIDParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - tags
+      responses:
+        '200':
+          description: Successful retrieval of label for the StyleBooks.
+          schema:
+            $ref: '#/definitions/CreateLabelBody'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/stylebooks/{namespace}/{version}/{name}/actions/download':
+    get:
+      description: >-
+          Download the StyleBook tarball
+      operationId: DownloadStyleBook
+      parameters:
+        - $ref: '#/parameters/namespaceParam'
+        - $ref: '#/parameters/versionParam'
+        - $ref: '#/parameters/nameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - attachment
+      tags:
+        - actions
+      responses:
+        '200':
+          description: Successful download  StyleBook
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/system_settings':
+    get:
+      description: >-
+          Retrieves the Systems settings for the display of defaults Stylebooks in the ADM GUI .
+      operationId: GetSystemSettings
+      produces:
+        - application/json
+      tags:
+        - system_settings
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of system settings for the Default StyleBooks.
+          schema:
+            $ref: '#/definitions/GetSystemSettings'
+    put:
+      description: >-
+          Modify the systems settings for the display of defaults Stylebooks in the ADM GUI .
+      operationId: PutSystemSettings
+      produces:
+        - application/json
+      tags:
+        - system_settings
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successful retrieval of system settings for the Default StyleBooks.
+          schema:
+            $ref: '#/definitions/PutSystemSettings'
+
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/repositories':
+    get:
+      description: >-
+          List all exisiting git repositories present on the ADM
+      operationId: GetAllRepository
+      produces:
+        - application/json
+      tags:
+        - repositories
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      responses:
+        '200':
+          description: Successfully list all git repository present onthe ADM.
+          schema:
+            $ref: '#/definitions/GetAllRepository'
+    post:
+      description: >-
+          Add a git repository to the ADM
+      operationId: AddRepository
+      produces:
+        - application/json
+      tags:
+        - repositories
+      parameters:
+        - $ref: '#/parameters/repositoryNameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/GetIndividualRepository'
+      responses:
+        '200':
+          description: Successful addition of the git repository to the ADM
+          schema:
+            $ref: '#/definitions/RepositoryResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/repositories/{repository-name}':
+    get:
+      description: Retrieves the repository.
+      operationId: GetRepository
+      parameters:
+        - $ref: '#/parameters/repositoryNameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - repositories
+      responses:
+        '200':
+          description: Successful retrieval of the attributes of the repository
+          schema:
+            $ref: '#/definitions/GetIndividualRepository'
+    put:
+      description: >-
+          Modify the added git repository to the ADM
+      operationId: PutRepository
+      produces:
+        - application/json
+      tags:
+        - repositories
+      parameters:
+        - $ref: '#/parameters/repositoryNameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/GetIndividualRepository'
+      responses:
+        '200':
+          description: Successful modification of the attributes of the git repository.
+          schema:
+            $ref: '#/definitions/RepositoryResponseBody'
+
+    delete:
+      description: Delete the repository.
+      operationId: DeleteRepository
+      parameters:
+        - $ref: '#/parameters/repositoryNameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+       - application/json
+      tags:
+        - repositories
+      responses:
+       '200':
+        description: Successful deletion of the Repository
+        schema:
+          $ref: '#/definitions/RepositoryAsyncResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/repositories/actions/sync':
+    post:
+      description: >-
+        Sync the repository to fetch the latest files from the remote repository.
+      operationId: SyncReposotory
+      tags:
+        - repositories
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/RepositoryActionBody'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: This is an async API call. Successful intiation of syncing of the repository
+          schema:
+            $ref: '#/definitions/RepositoryAsyncResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/repositories/actions/reset':
+    post:
+      description: >-
+        Sync the repository to fetch the latest files from the remote repository.
+      operationId: ResetRepository
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/RepositoryActionBody'
+      produces:
+        - application/json
+      tags:
+        - repositories
+      responses:
+        '200':
+          description: This is an async API call. Successful initiation of resetting the repository.
+          schema:
+            $ref: '#/definitions/RepositoryAsyncResponseBody'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/repositories/{repository-name}/files':
+    get:
+      description: Retrieves the files synced from the remote repository.
+      operationId: GetRepositoryFiles
+      parameters:
+        - $ref: '#/parameters/repositoryNameParam'
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+      produces:
+        - application/json
+      tags:
+        - repositories
+      responses:
+        '200':
+          description: Successful file in the repository
+          schema:
+            $ref: '#/definitions/RepositoryListFiles'
+
+  '/massvc/{customerid}/stylebook/nitro/v1/config/adc_configs/actions/extract':
+    post:
+      description: Extracts the config from the source instance
+      operationId: ExtractConfig
+      produces:
+          - application/json
+      tags:
+        - actions
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/ClitoNitro'
+      responses:
+        '200':
+          description: Successful retrieval of the config from the ADC instance
+          schema:
+            $ref: '#/definitions/ClitoNitroResponse'
+  '/massvc/{customerid}/stylebook/nitro/v1/config/adc_configs/actions/convert':
+    post:
+      description: Extracts the config from the source instance
+      operationId: ConvertConfig
+      produces:
+          - application/json
+      tags:
+        - actions
+      parameters:
+        - $ref: '#/parameters/customerid'
+        - $ref: '#/parameters/authHeaderParam'
+        - $ref: '#/parameters/iscloudHeaderParam'
+        - name: Body
+          in: body
+          required: true
+          x-is-map: false
+          schema:
+            $ref: '#/definitions/ClitoNitro'
+      responses:
+        '200':
+          description: Successful retrieval of the config from the ADC instance
+          schema:
+            $ref: '#/definitions/ClitoNitroResponse'
+
+
+definitions:
+  ImportStyleBookRequestBody:
+    title: Import a new StyleBook Request
+    type: object
+    properties:
+      stylebook:
+        type: object
+        properties:
+          source:
+            description: The YAML contents of the StyleBook
+            type: string
+          content:
+            description: The YAML contents of the StyleBook
+            type: string
+          icon:
+            description: The icon for the StyleBook being imported as base64 encoded
+            type: string
+
+          encoding:
+            description: >-
+              Optional. The encoding used to encode the value for the source
+              property. Valid values are: base64
+            type: string
+  ImportStyleBookResponseBody:
+    title: Import a new StyleBook Response
+    type: object
+    properties:
+      stylebook:
+        $ref: '#/definitions/StyleBookResponseReference'
+  DeleteStyleBookResponseBody:
+    title: Remove an existing StyleBook
+    type: object
+    properties:
+      stylebook:
+        $ref: '#/definitions/StyleBookResponseReference'
+  ValidateStyleBookRequestBody:
+    title: Validate a new StyleBook Request
+    type: object
+    properties:
+      validate:
+        type: object
+        properties:
+          source:
+            description: The YAML contents of the StyleBook
+            type: string
+  ValidateStyleBookResponseBody:
+    title: Validated a StyleBook Content
+    type: object
+    properties:
+      validate:
+        $ref: '#/definitions/StyleBookResponseReference'
+  CreateConfigpackRequestBody:
+    title: Create Configpack Payload Request
+    type: object
+    properties:
+      configpack:
+        $ref: '#/definitions/ConfigpackRequestBody'
+    required:
+      - configpack
+  CreateConfigpackResponseBody:
+    title: ConfigpackResponse
+    type: object
+    #properties:
+    #  configpack:
+    #    $ref: '#/definitions/ConfigpackIDResponse'
+  UpdateConfigpackRequestBody:
+    title: Update Configpack Request Payload
+    type: object
+    properties:
+      configpack:
+        $ref: '#/definitions/ConfigpackRequestBody'
+    required:
+      - configpack
+
+  UpdateConfigpackResponseBody:
+    title: Update Configpack Response Payload
+    type: object
+    #properties:
+    #  configpack:
+    #    $ref: '#/definitions/ConfigpackIDResponse'
+    #required:
+    #  - configpack
+  DeleteConfigpackResponseBody:
+    title: Delete Configpack Response Payload
+    type: object
+    #properties:
+    #  configpack:
+    #    $ref: '#/definitions/ConfigpackIDResponse'
+    required:
+      - configpack
+  UpgradeConfigpackRequestBody:
+    title: Upgrade Configpack Payload Request
+    type: object
+    properties:
+      configpack:
+        $ref: '#/definitions/UpgradeConfigpackDetailsRequestBody'
+    required:
+      - configpack
+  UpgradeConfigpackResponseBody:
+    title: UpgradeConfigpackResponse
+    type: object
+    #properties:
+    #  configpack:
+    #    $ref: '#/definitions/ConfigpackIDResponse'
+  AuditConfigpackResponseBody:
+    title: AuditConfigpackResponse
+    type: object
+    #properties:
+    #  configpack:
+    #    $ref: '#/definitions/ConfigpackIDResponse'
+  GetAuditConfigpackResponseBody:
+    title: AuditConfigpackResponse
+    type: object
+    #properties:
+    #  configpack:
+    #    $ref: '#/definitions/ConfigpackIDResponse'
+  GetAllStyleBooksResponseBody:
+    title: GetAllStyleBooksResponse
+    type: object
+    properties:
+      stylebooks:
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookSummaryDescription'
+  GetDistinctNamespacesStyleBooksResponseBody:
+    title: GetDistinctNamespacesStyleBooksResponse
+    type: object
+    properties:
+      namespaces:
+        type: array
+        items:
+          type: string
+  GetStylebooksofNamespaceResponseBody:
+    title: GetStylebooksofNamespaceResponse
+    type: object
+    properties:
+      stylebooks:
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookSummaryDescription'
+  GetDistinctVersionsStyleBooksResponseBody:
+    title: GetDistinctVersionsStyleBooksResponse
+    type: object
+    properties:
+      versions:
+        type: array
+        items:
+          type: string
+  GetStylebooksofVersionResponseBody:
+    title: GetStylebooksofVersionResponse
+    type: object
+    properties:
+      stylebooks:
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookSummaryDescription'
+  GetStyleBookResponseBody:
+    title: GetStyleBookResponse
+    type: object
+    properties:
+      stylebook:
+        $ref: '#/definitions/StyleBookSummaryDescription'
+  GetConfigpacksResponseBody:
+    title: GetConfigpacksResponse
+    type: object
+    properties:
+      configpacks:
+        type: array
+        items:
+          $ref: '#/definitions/ConfigpackSummaryDescription'
+  GetConfigpackResponseBody:
+    title: GetConfigpackResponse
+    type: object
+    properties:
+      configpack:
+        $ref: '#/definitions/ConfigpackDescription'
+  GetStyleBookSchemaResponseBody:
+    title: GetStyleBookSchemaResponse
+    type: object
+    properties:
+      schema:
+        $ref: '#/definitions/StyleBookSchemaResponse'
+  GetAsyncJobStatusResponseBody:
+    title: GetAsyncJobStatusResponse
+    type: object
+    #properties:
+    #  job:
+    #    $ref: '#/definitions/JobStatusResponse'
+  Parameters:
+    description: >-
+      A JSON dictionary containing the values for the Parameters of the
+      StyleBook, where the key of each item in the dictionary is the name of the
+      parameter and the value is the value of the parameter (note that the value
+      can be an arbitrary JSON object depending on the type of the parameter
+      (refer to the StyleBook schema).
+    title: Parameters
+    type: object
+  ConfigpackRequestBody:
+    title: ConfigpackRequest
+    type: object
+    properties:
+      parameters:
+        $ref: '#/definitions/Parameters'
+      targets:
+        $ref: '#/definitions/TargetDevices'
+    required:
+      - parameters
+  UpgradeConfigpackDetailsRequestBody:
+    title: UpgradeConfigpackRequest
+    type: object
+    properties:
+      parameters:
+        $ref: '#/definitions/Parameters'
+      targets:
+        $ref: '#/definitions/TargetDevices'
+      stylebook:
+        $ref: '#/definitions/UpgradeStyleBookReference'
+    required:
+      - parameters
+  UpgradeStyleBookReference:
+    title: StyleBookReference
+    type: object
+    properties:
+      name:
+        description: Name of the StyleBook
+        type: string
+      namespace:
+        description: Namespace of the StyleBook
+        type: string
+      version:
+        description: Version of the StyleBook
+        type: string
+
+  TargetDevices:
+    description: >-
+      A dictionary specifying the devices to which the configpack is applied.
+      The key of each item in the dictionary is the device's IP address and the
+      value is a dictionary that contains one item which corresponds to the
+      devices's ID in ADM in the form 'id':'<id-value>'
+    title: Targets
+    type: array
+    items:
+      type: object
+  ConfigpackIDResponse:
+    title: Response ConfigPack ID
+    type: object
+    properties:
+      configID:
+        description: 'The ID Of the ConfigPack created, updated or deleted'
+        type: string
+  StyleBookReference:
+    title: StyleBookReference
+    type: object
+    properties:
+      id:
+        description: ID of the StyleBook
+        type: string
+      name:
+        description: Name of the StyleBook
+        type: string
+      namespace:
+        description: Namespace of the StyleBook
+        type: string
+      version:
+        description: Version of the StyleBook
+        type: string
+      dependencies:
+        description: A list of StyleBooks directly used by the current StyleBook
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookReference'
+      reverse_dependencies:
+        description: A list of StyleBooks the current StyleBook uses.
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookReference'
+  StyleBookResponseReference:
+    title: StyleBookResponseReference
+    type: object
+    #properties:
+    #  name:
+    #    description: Name of the StyleBook
+    #    type: string
+    #  namespace:
+    #    description: Namespace of the StyleBook
+    #    type: string
+    #  version:
+    #    description: Version of the StyleBook
+    #    type: string
+  StyleBookSummaryDescription:
+    title: StyleBookSummaryDescription
+    type: object
+    properties:
+      id:
+        description: ID of the StyleBook
+        type: string
+      name:
+        description: Name of the StyleBook
+        type: string
+      namespace:
+        description: Namespace of the StyleBook
+        type: string
+      version:
+        description: Version of the StyleBook
+        type: string
+      description:
+        description: Description of the StyleBook
+        type: string
+      display_name:
+        description: Display name of the StyleBook (used in ADM GUI)
+        type: string
+      schema_version:
+        description: Schema Version of the StyleBook DSL Language
+        type: string
+      created_datetime:
+        description: Date on which the StyleBook was imported into ADM
+        type: string
+      custom:
+        description: >-
+          A boolean, which when true indicates that this StyleBook is listed in
+          the list of StyleBooks by ADM. When false, this StyleBook is
+          hidden (for example used by other top-level StyleBooks, which are user
+          visible)
+        type: string
+      builtin_namespaces:
+        description: >-
+          A dictionary whose keys/values are in the form of 'namespace':
+          'version' where each item designates a builtin namespace (and its
+          version) used by this StyleBook (currently the ADC Nitro builtin
+          namespace is the only builtin namespace)
+        type: object
+      dependencies:
+        description: A list of StyleBooks directly used by the current StyleBook
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookReference'
+      primary_keys:
+        description: >-
+              dictionary of the parameters that are keys for this StyleBook. The key
+              of each item is the name of the parameter and the value of the item is
+              the value of the parameter
+        type: object
+      reverse_dependencies:
+        description: >-
+          A list of StyleBooks in ADM that are known to use this
+          StyleBook
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookReference'
+      private:
+        description: >-
+            A boolean, which when true indicates that this StyleBook is a private StyleBook.
+        type: string
+      builtin:
+        description: >-
+            A boolean, which when true indicates that this StyleBook is a builtin StyleBook.
+        type: string
+      deprecate:
+        description: >-
+            A boolean, which when true indicates that this StyleBook is now deprecated and a configpack cannot be created.
+        type: string
+      primary_key:
+        description: >-
+            A key whose value is used to name the configpack created using the StyleBook.
+        type: array
+        items:
+          type: string
+      repository_name:
+        description:  >-
+            The name of the GITHUB repository if the StyleBook was synced from one.
+        type: string
+      username:
+        description:  The name of the user who imported the StyleBook to the ADM.
+        type: string
+      author:
+        description:  The name of the author of the StyleBook.
+        type: string
+      type:
+        description:  >-
+            The type of the StyleBook used in certain use cases such as, autoscale
+        type: string
+      source:
+        description:  The source of the Stylebook as base64 encoded
+        type: string
+      icon:
+        description: The icon of the Stylebook as base64 encoded
+        type: string
+      tenant_id:
+        description:  The id of the tenant
+        type: string
+  ConfigpackSummaryDescription:
+    title: ConfigpackSummaryDescription
+    type: object
+    properties:
+          id:
+            description: ID of the Configpack
+            type: string
+          name:
+            description: Configpack's StyleBook name
+            type: string
+          namespace:
+            description: Configpack's StyleBook namespace
+            type: string
+          version:
+            description: Configpack's StyleBook version
+            type: string
+          tenant_id:
+            description: The id of the tenant who has created the configpack
+            type: string
+          created_datetime:
+            description: Date and Time of this configpack creation
+            type: string
+          last_modified_datetime:
+            description: Date and Time the configpack was last modified
+            type: string
+          created_by:
+            description: The username of the user who created the configpack
+            type: string
+          last_modified_by:
+            description: The username of the user who last modified the configpack
+            type: string
+          primary_keys:
+            description: >-
+              dictionary of the parameters that are keys for this StyleBook. The key
+              of each item is the name of the parameter and the value of the item is
+              the value of the parameter
+            type: object
+          parameters:
+            description: >-
+              A dictionary containg the inputs to the StyleBook: the parameter names
+              (dictionary keys) and the parameter values (dictionary key values) of
+              this configPack.
+            type: object
+          outputs:
+            description: >-
+              A dictionary containg the outputs of the StyleBook. Each item of the
+              dictionary has as a key the name of the output, and as a value a
+              dictionary describing the output. See OutputDescription object.
+            type: object
+          targets:
+            description: The target ADC where the config is deployed
+            type: array
+            items:
+              type: object
+              properties:
+                instance_id :
+                  description: >-
+                    The internal unique identifier for the ADC instance added in the ADM
+                  type: string
+                id :
+                  description: >-
+                    The internal unique identifier for the ADC instance added in the ADM
+                  type: string
+                instance_ip:
+                  description: The IP of the ADC instance
+                  type: string
+                roles:
+                  description: The role assigned to the ADC instance as per the Stylebook definition
+                  type: array
+                  items:
+                    type: string
+          tags:
+            description: The tags
+            type: string
+          status:
+            description: The status of the deployed configpack.
+            type: string
+          autoscale_id:
+            description: The autoscale id
+            type: string
+          application_id:
+            description: The application id
+            type: string
+  ConfigpackDescription:
+    title: ConfigpackDescription
+    type: object
+
+  StyleBookSchemaResponse:
+    title: StyleBookSchemaResponse
+    type: object
+    properties:
+      name:
+        description: Name of the StyleBook
+        type: string
+      namespace:
+        description: Namespace of the StyleBook
+        type: string
+      version:
+        description: Version of the StyleBook
+        type: string
+      prompt_instance_credentials:
+        description: Prompt for instance credentials
+        type: boolean
+      parameters:
+        description: List of Parameter Descriptions of the StyleBook's Parameters
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookParameterDescription'
+      target_roles:
+            description: The target roles for the config deployed
+            type: array
+            items:
+              type: object
+              properties:
+                min_targets :
+                  description: The minimum targets for each role
+                  type: string
+                name :
+                  description: The name of the role
+                  type: string
+  GetObjectsResponseBody:
+    title: GetObjectsResponse
+    type: object
+    properties:
+      graph:
+        description: List of Parameter Descriptions of the StyleBook's Parameters
+        type: object
+  ObjectResponseDescription:
+    title: ObjectResponseDescription
+    type: object
+    #properties:
+    #  type:
+    #    description: Type of the object
+    #    type: string
+    #  properties:
+    #    description: Properties of the object
+    #    type: object
+    #  meta-properties:
+    #    description: Meta Properties of the object
+    #    type: object
+  StyleBookParameterDescription:
+    title: StyleBookParameterDescription
+    type: object
+    properties:
+      name:
+        description: Name of the Parameter
+        type: string
+      default:
+        description: Name of the Parameter
+        type: string
+
+      label:
+        description: Label of the Parameter used in ADM GUI
+        type: string
+      description:
+        description: Verbose description of the parameter
+        type: string
+      type:
+        description: >-
+          The type of the parameter. A valid value can be: string, number,
+          boolean, ipaddress, tcp-port, object, or an imported stylebook type.
+        type: string
+      network:
+        description: >-
+          The IPAM Network to fetch the IPAddress for a given parameter
+        type: string
+      min-length:
+        description: Minimum number of characters allowed in the parameter
+        type: string
+      max-length:
+        description: Maximum number of characters allowed in the parameter
+        type: string
+      pattern:
+        description: A pattern to validate the input against
+        type: string
+      dynamic-network:
+        description: >-
+          The IPAM Network to fetch the IPAddress for a given parameter when the choice of network is made through dynamic-allocation.
+        type: object
+        properties:
+          name:
+            description: Name of the IPAM Network
+            type: string 
+          reserve_ip:
+            description: IP to be requested from the IPAM network
+            type: string
+      key:
+        description: A boolean indicating whether this parameter is a Key (unique value)
+        type: boolean
+      required:
+        description: >-
+          A boolean indicating whether this parameter must be given a value by
+          the StyleBook user (a required parameter). Default value is false.
+        type: boolean
+      updatable:
+        description: >-
+          A boolean indicating whether this parameter can be updated after
+          creation of the configpack (is it updatable?). Default value is true
+        type: boolean
+      dynamic-allocation:
+        description: >-
+          The dynamically chosen IPAM Network to fetch the IPAddress for a given parameter
+        type: boolean
+      allowed-values:
+        description: >-
+          A list of values that are allowed for this parameter. A user can only
+          choose one of the values in this list
+        type: array
+        items:
+          type: string
+      allowed-dynamic-values:
+        description: >-
+          A list of values that are allowed for this parameter. A user can only
+          choose one of the values in this list that gets dynamically populated
+        type: object
+      gui:
+        description: >-
+          An dictionary object used to customize the visual rendering the
+          parameter in the ADM GUI
+        type: object
+      parameters:
+        description: >-
+          A list of descriptions for inner parameters scoped by this parameter
+          when its type is object. Each inner parameter is described using the
+          StyleBookParameterDescription definition.
+        type: array
+        items:
+          $ref: '#/definitions/StyleBookParameterDescription'
+    required:
+      - name
+      - type
+  JobStatusResponse:
+    title: JobStatusResponse
+    type: object
+    properties:
+      config_id:
+        description: The ID of the ConfigPack which concerns the Job
+        type: string
+      status:
+        description: >-
+          Overall status of the Job. When the status is set to 'completed', this
+          mean that the Job has ended and the configpack operation has finished.
+        type: string
+      reasons:
+        description: An array of strings explaining the failure if there was one
+        type: array
+        items:
+          type: string
+      progress_info:
+        description: >-
+          A list of dictionaries. Each describes a step of the Job and its
+          outcome status
+        type: array
+        items:
+          $ref: '#/definitions/JobStepStatus'
+    required:
+      - config_id
+      - status
+  JobStepStatus:
+    title: JobStepStatus
+    type: object
+    properties:
+      status:
+        description: >-
+          The current status of this step. The value is 'success' or 'completedi
+          if completed successfully.
+        type: string
+      message:
+        description: A textual message explaining the step and its current status
+        type: string
+      is_last:
+        description: A boolean indicating whether this is the last step of the Job
+        type: boolean
+      resource_type:
+        description: >-
+          If this step concerns the configuration of a ADC resource, the
+          type of this resource
+        type: string
+      payload_properties:
+        description: The properties and their values of the ADC resource
+        type: object
+    required:
+      - message
+      - status
+      - is_last
+
+  GetSystemSettings:
+    title: GetSystemSettings
+    type: object
+    properties:
+      system_settings:
+        description: ->
+          List the system settings set for the display of default stylebooks on the ADM GUI.
+        type: object
+        properties:
+          hide_default_sb:
+            description: ->
+              The flag indicating if the default stylebooks  displayed on the ADM GUI. The value is boolean converted into string.
+            type: string
+          tenant_id:
+            description: The internal id of the tenant
+            type: string
+
+  PutSystemSettings:
+    title: PutSystemSettings
+    type: object
+    properties:
+      system_settings:
+        description: ->
+          List the system settings set for the display of default stylebooks on the ADM GUI.
+        type: object
+        properties:
+          hide_default_sb:
+            description: ->
+              The flag indicating if the default stylebooks  displayed on the ADM GUI. The value is boolean converted into string.
+            type: string
+
+  GetLabelsResponseBody:
+    title: GetLabelsResponseBody
+    type: object
+    properties:
+      tags:
+        description: List of all the labels associated with any of the   StyleBooks.
+        type: array
+        items:
+          type: string
+
+  GetLabelValueResponseBody:
+    title: GetLabelValueResponseBody
+    type: object
+    properties:
+      values:
+        description: List of all the values associated with label
+        type: array
+        items:
+          type: string
+  GetIndividualRepository:
+    title: GetIndividualRepository
+    type: object
+    #properties:
+    #    $ref: '#/definitions/RepositorySummaryDescription'
+
+  RepositorySummaryDescription:
+    title: RepositorySummaryDescription
+    type: object
+    properties:
+      apikey:
+        description: >-
+          Personal access tokens function like ordinary OAuth access tokens. They can be used instead of a password for Git over HTTPS, or can be used to authenticate to the API over Basic Authentication.
+        type: string
+      clientid:
+        description: The client ID you received from git when you registered.
+        type: string
+      id:
+        description: The internal unique ID given to the repository.
+        type: string
+      last_sync_time:
+        description: The timestamp of the last sync event.
+        type: string
+      password:
+        description: The password of the remote git repository.
+        type: string
+      repository_branch:
+        description: The name of the branch of the remote repository.
+        type: string
+      repository_name:
+        description: >-
+          The user defined name of the remote git repository define in the ADM
+        type: string
+      repository_url:
+        description: The remote git url to connect over https
+        type: string
+      sha:
+        description: >-
+          ID (a.k.a. the "SHA" or "hash") that allows you to keep record of what changes were made when and by who.
+        type: string
+      status:
+        description: The current status of the local repository
+        type: string
+      tenant_id:
+        description: >-
+         The unique internal id of the tenant to which the username is associated with.
+        type: string
+      type:
+        description: The type of the git repository.
+        type: string
+      username:
+        description: The username registered with the remote repository.
+        type: string
+
+  GetAllRepository:
+    title: GetAllRepository
+    type: object
+    properties:
+      repositories:
+        description: The list of all git repositories registered in the ADM.
+        type: array
+        items:
+          $ref: '#/definitions/GetIndividualRepository'
+
+  RepositoryResponseBody:
+    title: RepositoryResponse
+    type: object
+    properties:
+      repositories:
+        description: The list of all git repositories registered in the ADM.
+        type: object
+        #properties:
+        #  id:
+        #    description: The internal id of the respository
+
+  RepositoryActionBody:
+    title: RepositoryActionBody
+    type: object
+    properties:
+      repositories:
+        description: The list of all git repositories registered in the ADM.
+        type: array
+        items:
+          $ref: '#/definitions/GetIndividualRepositoryAction'
+        #properties:
+        #  respository_id:
+        #    description: The internal id of the respository
+  GetIndividualRepositoryAction:
+    title: GetIndividualRepositoryAction
+    type: object
+
+  RepositoryAsyncResponseBody:
+    title: RepositoryAsyncResponse
+    type: object
+    properties:
+      repository:
+        description: The list of all git repositories registered in the ADM.
+        type: object
+        #properties:
+        #  job_id:
+        #    description: The internal id of the respository
+
+  RepositoryListFiles:
+    title: RepositoryListFiles
+    type: object
+    properties:
+      repository_file:
+        description: The list of all files in the local repository registered in the ADM.
+        type: array
+        items:
+          $ref: '#/definitions/RepositoryFile'
+
+  RepositoryFile:
+    title: RepositoryAsyncResponse
+    type: object
+    properties:
+      filename:
+        description: >-
+          The name of repository file as defined in the remote git repository
+        type: string
+      filepath:
+        description: The path of the repository files in the ADM file system
+        type: string
+      id:
+        description: The internal unique id of the repository file.
+        type: string
+      last_sync_time:
+        description: >-
+          The timestamp when the file was last synced from the remote repository in the ADM.
+        type: string
+      message:
+        description: The status of the last action taken on the file.
+        type: string
+      repository_name:
+        description: The name of the repository in the ADM
+        type: string
+      sb_id:
+        description: The internal unique id of the stylebook.
+        type: string
+      sha:
+        description: >-
+          ID (a.k.a. the "SHA" or "hash") that allows you to keep record of what changes were made when and by who.
+        type: string
+      source:
+        description: The base64 encoded file contents.
+        type: string
+      status:
+        description: The status of the file.
+        type: string
+      tenant_id:
+        description: ->
+          The internal unique id of the tenant associated with the user.
+        type: string
+
+  CreateLabelBody:
+    title: CreateLabelBody
+    type: object
+    properties:
+      tags:
+         type: array
+         items:
+            $ref: '#/definitions/LabelValue'
+
+  CreateConfigLabelBody:
+    title: CreateConfigLabelBody
+    type: object
+    properties:
+      tags:
+         type: array
+         items:
+            $ref: '#/definitions/LabelValue' 
+      parents:
+         type: array
+         items:
+            $ref: '#/definitions/InheritLabelData'
+
+  InheritLabelData:
+    title: InheritLabelData
+    type: object
+    properties:
+      parent_id:
+         description: The parent StyleBook name if exists
+         type: string 
+      inherit_all:
+         description: Flag to specify if all tags of parent have been set to inherit
+         type: boolean 
+
+
+  LabelValue:
+    title: LabelValue
+    type: object
+    properties:
+      tag:
+        description: The string idication the label attached
+        type: string
+      value:
+        description: The string indicating the value of the label
+        type: string
+      parent_id:
+         description: The parent StyleBook name if exists
+         type: string 
+
+  ClitoNitro:
+    title: ClitoNitro
+    type: object
+    properties:
+      adc_config:
+        description: The ADC configuration
+        type: object
+        properties:
+          source_instance:
+            description: The internal unique id indicating the device
+            type: string
+          apptype:
+            description: The type of the application
+            type: string
+          appname:
+            description: The type of the application
+            type: string
+          target_format:
+            description: The type of target format
+
+  ClitoNitroResponse:
+    title: ClitoNitroResponse
+    type: object
+    properties:
+      adc_config:
+        description: The ADC configuration
+        type: object
+        properties:
+          job_id:
+            description: The id of the async job
+            type: string
+
+
+  OutputDescription:
+    title: OutputDescription
+    type: object
+    properties:
+      name:
+        description: >-
+          The name of this Output as specified in the StyleBook of this
+          Configpack
+        type: string
+      type:
+        description: >-
+          The type of this Output. This can be a simple type, or a StyleBook
+          type (builtin or user-defined)
+        type: string
+      properties:
+        description: >-
+          For Outputs that have a non-simple type, these are the properties of
+          the object. Each item in the dictionary has a property name as the key
+          and a property value as the value.
+        type: object
+      components:
+        description: >-
+          The inner components that make up this output for components whose
+          type is another StyleBook. This is a dictionary where the keys are the
+          name of the inner components and the value of each key is an
+          OutputDescription definition.
+        type: object
+    required:
+      - name
+      - type

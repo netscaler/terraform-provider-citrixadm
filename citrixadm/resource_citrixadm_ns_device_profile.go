@@ -2,8 +2,6 @@ package citrixadm
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"log"
 
 	"terraform-provider-citrixadm/service"
@@ -188,7 +186,6 @@ func resourceNsDeviceProfile() *schema.Resource {
 }
 
 func getNsDeviceProfilePayload(d *schema.ResourceData) []interface{} {
-	//
 	data := make(map[string]interface{})
 
 	if v, ok := d.GetOk("name"); ok {
@@ -282,26 +279,11 @@ func resourceNsDeviceProfileCreate(ctx context.Context, d *schema.ResourceData, 
 
 	endpoint := "ns_device_profile"
 
-	n := service.NitroRequestParams{
-		Resource: endpoint,
+	returnData, err := c.AddResource(endpoint, getNsDeviceProfilePayload(d))
 
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, endpoint),
-		ResourceData:       getNsDeviceProfilePayload(d),
-		Method:             "POST",
-		SuccessStatusCodes: []int{200, 201},
-	}
-
-	body, err := c.MakeNitroRequest(n)
 	if err != nil {
-		return diag.FromErr(err)
+		return diag.Errorf("error creating ns_device_profile: %s", err.Error())
 	}
-	var returnData map[string]interface{}
-
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	log.Printf("return data %v", returnData)
 
 	resourceID := returnData[endpoint].([]interface{})[0].(map[string]interface{})["id"].(string)
 	log.Printf("id %s", resourceID)
@@ -319,33 +301,19 @@ func resourceNsDeviceProfileRead(ctx context.Context, d *schema.ResourceData, m 
 	resourceID := d.Id()
 	endpoint := "ns_device_profile"
 
-	n := service.NitroRequestParams{
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
-		Method:             "GET",
-		Resource:           endpoint,
-		ResourceData:       d,
-		SuccessStatusCodes: []int{200},
+	returnData, err := c.GetResource(endpoint, resourceID)
+	if err != nil {
+		return diag.Errorf("error reading ns_device_profile %s: %s", resourceID, err.Error())
 	}
 
-	body, err := c.MakeNitroRequest(n)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	var returnData map[string]interface{}
-
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	log.Printf("return data %v", returnData)
 	getResponseData := returnData[endpoint].([]interface{})[0].(map[string]interface{})
 
 	log.Println("getResponseData", getResponseData)
 
 	d.Set("cb_profile_name", getResponseData["cb_profile_name"].(string))
 	d.Set("host_username", getResponseData["host_username"].(string))
-	d.Set("http_port", getResponseData["http_port"].(string))   // FIXME: Though API schema defines this as int, the GET response returns as string
-	d.Set("https_port", getResponseData["https_port"].(string)) // FIXME: Though API schema defines this as int, the GET response returns as string
+	d.Set("http_port", getResponseData["http_port"].(string))   // FIXME: API problem. Though API schema defines this as int, the GET response returns as string
+	d.Set("https_port", getResponseData["https_port"].(string)) // FIXME: API problem. Though API schema defines this as int, the GET response returns as string
 	d.Set("max_wait_time_reboot", getResponseData["max_wait_time_reboot"].(string))
 	d.Set("name", getResponseData["name"].(string))
 	d.Set("ns_profile_name", getResponseData["ns_profile_name"].(string))
@@ -359,7 +327,7 @@ func resourceNsDeviceProfileRead(ctx context.Context, d *schema.ResourceData, m 
 	d.Set("ssl_cert", getResponseData["ssl_cert"].(string))
 	d.Set("svm_ns_comm", getResponseData["svm_ns_comm"].(string))
 	d.Set("type", getResponseData["type"].(string))
-	d.Set("use_global_setting_for_communication_with_ns", getResponseData["use_global_setting_for_communication_with_ns"].(string)) // FIXME: Though API schema defines this as bool, the GET response returns as string
+	d.Set("use_global_setting_for_communication_with_ns", getResponseData["use_global_setting_for_communication_with_ns"].(string)) // FIXME: API problem. Though API schema defines this as bool, the GET response returns as string
 	d.Set("username", getResponseData["username"].(string))
 
 	return diags
@@ -372,25 +340,11 @@ func resourceNsDeviceProfileUpdate(ctx context.Context, d *schema.ResourceData, 
 	resourceID := d.Id()
 	endpoint := "ns_device_profile"
 
-	n := service.NitroRequestParams{
-		Resource:           endpoint,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
-		ResourceData:       getNsDeviceProfilePayload(d),
-		Method:             "PUT",
-		SuccessStatusCodes: []int{200, 201},
-	}
+	_, err := c.UpdateResource(endpoint, getManagedDevicePayload(d), resourceID)
 
-	body, err := c.MakeNitroRequest(n)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	var returnData map[string]interface{}
-
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	log.Printf("return data %v", returnData)
 
 	return resourceNsDeviceProfileRead(ctx, d, m)
 
@@ -404,20 +358,11 @@ func resourceNsDeviceProfileDelete(ctx context.Context, d *schema.ResourceData, 
 
 	endpoint := "ns_device_profile"
 	resourceID := d.Id()
+	err := c.DeleteResource(endpoint, resourceID)
 
-	n := service.NitroRequestParams{
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, endpoint, resourceID),
-		Method:             "DELETE",
-		Resource:           endpoint,
-		SuccessStatusCodes: []int{200, 204},
-	}
-
-	body, err := c.MakeNitroRequest(n)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	log.Printf("delete response %v", body)
 
 	d.SetId("")
 
