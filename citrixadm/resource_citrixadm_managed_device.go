@@ -41,81 +41,81 @@ func resourceManagedDevice() *schema.Resource {
 				Required:    true,
 			},
 
-			"std_bw_config": {
-				Description: "Standard Bandwidth running",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"description": {
-				Description: "Description of managed device",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"vcpu_config": {
-				Description: "Number of vCPU allocated for the device",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"ent_bw_config": {
-				Description: "Enterprise Bandwidth configured",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"instance_config": {
-				Description: "Instance license running",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"is_managed": {
-				Description: "Is Managed",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
-			"servicepackage": {
-				Description: "Service Package Name of the device",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"license_edition": {
-				Description: "Edition of instance",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"isolation_policy": {
-				Description: "Isolation Policy of the Device",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"plt_bw_config": {
-				Description: "Platinum Bandwidth configured",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"peer_device_ip": {
-				Description: "Peer Device IP address for instance of type BLX ADC.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"file_name": {
-				Description: "File name which contains comma separated instances to be  discovered",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"file_location_path": {
-				Description: "File Location on Client for upload/download",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"peer_host_device_ip": {
-				Description: "Peer Host Device IP Address for instance of type BLX ADC.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"device_host_ip": {
-				Description: "Device Host IP Address for instance of type BLX ADC.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
+			// "std_bw_config": {
+			// 	Description: "Standard Bandwidth running",
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// },
+			// "description": {
+			// 	Description: "Description of managed device",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "vcpu_config": {
+			// 	Description: "Number of vCPU allocated for the device",
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// },
+			// "ent_bw_config": {
+			// 	Description: "Enterprise Bandwidth configured",
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// },
+			// "instance_config": {
+			// 	Description: "Instance license running",
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// },
+			// "is_managed": {
+			// 	Description: "Is Managed",
+			// 	Type:        schema.TypeBool,
+			// 	Optional:    true,
+			// },
+			// "servicepackage": {
+			// 	Description: "Service Package Name of the device",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "license_edition": {
+			// 	Description: "Edition of instance",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "isolation_policy": {
+			// 	Description: "Isolation Policy of the Device",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "plt_bw_config": {
+			// 	Description: "Platinum Bandwidth configured",
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// },
+			// "peer_device_ip": {
+			// 	Description: "Peer Device IP address for instance of type BLX ADC.",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "file_name": {
+			// 	Description: "File name which contains comma separated instances to be  discovered",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "file_location_path": {
+			// 	Description: "File Location on Client for upload/download",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "peer_host_device_ip": {
+			// 	Description: "Peer Host Device IP Address for instance of type BLX ADC.",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
+			// "device_host_ip": {
+			// 	Description: "Device Host IP Address for instance of type BLX ADC.",
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// },
 			"entity_tag": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -138,82 +138,74 @@ func resourceManagedDevice() *schema.Resource {
 	}
 }
 
-func getManagedDevicePayload(d *schema.ResourceData) []interface{} {
+func getManagedDevicePayload(d *schema.ResourceData) interface{} {
 	data := make(map[string]interface{})
 
-	if v, ok := d.GetOk("ip_address"); ok {
-		data["ip_address"] = v.(string)
-	}
+	data["ip_address"] = d.Get("ip_address").(string)
 
-	if v, ok := d.GetOk("profile_name"); ok {
-		data["profile_name"] = v.(string)
-	}
+	data["profile_name"] = d.Get("profile_name").(string)
 
-	if v, ok := d.GetOk("datacenter_id"); ok {
-		data["datacenter_id"] = v.(string)
-	}
-	if v, ok := d.GetOk("agent_id"); ok {
-		data["agent_id"] = v.(string)
-	}
+	data["datacenter_id"] = d.Get("datacenter_id").(string)
+	data["agent_id"] = d.Get("agent_id").(string)
 
-	if v, ok := d.GetOk("std_bw_config"); ok {
-		data["std_bw_config"] = v.(int)
-	}
+	// if v, ok := d.GetOk("std_bw_config"); ok {
+	// 	data["std_bw_config"] = v.(int)
+	// }
 
-	if v, ok := d.GetOk("description"); ok {
-		data["description"] = v.(string)
-	}
+	// if v, ok := d.GetOk("description"); ok {
+	// 	data["description"] = v.(string)
+	// }
 
-	if v, ok := d.GetOk("vcpu_config"); ok {
-		data["vcpu_config"] = v.(int)
-	}
-	if v, ok := d.GetOk("ent_bw_config"); ok {
-		data["ent_bw_config"] = v.(int)
-	}
+	// if v, ok := d.GetOk("vcpu_config"); ok {
+	// 	data["vcpu_config"] = v.(int)
+	// }
+	// if v, ok := d.GetOk("ent_bw_config"); ok {
+	// 	data["ent_bw_config"] = v.(int)
+	// }
 
-	if v, ok := d.GetOk("instance_config"); ok {
-		data["instance_config"] = v.(string)
-	}
-	if v, ok := d.GetOk("is_managed"); ok {
-		data["is_managed"] = v.(bool)
-	}
+	// if v, ok := d.GetOk("instance_config"); ok {
+	// 	data["instance_config"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("is_managed"); ok {
+	// 	data["is_managed"] = v.(bool)
+	// }
 
-	if v, ok := d.GetOk("servicepackage"); ok {
-		data["servicepackage"] = v.(string)
-	}
+	// if v, ok := d.GetOk("servicepackage"); ok {
+	// 	data["servicepackage"] = v.(string)
+	// }
 
-	if v, ok := d.GetOk("license_edition"); ok {
-		data["license_edition"] = v.(string)
-	}
-	if v, ok := d.GetOk("isolation_policy"); ok {
-		data["isolation_policy"] = v.(string)
-	}
-	if v, ok := d.GetOk("plt_bw_config"); ok {
-		data["plt_bw_config"] = v.(int)
-	}
-	if v, ok := d.GetOk("peer_device_ip"); ok {
-		data["peer_device_ip"] = v.(string)
-	}
-	if v, ok := d.GetOk("file_name"); ok {
-		data["file_name"] = v.(string)
-	}
-	if v, ok := d.GetOk("file_location_path"); ok {
-		data["file_location_path"] = v.(string)
-	}
-	if v, ok := d.GetOk("peer_host_device_ip"); ok {
-		data["peer_host_device_ip"] = v.(string)
-	}
-	if v, ok := d.GetOk("device_host_ip"); ok {
-		data["device_host_ip"] = v.(string)
-	}
+	// if v, ok := d.GetOk("license_edition"); ok {
+	// 	data["license_edition"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("isolation_policy"); ok {
+	// 	data["isolation_policy"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("plt_bw_config"); ok {
+	// 	data["plt_bw_config"] = v.(int)
+	// }
+	// if v, ok := d.GetOk("peer_device_ip"); ok {
+	// 	data["peer_device_ip"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("file_name"); ok {
+	// 	data["file_name"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("file_location_path"); ok {
+	// 	data["file_location_path"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("peer_host_device_ip"); ok {
+	// 	data["peer_host_device_ip"] = v.(string)
+	// }
+	// if v, ok := d.GetOk("device_host_ip"); ok {
+	// 	data["device_host_ip"] = v.(string)
+	// }
 	if v, ok := d.GetOk("entity_tag"); ok {
 		data["entity_tag"] = v.([]interface{})
 	}
 
-	var payload []interface{}
-	payload = append(payload, data)
+	// var payload []interface{}
+	// payload = append(payload, data)
 
-	return payload
+	return data
 }
 
 func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -239,7 +231,6 @@ func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	resourceID := func() string {
-
 		returnData, err := c.GetAllResource(endpoint)
 		if err != nil {
 			return ""
@@ -257,29 +248,47 @@ func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(errors.New("Failed to find resource ID"))
 	}
 
-	log.Printf("id %s", resourceID)
-
-	// allocate_license
-	// check for license_edition and plt_bw_config if preent in d
-	if _, ok := d.GetOk("license_edition"); ok {
-		data := make(map[string]interface{})
-
-		data["license_edition"] = d.Get("license_edition").(string)
-		if v, ok := d.GetOk("plt_bw_config"); ok {
-			data["plt_bw_config"] = v.(int)
-		}
-		data["id"] = resourceID
-		var payload []interface{}
-		payload = append(payload, data)
-
-		_, err = c.AddResourceWithActionParams(endpoint, payload, "allocate_license")
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
 	d.SetId(resourceID)
 	return resourceManagedDeviceRead(ctx, d, m)
+
+	// return allocateLicense(ctx, d, m)
 }
+
+// func allocateLicense(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+// 	log.Printf("In allocateLicense")
+
+// 	c := m.(*service.NitroClient)
+
+// 	resourceID := d.Id()
+// 	endpoint := "managed_device"
+
+// 	log.Println("d.GetOk(\"license_edition\")", d.Get("license_edition"))
+
+// 	// check for license_edition and plt_bw_config if preent in d
+// 	if _, ok := d.GetOk("license_edition"); ok {
+// 		data := make(map[string]interface{})
+
+// 		data["license_edition"] = d.Get("license_edition").(string)
+
+// 		// if plt_bw_config is not present in d, error out
+// 		if v, ok := d.GetOk("plt_bw_config"); ok {
+// 			data["plt_bw_config"] = v.(int)
+// 		} else {
+// 			return diag.FromErr(errors.New("plt_bw_config is required"))
+// 		}
+
+// 		data["id"] = resourceID
+// 		var payload []interface{}
+// 		payload = append(payload, data)
+
+// 		_, err := c.AddResourceWithActionParams(endpoint, payload, "allocate_license")
+// 		if err != nil {
+// 			return diag.FromErr(err)
+// 		}
+// 	}
+
+// 	return resourceNsDeviceProfileRead(ctx, d, m)
+// }
 
 func resourceManagedDeviceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("In resourceManagedDeviceRead")
@@ -296,30 +305,30 @@ func resourceManagedDeviceRead(ctx context.Context, d *schema.ResourceData, m in
 
 	getResponseData := returnData[endpoint].([]interface{})[0].(map[string]interface{})
 
-	log.Println("getResponseData", getResponseData)
+	// log.Println("getResponseData", getResponseData)
 
-	d.Set("is_managed", getResponseData["is_managed"].(string))
-	d.Set("std_bw_config", getResponseData["std_bw_config"].(string))
-	d.Set("description", getResponseData["description"].(string))
-	d.Set("instance_config", getResponseData["instance_config"].(string))
-	d.Set("vcpu_config", getResponseData["vcpu_config"].(string))
+	// d.Set("is_managed", getResponseData["is_managed"].(string))
+	// d.Set("std_bw_config", getResponseData["std_bw_config"].(string))
+	// d.Set("description", getResponseData["description"].(string))
+	// d.Set("instance_config", getResponseData["instance_config"].(string))
+	// d.Set("vcpu_config", getResponseData["vcpu_config"].(string))
+	// d.Set("servicepackage", getResponseData["servicepackage"].(string))
+	// d.Set("plt_bw_config", getResponseData["plt_bw_config"].(string))
+	// d.Set("isolation_policy", getResponseData["isolation_policy"].(string))
+	// d.Set("ent_bw_config", getResponseData["ent_bw_config"].(string))
+	// d.Set("license_edition", getResponseData["license_edition"].(string))
+	// d.Set("template_interval", getResponseData["template_interval"].(string))
+	// d.Set("is_licensed", getResponseData["is_licensed"].(string))
+	// d.Set("contactperson", getResponseData["contactperson"].(string))
+	// d.Set("peer_host_device_ip", getResponseData["peer_host_device_ip"].(string))
+	// d.Set("device_host_ip", getResponseData["device_host_ip"].(string))
+	// d.Set("peer_device_ip", getResponseData["peer_device_ip"].(string))
+	// d.Set("file_location_path", getResponseData["file_location_path"].(string))
+	// d.Set("file_name", getResponseData["file_name"].(string))
 	d.Set("agent_id", getResponseData["agent_id"].(string))
-	d.Set("servicepackage", getResponseData["servicepackage"].(string))
 	d.Set("ip_address", getResponseData["ip_address"].(string))
-	d.Set("plt_bw_config", getResponseData["plt_bw_config"].(string))
-	d.Set("isolation_policy", getResponseData["isolation_policy"].(string))
 	d.Set("profile_name", getResponseData["profile_name"].(string))
-	d.Set("ent_bw_config", getResponseData["ent_bw_config"].(string))
 	d.Set("datacenter_id", getResponseData["datacenter_id"].(string))
-	d.Set("license_edition", getResponseData["license_edition"].(string))
-	d.Set("template_interval", getResponseData["template_interval"].(string))
-	d.Set("is_licensed", getResponseData["is_licensed"].(string))
-	d.Set("contactperson", getResponseData["contactperson"].(string))
-	d.Set("peer_host_device_ip", getResponseData["peer_host_device_ip"].(string))
-	d.Set("device_host_ip", getResponseData["device_host_ip"].(string))
-	d.Set("peer_device_ip", getResponseData["peer_device_ip"].(string))
-	d.Set("file_location_path", getResponseData["file_location_path"].(string))
-	d.Set("file_name", getResponseData["file_name"].(string))
 	d.Set("entity_tag", getResponseData["entity_tag"].([]interface{}))
 
 	return diags
@@ -352,7 +361,6 @@ func resourceManagedDeviceUpdate(ctx context.Context, d *schema.ResourceData, m 
 			return diag.FromErr(err)
 		}
 	}
-
 
 	return resourceManagedDeviceRead(ctx, d, m)
 }

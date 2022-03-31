@@ -137,7 +137,7 @@ func (c *NitroClient) GetNewToken() error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(string(body))
+	log.Println("NewToken details", string(body))
 	response := map[string]interface{}{}
 	if err := json.Unmarshal([]byte(body), &response); err != nil {
 		panic(err)
@@ -155,20 +155,16 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 
 	if n.Method == "POST" || n.Method == "PUT" {
 		payload := map[string]interface{}{n.Resource: n.ResourceData}
-		// update the payload with below params if n.ActionParams is not empty
-		//  "params": {
-		// 	"action": "allocate_license"
-		// },
 		if n.ActionParams != "" {
 			payload["params"] = map[string]interface{}{
 				"action": n.ActionParams,
 			}
 		}
-		log.Println("MakeNitroRequest payload", payload)
 		buff, err = JSONMarshal(payload)
 		if err != nil {
 			return nil, err
 		}
+		log.Println("MakeNitroRequest payload", toJsonIndent(payload)) // print json converted payload
 	} else if n.Method == "GET" || n.Method == "DELETE" {
 		buff = []byte{}
 	}
@@ -189,13 +185,14 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 	req.Header.Set("isCloud", "true")
 
 	// Request defined headers
-	log.Println("MakeNitroRequest method: Request defined headers")
+	// log.Println("MakeNitroRequest method: Request defined headers")
 	for k, v := range n.Headers {
-		log.Println(k, v)
+		// log.Println(k, v)
 		req.Header.Set(k, v)
 	}
 
-	log.Printf("MakeNitroRequest method:%s, url:%s, headers:%v", req.Method, req.URL, req.Header)
+	log.Printf("MakeNitroRequest request:%s, url:%s, headers:%v", req.Method, req.URL, toJsonIndent(req.Header))
+	// log.Println("MakeNitroRequest payload", string(buff)) // print json converted payload
 
 	resp, err := c.client.Do(req)
 
@@ -211,6 +208,7 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 
 	if statusCodeSuccess(n.SuccessStatusCodes, resp.StatusCode) {
 		body, _ = ioutil.ReadAll(resp.Body)
+		log.Println("MakeNitroRequest resopnse", n.Method, "url:", urlstr, "status:", resp.StatusCode)
 		return body, nil
 	}
 	body, _ = ioutil.ReadAll(resp.Body)
@@ -268,7 +266,7 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 
 		activityStatus := returnData["activity_status"].([]interface{})
 
-		log.Println("Activity Status", activityStatus)
+		log.Println("Activity Status", toJsonIndent(activityStatus))
 
 		// check for "is_last" key in activityStatus array and if it is true, then check for "status" key. And if the value of "status" key is "Completed" or "Failed" then return the activityStatus
 		for _, activity := range activityStatus {
@@ -284,7 +282,12 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 	}
 }
 
-func (c *NitroClient) AddResource(resource string, resourceData []interface{}) (map[string]interface{}, error) {
+func toJsonIndent(v interface{}) string {
+	b, _ := json.MarshalIndent(v, "", "    ")
+	return string(b)
+}
+
+func (c *NitroClient) AddResource(resource string, resourceData interface{}) (map[string]interface{}, error) {
 	log.Println("AddResource method:", resource, resourceData)
 	var returnData map[string]interface{}
 	n := NitroRequestParams{
@@ -304,11 +307,11 @@ func (c *NitroClient) AddResource(resource string, resourceData []interface{}) (
 	if err != nil {
 		return returnData, err
 	}
-	log.Printf("return data %v", returnData)
+	log.Printf("AddResource response %v", toJsonIndent(returnData))
 	return returnData, nil
 }
 
-func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData []interface{}, actionParam string) (map[string]interface{}, error) {
+func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData interface{}, actionParam string) (map[string]interface{}, error) {
 	log.Println("AddResourceWithActionParams method:", resource, resourceData, actionParam)
 	var returnData map[string]interface{}
 	n := NitroRequestParams{
@@ -329,10 +332,10 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 	if err != nil {
 		return returnData, err
 	}
-	log.Printf("return data %v", returnData)
+	log.Printf("AddResourceWithActionParams response %v", toJsonIndent(returnData))
 	return returnData, nil
 }
-func (c *NitroClient) UpdateResource(resource string, resourceData []interface{}, resourceID string) (map[string]interface{}, error) {
+func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, resourceID string) (map[string]interface{}, error) {
 	log.Println("UpdateResource method:", resource, resourceData, resourceID)
 	var returnData map[string]interface{}
 	n := NitroRequestParams{
@@ -352,7 +355,7 @@ func (c *NitroClient) UpdateResource(resource string, resourceData []interface{}
 	if err != nil {
 		return returnData, err
 	}
-	log.Printf("return data %v", returnData)
+	log.Printf("UpdateResource response %v", toJsonIndent(returnData))
 	return returnData, nil
 }
 
@@ -366,15 +369,21 @@ func (c *NitroClient) DeleteResource(resource string, resourceID string) error {
 		SuccessStatusCodes: []int{200, 204},
 	}
 
-	deleteResponse, err := c.MakeNitroRequest(n)
+	body, err := c.MakeNitroRequest(n)
 	if err != nil {
 		return err
 	}
-	log.Printf("delete response %v", deleteResponse)
+	var returnData map[string]interface{}
+	err = json.Unmarshal(body, &returnData)
+	if err != nil {
+		return err
+	}
+	// log.Printf("delete response %v", deleteResponse)
+	log.Printf("DeleteResource response %v", toJsonIndent(returnData))
 	return nil
 }
 
-// get resource
+// GetResource returns a resource
 func (c *NitroClient) GetResource(resource string, resourceID string) (map[string]interface{}, error) {
 	log.Println("GetResource method:", resource, resourceID)
 	var returnData map[string]interface{}
@@ -394,7 +403,7 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 	if err != nil {
 		return returnData, err
 	}
-	log.Printf("return data %v", returnData)
+	log.Printf("GetResource response %v", toJsonIndent(returnData))
 	return returnData, nil
 }
 
@@ -417,6 +426,6 @@ func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, e
 	if err != nil {
 		return returnData, err
 	}
-	log.Printf("return data %v", returnData)
+	log.Printf("GetAllResource response %v", toJsonIndent(returnData))
 	return returnData, nil
 }

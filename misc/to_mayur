@@ -1,0 +1,1 @@
+When citrixadm_managed_device_allocate_license is destroyed, the bandwidth will be zeroed

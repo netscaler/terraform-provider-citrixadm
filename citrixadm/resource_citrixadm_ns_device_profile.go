@@ -185,7 +185,7 @@ func resourceNsDeviceProfile() *schema.Resource {
 	}
 }
 
-func getNsDeviceProfilePayload(d *schema.ResourceData) []interface{} {
+func getNsDeviceProfilePayload(d *schema.ResourceData) interface{} {
 	data := make(map[string]interface{})
 
 	if v, ok := d.GetOk("name"); ok {
@@ -265,10 +265,10 @@ func getNsDeviceProfilePayload(d *schema.ResourceData) []interface{} {
 		data["host_username"] = v.(string)
 	}
 
-	var payload []interface{}
-	payload = append(payload, data)
+	// var payload []interface{}
+	// payload = append(payload, data)
 
-	return payload
+	return data
 
 }
 
