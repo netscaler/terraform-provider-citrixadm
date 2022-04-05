@@ -1,0 +1,227 @@
+PUT: https: //cocoa.adm.cloud.com/stylebook/nitro/v2/config/configpacks/3089171332?mode=async
+
+PUT Request: {
+    "configpack": {
+        "parameters": {
+            "lb-advanced": {
+                "algorithm": "ROUNDROBIN",
+                "appflow-log": "ENABLED",
+                "client-timeout": "100",
+                "flush-on-state-down": "ENABLED",
+                "insert-vserver-ipport": "VIPADDR",
+                "persistence": "SRCIPDESTIP"
+            },
+            "lb-appname": "lb_app_name",
+            "lb-service-type": "HTTP",
+            "lb-virtual-ip": "3.3.3.3",
+            "lb-virtual-port": "80",
+            "svc-service-type": "ANY",
+            "svcg-advanced": {
+                "svc-client-ip": "ENABLED",
+                "svc-client-keepalive": "NO",
+                "svc-compression": "NO",
+                "svc-downstate-flush": "DISABLED",
+                "svc-enable-health-monitor": "NO",
+                "svc-state": "ENABLED",
+                "svc-surge-protection": "OFF",
+                "svc-tcp-buffering": "NO",
+                "svc-use-proxy-port": "NO",
+                "svc-use-source-ip": "NO"
+            }
+        },
+        "stylebook": {
+            "name": "lb",
+            "namespace": "com.citrix.adc.stylebooks",
+            "version": "1.1"
+        },
+        "targets": [
+            {
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128"
+            }
+        ]
+    }
+}
+
+
+PUT Response: {
+    "job": {
+        "job_id": "3089171332"
+    }
+}
+
+
+JOB: https: //cocoa.adm.cloud.com/stylebook/nitro/v2/config/jobs/3089171332
+{
+    "job": {
+        "job_id": "3089171332",
+        "progress_info": [
+            {
+                "id": "3089171332",
+                "instance_id": "",
+                "instance_ip": "",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Validated the parameters",
+                "status": "success",
+                "task_id": 0
+            }
+        ],
+        "status": "in_progress"
+    }
+}
+
+
+
+
+
+{
+    "job": {
+        "job_id": "3089171332",
+        "progress_info": [
+            {
+                "id": "3089171332",
+                "instance_id": "",
+                "instance_ip": "",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Validated the parameters",
+                "status": "success",
+                "task_id": 0
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Configuration audit completed",
+                "status": "success",
+                "task_id": 1
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "dummy_target_id",
+                "instance_ip": "",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Computed configuration objects",
+                "status": "success",
+                "task_id": 2
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Computed configuration objects",
+                "status": "success",
+                "task_id": 3
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Prepared objects for applying configuration on 10.0.1.48",
+                "status": "success",
+                "task_id": 4
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Retrieved existing data for updatable objects on instance 10.0.1.48",
+                "status": "success",
+                "task_id": 5
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Applying configuration on instance 10.0.1.48",
+                "status": "inprogress",
+                "task_id": 6
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Retrieved existing data for updatable objects on instance 10.0.1.48",
+                "status": "success",
+                "task_id": 7
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Applied configuration on instance 10.0.1.48",
+                "status": "success",
+                "task_id": 8
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Logged out from instance 10.0.1.48",
+                "status": "success",
+                "task_id": 9
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Configuration pack process failed. Create of lbvserver_servicegroup_binding 'lb_app_name-lb' failed on instance 10.0.1.48. {'errorcode': 1304, 'message': 'Service type mismatch between the vserver and service', 'severity': 'ERROR'}",
+                "reason": "Configuration pack process failed. Create of lbvserver_servicegroup_binding 'lb_app_name-lb' failed on instance 10.0.1.48. {'errorcode': 1304, 'message': 'Service type mismatch between the vserver and service', 'severity': 'ERROR'}",
+                "status": "failed",
+                "task_id": 10
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "dummy_target_id",
+                "instance_ip": "",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Retrieved existing data for updatable objects on instance ",
+                "status": "success",
+                "task_id": 11
+            },
+            {
+                "id": "3089171332",
+                "instance_id": "10f159c3-6e10-4ae4-b3bc-7822f549e128",
+                "instance_ip": "10.0.1.48",
+                "is_last": "false",
+                "job_type": null,
+                "message": "Configuration pack process failed. Configuration failed on instance 10.0.1.48. Create of lbvserver_servicegroup_binding 'lb_app_name-lb' failed on instance 10.0.1.48. {'errorcode': 1304, 'message': 'Service type mismatch between the vserver and service', 'severity': 'ERROR'}. ",
+                "reason": "Configuration pack process failed. Configuration failed on instance 10.0.1.48. Create of lbvserver_servicegroup_binding 'lb_app_name-lb' failed on instance 10.0.1.48. {'errorcode': 1304, 'message': 'Service type mismatch between the vserver and service', 'severity': 'ERROR'}. ",
+                "status": "failed",
+                "task_id": 12
+            },
+            {
+                "id": "3089171332",
+                "instance_id": null,
+                "instance_ip": null,
+                "is_last": "true",
+                "job_type": null,
+                "message": "Configuration process terminated",
+                "reason": "Configuration process terminated",
+                "status": "failed",
+                "task_id": 13
+            }
+        ],
+        "status": "failed"
+    }
+}

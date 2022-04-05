@@ -16,6 +16,12 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
+// create a list of stylebook endpoints
+var stylebookEndpoints = []string{
+	"configpacks",
+	"jogs",
+}
+
 type NitroRequestParams struct {
 	ResourcePath       string
 	Method             string
@@ -54,10 +60,12 @@ type NitroClient struct {
 	// sessionidMux sync.RWMutex
 	// sessionid    string
 	// timeout      int
-	headers         map[string]string
-	logger          hclog.Logger
-	accessToken     string
-	ActivityTimeout int
+	headers             map[string]string
+	logger              hclog.Logger
+	accessToken         string
+	sessionID           string
+	ActivityTimeout     int
+	StylebookJobTimeout int
 }
 
 //NewNitroClientFromParams returns a usable NitroClient. Does not check validity of supplied parameters
@@ -77,14 +85,18 @@ func NewNitroClientFromParams(params NitroParams) (*NitroClient, error) {
 	c.hostLocation = params.HostLocation
 	c.CustomerID = params.CustomerID
 	c.client = &http.Client{}
-	c.ActivityTimeout = 120 // seconds to wait for activity to complete (manged_device)
+	c.ActivityTimeout = 120     // seconds to wait for activity to complete (manged_device)
+	c.StylebookJobTimeout = 120 // seconds to wait for activity to complete (configpacks)
 
 	// Get New Token
 	if err := c.GetNewToken(); err != nil {
 		return nil, err
 	}
-	// c.sessionid = ""
-	// c.timeout = params.Timeout
+
+	// Get Session ID for v2 API
+	if err := c.GetSessionID(); err != nil {
+		return nil, err
+	}
 
 	level := hclog.LevelFromString(params.LogLevel)
 	if level == hclog.NoLevel {
@@ -108,6 +120,44 @@ func NewNitroClientFromParams(params NitroParams) (*NitroClient, error) {
 		IncludeLocation: true,
 	})
 	return c, nil
+}
+
+// FIXME:
+// GetSessionID returns a new access token
+func (c *NitroClient) GetSessionID() error {
+	endpoint := fmt.Sprintf("%s/nitro/v2/config/login", c.host)
+
+	data := url.Values{}
+	data.Set("grant_type", "client_credentials")
+	data.Set("client_id", c.id)
+	data.Set("client_secret", c.secret)
+
+	client := &http.Client{}
+	r, err := http.NewRequest("POST", endpoint, strings.NewReader(data.Encode())) // URL-encoded payload
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	r.Header.Add("Accept", "application/json")
+
+	res, err := client.Do(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(res.Status)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("NewToken details", string(body))
+	response := map[string]interface{}{}
+	if err := json.Unmarshal([]byte(body), &response); err != nil {
+		panic(err)
+	}
+	// log.Println(sec["access_token"].(string))
+	c.accessToken = response["access_token"].(string)
+	return nil
 }
 
 // GetNewToken returns a new access token
@@ -177,7 +227,12 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 	}
 
 	// Authenticate
-	req.Header.Set("Authorization", fmt.Sprintf("CwsAuth bearer=%s", c.accessToken))
+	// if v1 in url, use Authorization header elif v2 in url, use sessionId header
+	if strings.Contains(urlstr, "stylebook") {
+		req.Header.Set("Authorization", fmt.Sprintf("CwsAuth bearer=%s", c.accessToken))
+	} else {
+		req.Header.Set("sessionId", fmt.Sprintf("sessionid=%s", c.sessionID))
+	}
 
 	// Standard headers
 	req.Header.Set("Accept", "application/json")
@@ -237,35 +292,15 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 	start := time.Now()
 	for {
 		if time.Since(start) > timeout {
-			return errors.New("timeout")
+			return errors.New("TIMEOUT: WaitForActivityCompletion ActivityID: " + activityID)
 		}
 		time.Sleep(time.Second * 5)
-		// activity, err := c.GetActivity(activityID)
 
-		body, err := c.MakeNitroRequest(NitroRequestParams{
-			Method:       "GET",
-			ResourcePath: fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, "activity_status", activityID),
-			Resource:     "activity_status",
-			ResourceData: nil,
-			SuccessStatusCodes: []int{
-				200,
-			},
-			Headers: map[string]string{
-				"Content-Type": "application/json",
-			},
-		})
+		returnData, err := c.GetResource("activity_status", activityID)
 		if err != nil {
 			return err
 		}
-		var returnData map[string]interface{}
-
-		err = json.Unmarshal(body, &returnData)
-		if err != nil {
-			return err
-		}
-
 		activityStatus := returnData["activity_status"].([]interface{})
-
 		log.Println("Activity Status", toJsonIndent(activityStatus))
 
 		// check for "is_last" key in activityStatus array and if it is true, then check for "status" key. And if the value of "status" key is "Completed" or "Failed" then return the activityStatus
@@ -282,6 +317,44 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 	}
 }
 
+// WaitForStylebookJobCompletion waits for a stylebook job to complete
+func (c *NitroClient) WaitForStylebookJobCompletion(jobID string, timeout time.Duration) error {
+	start := time.Now()
+	for {
+		if time.Since(start) > timeout {
+			return errors.New("TIMEOUT: WaitForStylebookJobCompletion jobID: " + jobID)
+		}
+		time.Sleep(time.Second * 5)
+
+		returnData, err := c.GetResource("jobs", jobID)
+		if err != nil {
+			return err
+		}
+
+		// find jobStatus
+		jobStatus := returnData["job"].(map[string]interface{})["status"].(string)
+
+		log.Println("Activity Status", toJsonIndent(jobStatus))
+
+		if jobStatus == "completed" {
+			log.Println("Job Status", toJsonIndent(returnData))
+			return nil
+		} else if jobStatus == "failed" {
+			log.Println("Job Status", toJsonIndent(returnData))
+			return errors.New("Stylebook JobID" + jobID + "FAILED")
+		}
+	}
+}
+
+func contains(slice []string, val string) bool {
+	for _, item := range slice {
+		if strings.EqualFold(item, val) {
+			return true
+		}
+	}
+	return false
+}
+
 func toJsonIndent(v interface{}) string {
 	b, _ := json.MarshalIndent(v, "", "    ")
 	return string(b)
@@ -290,12 +363,20 @@ func toJsonIndent(v interface{}) string {
 func (c *NitroClient) AddResource(resource string, resourceData interface{}) (map[string]interface{}, error) {
 	log.Println("AddResource method:", resource, resourceData)
 	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+	}
+
 	n := NitroRequestParams{
 		Resource:           resource,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource),
+		ResourcePath:       resourcePath,
 		ResourceData:       resourceData,
 		Method:             "POST",
-		SuccessStatusCodes: []int{200, 201},
+		SuccessStatusCodes: []int{200, 201, 202},
 	}
 
 	body, err := c.MakeNitroRequest(n)
@@ -314,9 +395,17 @@ func (c *NitroClient) AddResource(resource string, resourceData interface{}) (ma
 func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData interface{}, actionParam string) (map[string]interface{}, error) {
 	log.Println("AddResourceWithActionParams method:", resource, resourceData, actionParam)
 	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+	}
+
 	n := NitroRequestParams{
 		Resource:           resource,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource),
+		ResourcePath:       resourcePath,
 		ResourceData:       resourceData,
 		ActionParams:       actionParam,
 		Method:             "POST",
@@ -335,12 +424,21 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 	log.Printf("AddResourceWithActionParams response %v", toJsonIndent(returnData))
 	return returnData, nil
 }
+
 func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, resourceID string) (map[string]interface{}, error) {
 	log.Println("UpdateResource method:", resource, resourceData, resourceID)
 	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+	}
+
 	n := NitroRequestParams{
 		Resource:           resource,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID),
+		ResourcePath:       resourcePath,
 		ResourceData:       resourceData,
 		Method:             "PUT",
 		SuccessStatusCodes: []int{200, 201},
@@ -362,9 +460,17 @@ func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, 
 // delete resource
 func (c *NitroClient) DeleteResource(resource string, resourceID string) error {
 	log.Println("DeleteResource method:", resource, resourceID)
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+	}
+
 	n := NitroRequestParams{
 		Resource:           resource,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID),
+		ResourcePath:       resourcePath,
 		Method:             "DELETE",
 		SuccessStatusCodes: []int{200, 204},
 	}
@@ -387,9 +493,17 @@ func (c *NitroClient) DeleteResource(resource string, resourceID string) error {
 func (c *NitroClient) GetResource(resource string, resourceID string) (map[string]interface{}, error) {
 	log.Println("GetResource method:", resource, resourceID)
 	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+	}
+
 	n := NitroRequestParams{
 		Resource:           resource,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID),
+		ResourcePath:       resourcePath,
 		Method:             "GET",
 		SuccessStatusCodes: []int{200},
 	}
@@ -410,9 +524,17 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, error) {
 	log.Println("GetAllResource method:", resource)
 	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+	}
+
 	n := NitroRequestParams{
 		Resource:           resource,
-		ResourcePath:       fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource),
+		ResourcePath:       resourcePath,
 		Method:             "GET",
 		SuccessStatusCodes: []int{200},
 	}

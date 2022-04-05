@@ -13,6 +13,7 @@ build: fmt
 
 debug-build: fmt
 	go build -gcflags="all=-N -l" -o ${BINARY}
+	cp -f ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
 release:
 	goreleaser release --rm-dist --snapshot --skip-publish  --skip-sign

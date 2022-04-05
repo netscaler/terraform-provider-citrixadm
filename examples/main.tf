@@ -1,6 +1,18 @@
-data "citrixadm_mps_agent" "agent1" {
-  name = "10.0.1.91"
+resource "citrixadm_stylebook_configpack" "cfgpack1" {
+  stylebook {
+
+  }
+  parameters {
+
+  }
+  tenents {
+
+  }
 }
+
+# data "citrixadm_mps_agent" "agent1" {
+#   name = "10.0.1.91"
+# }
 
 # resource "citrixadm_ns_device_profile" "profile1" {
 #   name     = "tf_test_profile2"
@@ -53,16 +65,16 @@ data "citrixadm_mps_agent" "agent1" {
 #   agent_id      = data.citrixadm_mps_agent.agent1.id
 # }
 
-resource "citrixadm_managed_device" "device5" {
-  ip_address    = "10.0.1.128"
-  profile_name  = "nsroot_notnsroot_profile"
-  datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
-  agent_id      = data.citrixadm_mps_agent.agent1.id
+# resource "citrixadm_managed_device" "device5" {
+#   ip_address    = "10.0.1.48"
+#   profile_name  = "nsroot_notnsroot_profile"
+#   datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+#   agent_id      = data.citrixadm_mps_agent.agent1.id
 
-}
+# }
 
-resource "citrixadm_managed_device_allocate_license" "lic1" {
-  managed_device_id = citrixadm_managed_device.device5.id
-  license_edition= "Platinum"
-  plt_bw_config= 1700
-}
+# resource "citrixadm_managed_device_allocate_license" "lic1" {
+#   managed_device_id = citrixadm_managed_device.device5.id
+#   license_edition= "Platinum"
+#   plt_bw_config= 1700
+# }

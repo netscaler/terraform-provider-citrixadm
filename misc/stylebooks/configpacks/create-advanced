@@ -1,0 +1,180 @@
+POST: https://cocoa.adm.cloud.com/stylebook/nitro/v2/config/configpacks?mode=async
+
+POST payload:
+    {
+	"configpack": {
+		"parameters": {
+			"lb-advanced": {
+				"algorithm": "ROUNDROBIN",
+				"appflow-log": "ENABLED",
+				"auth-params": {
+					"authentication": "OFF",
+					"authentication-http-401": "OFF"
+				},
+				"client-timeout": "100",
+				"flush-on-state-down": "ENABLED",
+				"insert-vserver-ipport": "VIPADDR",
+				"persistence": "SRCIPDESTIP"
+			},
+			"lb-appname": "lb_app_name",
+			"lb-service-type": "HTTP",
+			"lb-virtual-ip": "3.3.3.3",
+			"lb-virtual-port": "80",
+			"svc-service-type": "ANY",
+			"svcg-advanced": {
+				"svc-client-ip": "ENABLED",
+				"svc-client-keepalive": "NO",
+				"svc-compression": "NO",
+				"svc-downstate-flush": "DISABLED",
+				"svc-enable-health-monitor": "NO",
+				"svc-state": "ENABLED",
+				"svc-surge-protection": "OFF",
+				"svc-tcp-buffering": "NO",
+				"svc-use-proxy-port": "NO",
+				"svc-use-source-ip": "NO"
+			}
+		},
+		"stylebook": {
+			"name": "lb",
+			"namespace": "com.citrix.adc.stylebooks",
+			"version": "1.1"
+		}
+	}
+}
+
+
+POST Response:
+{
+	"job": {
+		"job_id": "3089171332"
+	}
+}
+
+JOB ID GET: https://cocoa.adm.cloud.com/stylebook/nitro/v2/config/jobs/3089171332
+
+JOB Response:
+{
+	"job": {
+		"job_id": "3089171332",
+		"progress_info": [
+			{
+				"id": "3089171332",
+				"instance_id": "",
+				"instance_ip": "",
+				"is_last": "false",
+				"job_type": null,
+				"message": "Validated the parameters",
+				"status": "success",
+				"task_id": 0
+			},
+			{
+				"id": "3089171332",
+				"instance_id": "dummy_target_id",
+				"instance_ip": "",
+				"is_last": "false",
+				"job_type": null,
+				"message": "Computed configuration objects",
+				"status": "success",
+				"task_id": 1
+			},
+			{
+				"id": "3089171332",
+				"instance_id": null,
+				"instance_ip": null,
+				"is_last": "true",
+				"job_type": null,
+				"message": "Saved configpack.",
+				"status": "completed",
+				"task_id": 2
+			}
+		],
+		"result": {
+			"application_id": null,
+			"autoscale_id": null,
+			"config_key": "3089171332",
+			"created_by": "sumanth.lingappa@citrix.com",
+			"created_datetime": "2022-04-01 06:38:12.969997",
+			"created_datetimestamp": "2022-04-01 06:38:12",
+			"description": "",
+			"id": "3089171332",
+			"incarnation_number": "0",
+			"last_modified_by": "sumanth.lingappa@citrix.com",
+			"last_modified_datetime": "2022-04-01 06:38:12",
+			"lock": "Y",
+			"name": "lb",
+			"namespace": "com.citrix.adc.stylebooks",
+			"primary_keys": "{\"lb-appname\": \"lb_app_name\"}",
+			"sb_id": "lbc957df10536842c383e55a8114a92b96",
+			"status": "completed",
+			"tags": "",
+			"target_devices_json": "[]",
+			"tenant_id": "b0ce04a7-ae03-4425-9e9d-359a5a2ac2e2",
+			"type": null,
+			"version": "1.1"
+		},
+		"status": "completed"
+	}
+}
+
+{
+	"job": {
+		"job_id": "3089171332",
+		"progress_info": [
+			{
+				"id": "3089171332",
+				"instance_id": "",
+				"instance_ip": "",
+				"is_last": "false",
+				"job_type": null,
+				"message": "Validated the parameters",
+				"status": "success",
+				"task_id": 0
+			},
+			{
+				"id": "3089171332",
+				"instance_id": "dummy_target_id",
+				"instance_ip": "",
+				"is_last": "false",
+				"job_type": null,
+				"message": "Computed configuration objects",
+				"status": "success",
+				"task_id": 1
+			},
+			{
+				"id": "3089171332",
+				"instance_id": null,
+				"instance_ip": null,
+				"is_last": "true",
+				"job_type": null,
+				"message": "Saved configpack.",
+				"status": "completed",
+				"task_id": 2
+			}
+		],
+		"result": {
+			"application_id": null,
+			"autoscale_id": null,
+			"config_key": "3089171332",
+			"created_by": "sumanth.lingappa@citrix.com",
+			"created_datetime": "2022-04-01 06:38:12.969997",
+			"created_datetimestamp": "2022-04-01 06:38:12",
+			"description": "",
+			"id": "3089171332",
+			"incarnation_number": "0",
+			"last_modified_by": "sumanth.lingappa@citrix.com",
+			"last_modified_datetime": "2022-04-01 06:38:12",
+			"lock": "Y",
+			"name": "lb",
+			"namespace": "com.citrix.adc.stylebooks",
+			"primary_keys": "{\"lb-appname\": \"lb_app_name\"}",
+			"sb_id": "lbc957df10536842c383e55a8114a92b96",
+			"status": "completed",
+			"tags": "",
+			"target_devices_json": "[]",
+			"tenant_id": "b0ce04a7-ae03-4425-9e9d-359a5a2ac2e2",
+			"type": null,
+			"version": "1.1"
+		},
+		"status": "completed"
+	}
+}

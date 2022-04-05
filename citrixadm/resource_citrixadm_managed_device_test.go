@@ -1,24 +1,23 @@
 package citrixadm
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
+	"fmt"
+	"log"
 	"terraform-provider-citrixadm/service"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 const testAccManagedDeviceAdd = `
 
-
-
-
 data "citrixadm_mps_agent" "agent1" {
 	name = "10.0.1.91"
   }
 
-resource "citrixadm_managed_device" "device5" {
-	ip_address    = "10.0.1.92"
+resource "citrixadm_managed_device" "device1" {
+	ip_address    = "10.0.1.42"
 	profile_name  = "nsroot_notnsroot_profile"
 	datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
 	agent_id      = data.citrixadm_mps_agent.agent1.id
@@ -32,50 +31,74 @@ func TestAccManagedDevice_basic(t *testing.T) {
 		PreCheck:   func() { testAccPreCheck(t) },
 		// ProviderFactories: providerFactories,
 		Providers:    testAccProviders,
-		CheckDestroy: nil, //testAccCheckManagedDeviceDestroy,
+		CheckDestroy: testAccCheckManagedDeviceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccManagedDeviceAdd,
-				Check:  resource.ComposeTestCheckFunc(
-				// testAccCheckManagedDeviceExists("example_widget.foo", &widgetBefore),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckManagedDeviceExists("citrixadm_managed_device.device1", nil),
 				),
 			},
 		},
 	})
 }
 
-// // testAccCheckManagedDeviceDestroy ...
-// func testAccCheckManagedDeviceDestroy(s *terraform.State) error {
-// 	// retrieve the connection established in Provider configuration
-// 	conn := testAccProvider.Meta().(*service.NitroClient)
+func testAccCheckManagedDeviceExists(n string, id *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		// retrieve the resource by name from state
+		log.Println("[DEBUG] sumanth testAccCheckManagedDeviceExists")
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
 
-// 	// loop through the resources in state, verifying each widget
-// 	// is destroyed
-// 	for _, rs := range s.RootModule().Resources {
-// 	  if rs.Type != "example_widget" {
-// 		continue
-// 	  }
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No Managed Device ID is set")
+		}
 
-// 	  // Retrieve our widget by referencing it's state ID for API lookup
-// 	  request := &example.DescribeWidgets{
-// 		IDs: []string{rs.Primary.ID},
-// 	  }
+		// FIXME: Understand this block
+		if id != nil {
+			if *id != "" && *id != rs.Primary.ID {
+				return fmt.Errorf("Resource ID has changed")
+			}
 
-// 	  response, err := conn.DescribeWidgets(request)
-// 	  if err == nil {
-// 		if len(response.Widgets) > 0 && *response.Widgets[0].ID == rs.Primary.ID {
-// 		  return fmt.Errorf("Widget (%s) still exists.", rs.Primary.ID)
-// 		}
+			*id = rs.Primary.ID
+		}
 
-// 		return nil
-// 	  }
+		// retrieve the client from the test provider
+		c := testAccProvider.Meta().(*service.NitroClient)
+		data, err := c.GetResource("managed_device", rs.Primary.ID)
 
-// 	  // If the error is equivalent to 404 not found, the widget is destroyed.
-// 	  // Otherwise return the error
-// 	  if !strings.Contains(err.Error(), "Widget not found") {
-// 		return err
-// 	  }
-// 	}
+		if err != nil {
+			return err
+		}
 
-// 	return nil
-//   }
+		if data == nil {
+			return fmt.Errorf("Resource %s not found", n)
+		}
+
+		return nil
+	}
+}
+
+func testAccCheckManagedDeviceDestroy(s *terraform.State) error {
+	c := testAccProvider.Meta().(*service.NitroClient)
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "citrixadm_managed_device" {
+			continue
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No name is set")
+		}
+
+		_, err := c.GetResource("manaaged_device", rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("Managed Device %s still exists", rs.Primary.ID)
+		}
+
+	}
+
+	return nil
+}
