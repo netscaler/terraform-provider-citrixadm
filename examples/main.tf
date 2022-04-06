@@ -4,12 +4,11 @@ resource "citrixadm_stylebook_configpack" "cfgpack1" {
     namespace = "com.citrix.adc.stylebooks"
     version   = "1.1"
   }
-  # parameters = {
-  parameters {
-    lb-appname       = "tf-sample-lb3"
+  parameters = {
+    lb-appname       = "tf-sample-lb"
     lb-service-type  = "HTTP"
     lb-virtual-ip    = "4.3.3.4"
-    lb-virtual-port  = 80
+    lb-virtual-port  = "80"
     svc-service-type = "HTTP"
   }
   targets {

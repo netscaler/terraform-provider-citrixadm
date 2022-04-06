@@ -30,6 +30,9 @@ func resourceStylebookConfigpack() *schema.Resource {
 					Type:     schema.TypeString,
 					Computed: true,
 				},
+				// DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				// 	return old == new
+				// },
 			},
 			"stylebook": {
 				Description: "The StyleBook to use for the managed device.",
