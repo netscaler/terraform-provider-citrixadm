@@ -230,65 +230,30 @@ func resourceManagedDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	resourceID := func() string {
-		returnData, err := c.GetAllResource(endpoint)
-		if err != nil {
-			return ""
-		}
+	resourceID, err := getManagedDeviceID(c, d.Get("ip_address").(string))
 
-		for _, v := range returnData[endpoint].([]interface{}) {
-			if v.(map[string]interface{})["ip_address"].(string) == d.Get("ip_address").(string) {
-				return v.(map[string]interface{})["id"].(string)
-			}
-		}
-		return ""
-	}()
-
-	if resourceID == "" {
+	if err != nil {
 		return diag.FromErr(errors.New("Failed to find resource ID"))
 	}
 
 	d.SetId(resourceID)
 	return resourceManagedDeviceRead(ctx, d, m)
-
-	// return allocateLicense(ctx, d, m)
 }
 
-// func allocateLicense(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-// 	log.Printf("In allocateLicense")
+func getManagedDeviceID(c *service.NitroClient, ipAddress string) (string, error) {
+	endpoint := "managed_device"
+	returnData, err := c.GetAllResource(endpoint)
+	if err != nil {
+		return "", err
+	}
 
-// 	c := m.(*service.NitroClient)
-
-// 	resourceID := d.Id()
-// 	endpoint := "managed_device"
-
-// 	log.Println("d.GetOk(\"license_edition\")", d.Get("license_edition"))
-
-// 	// check for license_edition and plt_bw_config if preent in d
-// 	if _, ok := d.GetOk("license_edition"); ok {
-// 		data := make(map[string]interface{})
-
-// 		data["license_edition"] = d.Get("license_edition").(string)
-
-// 		// if plt_bw_config is not present in d, error out
-// 		if v, ok := d.GetOk("plt_bw_config"); ok {
-// 			data["plt_bw_config"] = v.(int)
-// 		} else {
-// 			return diag.FromErr(errors.New("plt_bw_config is required"))
-// 		}
-
-// 		data["id"] = resourceID
-// 		var payload []interface{}
-// 		payload = append(payload, data)
-
-// 		_, err := c.AddResourceWithActionParams(endpoint, payload, "allocate_license")
-// 		if err != nil {
-// 			return diag.FromErr(err)
-// 		}
-// 	}
-
-// 	return resourceNsDeviceProfileRead(ctx, d, m)
-// }
+	for _, v := range returnData[endpoint].([]interface{}) {
+		if v.(map[string]interface{})["ip_address"].(string) == ipAddress {
+			return v.(map[string]interface{})["id"].(string), nil
+		}
+	}
+	return "", errors.New("Failed to find managed device resource ID with IP: " + ipAddress)
+}
 
 func resourceManagedDeviceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("In resourceManagedDeviceRead")
@@ -305,26 +270,6 @@ func resourceManagedDeviceRead(ctx context.Context, d *schema.ResourceData, m in
 
 	getResponseData := returnData[endpoint].([]interface{})[0].(map[string]interface{})
 
-	// log.Println("getResponseData", getResponseData)
-
-	// d.Set("is_managed", getResponseData["is_managed"].(string))
-	// d.Set("std_bw_config", getResponseData["std_bw_config"].(string))
-	// d.Set("description", getResponseData["description"].(string))
-	// d.Set("instance_config", getResponseData["instance_config"].(string))
-	// d.Set("vcpu_config", getResponseData["vcpu_config"].(string))
-	// d.Set("servicepackage", getResponseData["servicepackage"].(string))
-	// d.Set("plt_bw_config", getResponseData["plt_bw_config"].(string))
-	// d.Set("isolation_policy", getResponseData["isolation_policy"].(string))
-	// d.Set("ent_bw_config", getResponseData["ent_bw_config"].(string))
-	// d.Set("license_edition", getResponseData["license_edition"].(string))
-	// d.Set("template_interval", getResponseData["template_interval"].(string))
-	// d.Set("is_licensed", getResponseData["is_licensed"].(string))
-	// d.Set("contactperson", getResponseData["contactperson"].(string))
-	// d.Set("peer_host_device_ip", getResponseData["peer_host_device_ip"].(string))
-	// d.Set("device_host_ip", getResponseData["device_host_ip"].(string))
-	// d.Set("peer_device_ip", getResponseData["peer_device_ip"].(string))
-	// d.Set("file_location_path", getResponseData["file_location_path"].(string))
-	// d.Set("file_name", getResponseData["file_name"].(string))
 	d.Set("agent_id", getResponseData["agent_id"].(string))
 	d.Set("ip_address", getResponseData["ip_address"].(string))
 	d.Set("profile_name", getResponseData["profile_name"].(string))
@@ -374,7 +319,7 @@ func resourceManagedDeviceDelete(ctx context.Context, d *schema.ResourceData, m 
 	endpoint := "managed_device"
 	resourceID := d.Id()
 
-	err := c.DeleteResource(endpoint, resourceID)
+	_, err := c.DeleteResource(endpoint, resourceID)
 
 	if err != nil {
 		return diag.FromErr(err)

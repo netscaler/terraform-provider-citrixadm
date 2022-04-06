@@ -19,12 +19,16 @@ func resourceStylebookConfigpack() *schema.Resource {
 		UpdateContext: resourceStylebookConfigpackUpdate,
 		DeleteContext: resourceStylebookConfigpackDelete,
 		Schema: map[string]*schema.Schema{
-			"parameters:": {
+			// FIXME: George: terraform plan creates unnecessary diffs
+			// https://github.com/hashicorp/terraform-plugin-sdk/issues/477
+			// FIXME: George: not implementing upgrade, should it be ForceNew = true?
+			"parameters": {
 				Description: "A JSON dictionary containing the values for the Parameters of the StyleBook, where the key of each item in the dictionary is the name of the parameter and the value is the value of the parameter (note that the value can be an arbitrary JSON object depending on the type of the parameter (refer to the StyleBook schema).",
 				Type:        schema.TypeMap,
 				Required:    true,
 				Elem: &schema.Schema{
-					Type: schema.TypeString,
+					Type:     schema.TypeString,
+					Computed: true,
 				},
 			},
 			"stylebook": {
@@ -52,10 +56,11 @@ func resourceStylebookConfigpack() *schema.Resource {
 					},
 				},
 			},
-			"targets:": {
+			"targets": {
 				Description: "A dictionary specifying the devices to which the configpack is applied. The key of each item in the dictionary is the device's IP address and the value is a dictionary that contains one item which corresponds to the devices's ID in ADM in the form 'id':'<id-value>'",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"instance_id": {
@@ -115,10 +120,8 @@ func resourceStylebookConfigpackCreate(ctx context.Context, d *schema.ResourceDa
 
 	jobID := returnData["job"].(map[string]interface{})["job_id"].(string)
 
-	// activityStatusID := returnData[endpoint].([]interface{})[0].(map[string]interface{})["act_id"].(string)
-
-	// Wait for activity to complete
-	log.Printf("Waiting for activity to complete")
+	// Wait for the job to complete
+	log.Printf("Waiting for the job to complete")
 	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.ActivityTimeout)*time.Second)
 	if err != nil {
 		return diag.FromErr(err)
@@ -143,6 +146,9 @@ func resourceStylebookConfigpackRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 
+	if bodyResource, ok := service.URLResourceToBodyResource[endpoint]; ok {
+		endpoint = bodyResource
+	}
 	getResponseData := returnData[endpoint].(map[string]interface{})
 
 	// Update the state with the returned data
@@ -160,31 +166,20 @@ func resourceStylebookConfigpackUpdate(ctx context.Context, d *schema.ResourceDa
 	resourceID := d.Id()
 	endpoint := "configpacks"
 
-	_, err := c.UpdateResource(endpoint, getStylebookConfigpackPayload(d), resourceID)
+	returnData, err := c.UpdateResource(endpoint, getStylebookConfigpackPayload(d), resourceID)
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	// // if license_edition or plt_bw_config has changed then allocate_license
-	// data := make(map[string]interface{})
-	// hasChanged := false
-	// if d.HasChange("parameters") {
-	// 	data["parameters"] = d.Get("parameters").(map[string]interface{})
-	// }
-	// if d.HasChange("targets") {
-	// 	data["targets"] = d.Get("targets").([]interface{})
-	// }
+	jobID := returnData["job"].(map[string]interface{})["job_id"].(string)
 
-	// if hasChanged {
-	// 	var payload []interface{}
-	// 	payload = append(payload, data)
-
-	// 	_, err = c.AddResourceWithActionParams(endpoint, payload, "allocate_license")
-	// 	if err != nil {
-	// 		return diag.FromErr(err)
-	// 	}
-	// }
+	// Wait for the job to complete
+	log.Printf("Waiting for the job to complete")
+	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.ActivityTimeout)*time.Second)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	return resourceStylebookConfigpackRead(ctx, d, m)
 }
@@ -198,9 +193,17 @@ func resourceStylebookConfigpackDelete(ctx context.Context, d *schema.ResourceDa
 	endpoint := "configpacks"
 	resourceID := d.Id()
 
-	// FIXME: this is an async operation, so we need to wait for it to complete
-	err := c.DeleteResource(endpoint, resourceID)
+	returnData, err := c.DeleteResource(endpoint, resourceID)
 
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	jobID := returnData["job"].(map[string]interface{})["job_id"].(string)
+
+	// Wait for the job to complete
+	log.Printf("Waiting for the job to complete")
+	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.ActivityTimeout)*time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}

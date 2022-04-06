@@ -1,13 +1,24 @@
 resource "citrixadm_stylebook_configpack" "cfgpack1" {
   stylebook {
-
+    name      = "lb"
+    namespace = "com.citrix.adc.stylebooks"
+    version   = "1.1"
   }
+  # parameters = {
   parameters {
-
+    lb-appname       = "tf-sample-lb3"
+    lb-service-type  = "HTTP"
+    lb-virtual-ip    = "4.3.3.4"
+    lb-virtual-port  = 80
+    svc-service-type = "HTTP"
   }
-  tenents {
-
+  targets {
+    instance_id = data.citrixadm_managed_device.device1.id
   }
+}
+
+data "citrixadm_managed_device" "device1" {
+  ip_address = "10.0.1.42"
 }
 
 # data "citrixadm_mps_agent" "agent1" {

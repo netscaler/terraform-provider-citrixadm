@@ -358,7 +358,7 @@ func resourceNsDeviceProfileDelete(ctx context.Context, d *schema.ResourceData, 
 
 	endpoint := "ns_device_profile"
 	resourceID := d.Id()
-	err := c.DeleteResource(endpoint, resourceID)
+	_, err := c.DeleteResource(endpoint, resourceID)
 
 	if err != nil {
 		return diag.FromErr(err)

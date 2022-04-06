@@ -47,7 +47,8 @@ func Provider() *schema.Provider {
 			"citrixadm_stylebook_configpack":            resourceStylebookConfigpack(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"citrixadm_mps_agent": dataSourceMpsAgent(),
+			"citrixadm_mps_agent":      dataSourceMpsAgent(),
+			"citrixadm_managed_device": dataSourceManagedDevice(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
