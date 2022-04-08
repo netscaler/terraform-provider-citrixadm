@@ -63,7 +63,7 @@ type NitroClient struct {
 	id           string
 	secret       string
 	client       *http.Client
-	CustomerID   string
+	customerID   string
 	// sessionidMux sync.RWMutex
 	// sessionid    string
 	// timeout      int
@@ -90,7 +90,7 @@ func NewNitroClientFromParams(params NitroParams) (*NitroClient, error) {
 	c.secret = params.Secret
 	c.headers = params.Headers
 	c.hostLocation = params.HostLocation
-	c.CustomerID = params.CustomerID
+	c.customerID = params.CustomerID
 	c.client = &http.Client{}
 	c.ActivityTimeout = 120     // seconds to wait for activity to complete (manged_device)
 	c.StylebookJobTimeout = 120 // seconds to wait for activity to complete (configpacks)
@@ -307,7 +307,7 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 					return nil
 				}
 				if activity.(map[string]interface{})["status"].(string) == "Failed" {
-					return fmt.Errorf("ActivityID: %s FAILED", activityID)
+					return fmt.Errorf(activity.(map[string]interface{})["status"].(string) + ": " + activity.(map[string]interface{})["message"].(string))
 				}
 			}
 		}
@@ -369,7 +369,7 @@ func (c *NitroClient) AddResource(resource string, resourceData interface{}) (ma
 	} else if contains(stylebookEndpoints, resource) {
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
 	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
 
 	n := NitroRequestParams{
@@ -402,7 +402,7 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 	if contains(stylebookEndpoints, resource) {
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
 	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
 
 	n := NitroRequestParams{
@@ -436,7 +436,7 @@ func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, 
 	if contains(stylebookEndpoints, resource) {
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
 	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID)
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
 
 	n := NitroRequestParams{
@@ -469,7 +469,7 @@ func (c *NitroClient) DeleteResource(resource string, resourceID string) (map[st
 	if contains(stylebookEndpoints, resource) {
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
 	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID)
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
 
 	n := NitroRequestParams{
@@ -501,7 +501,7 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 	if contains(stylebookEndpoints, resource) {
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
 	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.CustomerID, resource, resourceID)
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
 
 	n := NitroRequestParams{
@@ -532,7 +532,7 @@ func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, e
 	if contains(stylebookEndpoints, resource) {
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
 	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.CustomerID, resource)
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
 
 	n := NitroRequestParams{

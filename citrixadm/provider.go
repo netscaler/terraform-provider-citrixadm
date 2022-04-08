@@ -2,6 +2,8 @@ package citrixadm
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"terraform-provider-citrixadm/service"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -17,27 +19,39 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_HOST", nil),
+				Description: "Citrix Adm host. Can be specified with `CITRIXADM_HOST` environment variable. This has to start with https://",
+				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
+					// if the value does not start with http, throw an error
+					if !strings.HasPrefix(v.(string), "https://") {
+						errors = append(errors, fmt.Errorf("host must start with https://"))
+					}
+					return
+				},
 			},
 			"client_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_CLIENT_ID", nil),
+				Description: "Citrix Adm client id. Can be specified with `CITRIXADM_CLIENT_ID` environment variable.",
 			},
 			"client_secret": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_CLIENT_SECRET", nil),
+				Description: "Citrix Adm client secret. Can be specified with `CITRIXADM_CLIENT_SECRET` environment variable.",
 			},
 			"host_location": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_HOST_LOCATION", ""),
+				Description: "Citrix Adm host location, e.g. `us`, `eu`. Can be specified with `CITRIXADM_HOST_LOCATION` environment variable.",
 			},
 			"customer_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_CUSTOMER_ID", ""),
+				Description: "Citrix Adm customer/tenant id. Can be specified with `CITRIXADM_CUSTOMER_ID` environment variable.",
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{

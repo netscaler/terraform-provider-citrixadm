@@ -8,6 +8,9 @@ OS_ARCH=darwin_amd64
 
 default: install
 
+docgen:
+	tfplugindocs
+
 build: fmt
 	go build -o ${BINARY}
 
@@ -20,6 +23,10 @@ release:
 
 fmt:
 	go fmt ./...
+
+tf-fmt:
+	terraform fmt -list=true -recursive examples
+
 
 install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}

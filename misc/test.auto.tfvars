@@ -1,0 +1,5 @@
+citrixadm_host = "https://adm.cloud.com"
+citrixadm_client_id = "1234-adsfa-w3qe-asdf"
+citrixadm_client_secret = "==aslkdfjla=="
+citrixadm_host_location = "us"
+citrixadm_customer_id = "vqw2112fdsf"

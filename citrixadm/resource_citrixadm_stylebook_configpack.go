@@ -125,7 +125,7 @@ func resourceStylebookConfigpackCreate(ctx context.Context, d *schema.ResourceDa
 
 	// Wait for the job to complete
 	log.Printf("Waiting for the job to complete")
-	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.ActivityTimeout)*time.Second)
+	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.StylebookJobTimeout)*time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -179,7 +179,7 @@ func resourceStylebookConfigpackUpdate(ctx context.Context, d *schema.ResourceDa
 
 	// Wait for the job to complete
 	log.Printf("Waiting for the job to complete")
-	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.ActivityTimeout)*time.Second)
+	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.StylebookJobTimeout)*time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -206,7 +206,7 @@ func resourceStylebookConfigpackDelete(ctx context.Context, d *schema.ResourceDa
 
 	// Wait for the job to complete
 	log.Printf("Waiting for the job to complete")
-	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.ActivityTimeout)*time.Second)
+	err = c.WaitForStylebookJobCompletion(jobID, time.Duration(c.StylebookJobTimeout)*time.Second)
 	if err != nil {
 		return diag.FromErr(err)
 	}
