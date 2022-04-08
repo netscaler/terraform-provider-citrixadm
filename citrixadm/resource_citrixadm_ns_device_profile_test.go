@@ -10,50 +10,45 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-const testAccManagedDeviceAdd = `
-
-data "citrixadm_mps_agent" "agent1" {
-	name = "10.0.1.91"
-  }
-
-resource "citrixadm_managed_device" "device1" {
-	ip_address    = "10.0.1.166"
-	profile_name  = "nsroot_notnsroot_profile"
-	datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
-	agent_id      = data.citrixadm_mps_agent.agent1.id
-}
+const testAccNsDeviceProfileAdd = `
+	resource "citrixadm_ns_device_profile" "profile1" {
+		name     = "tf_acc_test_profile"
+		username = "nsroot"
+		password = "verysecretpassword"
+		http_port = "80"
+		https_port = "443"
+	}
 `
 
-// example.Widget represents a concrete Go type that represents an API resource
-func TestAccManagedDevice_basic(t *testing.T) {
+func TestAccNsDeviceProfile_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		IsUnitTest: false,
 		PreCheck:   func() { testAccPreCheck(t) },
 		// ProviderFactories: providerFactories,
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckManagedDeviceDestroy,
+		CheckDestroy: testAccCheckNsDeviceProfileDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccManagedDeviceAdd,
+				Config: testAccNsDeviceProfileAdd,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckManagedDeviceExists("citrixadm_managed_device.device1", nil),
+					testAccCheckNsDeviceProfileExists("citrixadm_ns_device_profile.profile1", nil),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckManagedDeviceExists(n string, id *string) resource.TestCheckFunc {
+func testAccCheckNsDeviceProfileExists(n string, id *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// retrieve the resource by name from state
-		log.Println("[DEBUG] sumanth testAccCheckManagedDeviceExists")
+		log.Println("[DEBUG] sumanth testAccCheckNsDeviceProfileExists")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Managed Device ID is set")
+			return fmt.Errorf("No NS Device Profile ID is set")
 		}
 
 		// FIXME: Understand this block
@@ -67,7 +62,7 @@ func testAccCheckManagedDeviceExists(n string, id *string) resource.TestCheckFun
 
 		// retrieve the client from the test provider
 		c := testAccProvider.Meta().(*service.NitroClient)
-		data, err := c.GetResource("managed_device", rs.Primary.ID)
+		data, err := c.GetResource("ns_device_profile", rs.Primary.ID)
 
 		if err != nil {
 			return err
@@ -81,11 +76,11 @@ func testAccCheckManagedDeviceExists(n string, id *string) resource.TestCheckFun
 	}
 }
 
-func testAccCheckManagedDeviceDestroy(s *terraform.State) error {
+func testAccCheckNsDeviceProfileDestroy(s *terraform.State) error {
 	c := testAccProvider.Meta().(*service.NitroClient)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "citrixadm_managed_device" {
+		if rs.Type != "citrixadm_ns_device_profile" {
 			continue
 		}
 
@@ -93,9 +88,9 @@ func testAccCheckManagedDeviceDestroy(s *terraform.State) error {
 			return fmt.Errorf("No name is set")
 		}
 
-		_, err := c.GetResource("managed_device", rs.Primary.ID)
+		_, err := c.GetResource("ns_device_profile", rs.Primary.ID)
 		if err == nil {
-			return fmt.Errorf("Managed Device %s still exists", rs.Primary.ID)
+			return fmt.Errorf("NS Device Profile %s still exists", rs.Primary.ID)
 		}
 
 	}

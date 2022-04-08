@@ -32,7 +32,7 @@ func resourceNsDeviceProfile() *schema.Resource {
 			},
 			"use_global_setting_for_communication_with_ns": {
 				Description: "True, if the communication with Instance needs to be global and not device specific",
-				Type:        schema.TypeBool,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -71,7 +71,7 @@ func resourceNsDeviceProfile() *schema.Resource {
 			},
 			"http_port": {
 				Description: "HTTP port to connect to the device",
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -125,7 +125,7 @@ func resourceNsDeviceProfile() *schema.Resource {
 			},
 			"https_port": {
 				Description: "HTTPS port to connect to the device",
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -196,7 +196,7 @@ func getNsDeviceProfilePayload(d *schema.ResourceData) interface{} {
 		data["svm_ns_comm"] = v.(string)
 	}
 	if v, ok := d.GetOk("use_global_setting_for_communication_with_ns"); ok {
-		data["use_global_setting_for_communication_with_ns"] = v.(bool)
+		data["use_global_setting_for_communication_with_ns"] = v.(string)
 	}
 	if v, ok := d.GetOk("type"); ok {
 		data["type"] = v.(string)
@@ -214,7 +214,7 @@ func getNsDeviceProfilePayload(d *schema.ResourceData) interface{} {
 		data["ssl_cert"] = v.(string)
 	}
 	if v, ok := d.GetOk("http_port"); ok {
-		data["http_port"] = v.(int)
+		data["http_port"] = v.(string)
 	}
 	if v, ok := d.GetOk("ns_profile_name"); ok {
 		data["ns_profile_name"] = v.(string)
@@ -238,7 +238,7 @@ func getNsDeviceProfilePayload(d *schema.ResourceData) interface{} {
 		data["snmpprivprotocol"] = v.(string)
 	}
 	if v, ok := d.GetOk("https_port"); ok {
-		data["https_port"] = v.(int)
+		data["https_port"] = v.(string)
 	}
 	if v, ok := d.GetOk("username"); ok {
 		data["username"] = v.(string)

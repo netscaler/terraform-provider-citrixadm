@@ -1,6 +1,7 @@
 package citrixadm
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,16 +16,33 @@ import (
 // 	},
 // }
 
-// func TestProvider(t *testing.T) {
-// 	if err := New("dev")().InternalValidate(); err != nil {
-// 		t.Fatalf("err: %s", err)
-// 	}
-// }
+func TestProvider(t *testing.T) {
+	if err := Provider().InternalValidate(); err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
+
+func TestProvider_impl(t *testing.T) {
+	var _ *schema.Provider = Provider()
+}
 
 func testAccPreCheck(t *testing.T) {
 	// You can add code here to run prior to any test case execution, for example assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
+
+	requiredEnvVariables := []string{
+		"CITRIXADM_HOST",
+		"CITRIXADM_CLIENT_ID",
+		"CITRIXADM_CLIENT_SECRET",
+		"CITRIXADM_HOST_LOCATION",
+		"CITRIXADM_CUSTOMER_ID",
+	}
+	for _, envVar := range requiredEnvVariables {
+		if v := os.Getenv(envVar); v == "" {
+			t.Fatalf("%s must be set for acceptance tests", envVar)
+		}
+	}
 }
 
 var testAccProviders map[string]*schema.Provider
