@@ -5,7 +5,7 @@ data "citrixadm_mps_agent" "agent1" {
 resource "citrixadm_ns_device_profile" "profile1" {
   name       = "sample_profile"
   username   = "nsroot"
-  password   = "notnsroot" #FIXME: make this a secret
+  password   = "verysecretpassword"
   http_port  = "80"
   https_port = "443"
 }

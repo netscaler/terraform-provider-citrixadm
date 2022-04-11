@@ -2,6 +2,7 @@ package citrixadm
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -19,9 +20,6 @@ func resourceStylebookConfigpack() *schema.Resource {
 		UpdateContext: resourceStylebookConfigpackUpdate,
 		DeleteContext: resourceStylebookConfigpackDelete,
 		Schema: map[string]*schema.Schema{
-			// FIXME: George: terraform plan creates unnecessary diffs
-			// https://github.com/hashicorp/terraform-plugin-sdk/issues/477
-			// FIXME: George: not implementing upgrade, should it be ForceNew = true?
 			"parameters": {
 				Description: "A JSON dictionary containing the values for the Parameters of the StyleBook, where the key of each item in the dictionary is the name of the parameter and the value is the value of the parameter (note that the value can be an arbitrary JSON object depending on the type of the parameter (refer to the StyleBook schema).",
 				Type:        schema.TypeMap,
@@ -30,9 +28,6 @@ func resourceStylebookConfigpack() *schema.Resource {
 					Type:     schema.TypeString,
 					Computed: true,
 				},
-				// DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				// 	return old == new
-				// },
 			},
 			"stylebook": {
 				Description: "The StyleBook to use for the managed device.",
@@ -75,6 +70,16 @@ func resourceStylebookConfigpack() *schema.Resource {
 							Description: "The device's IP address",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
+						},
+						"roles": {
+							Description: "The device's roles",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
 						},
 					},
 				},
@@ -94,10 +99,6 @@ func getStylebookConfigpackPayload(d *schema.ResourceData) interface{} {
 		data["targets"] = v.([]interface{})
 	}
 
-	if v, ok := d.GetOk("entity_tag"); ok {
-		data["entity_tag"] = v.([]interface{})
-	}
-
 	return data
 }
 
@@ -113,13 +114,6 @@ func resourceStylebookConfigpackCreate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.Errorf("unable to create Configpack: %s", err.Error())
 	}
-
-	// returnData
-	// {
-	// 	"job": {
-	// 		"job_id": "1629958816"
-	// 	}
-	// }
 
 	jobID := returnData["job"].(map[string]interface{})["job_id"].(string)
 
@@ -155,11 +149,26 @@ func resourceStylebookConfigpackRead(ctx context.Context, d *schema.ResourceData
 	getResponseData := returnData[endpoint].(map[string]interface{})
 
 	// Update the state with the returned data
-	d.Set("parameters", getResponseData["parameters"])
-	d.Set("stylebook", getResponseData["stylebook"])
-	d.Set("targets", getResponseData["targets"])
+	params := getResponseData["parameters"].(map[string]interface{})
+	// convert the parameters to a map[string]string
+	parameters := make(map[string]string)
+	for k, v := range params {
+		parameters[k] = fmt.Sprintf("%v", v)
+	}
+	d.Set("parameters", parameters)
+	d.Set("stylebook", flattenStylebookParameter(getResponseData["stylebook"].(map[string]interface{})))
+	d.Set("targets", getResponseData["targets"].([]interface{}))
 
 	return diags
+}
+
+func flattenStylebookParameter(stylebookParam map[string]interface{}) []interface{} {
+	s := make(map[string]interface{})
+	s["name"] = stylebookParam["name"]
+	s["namespace"] = stylebookParam["namespace"]
+	s["version"] = stylebookParam["version"]
+
+	return []interface{}{s}
 }
 
 func resourceStylebookConfigpackUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

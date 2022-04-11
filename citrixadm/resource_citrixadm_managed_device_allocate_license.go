@@ -60,7 +60,7 @@ func resourceManagedDeviceAllocateLicenseCreate(ctx context.Context, d *schema.R
 
 	return diags
 
-	// FIXME: As of now, there is API problem that the immediate READ (GET) after license allocation gives empty value for license_edition and plt_bw_config. Hence skipping READ for now.
+	// FIXME: API Problem. As of now, there is API problem that the immediate READ (GET) after license allocation gives empty value for license_edition and plt_bw_config. Hence skipping READ for now.
 	// return resourceManagedDeviceAllocateLicenseRead(ctx, d, m)
 
 }

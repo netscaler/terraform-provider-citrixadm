@@ -5,7 +5,7 @@ data "citrixadm_mps_agent" "agent1" {
 resource "citrixadm_ns_device_profile" "profile1" {
   name       = "sample_profile"
   username   = "nsroot"
-  password   = "notnsroot" #FIXME: make this a secret
+  password   = "verysecretpassword"
   http_port  = "80"
   https_port = "443"
 }
@@ -31,7 +31,7 @@ resource "citrixadm_stylebook_configpack" "cfgpack1" {
   parameters = {
     lb-appname       = "tf-sample-lb1"
     lb-service-type  = "HTTP"
-    lb-virtual-ip    = "4.3.3.4"
+    lb-virtual-ip    = "4.3.3.5"
     lb-virtual-port  = "80"
     svc-service-type = "HTTP"
   }

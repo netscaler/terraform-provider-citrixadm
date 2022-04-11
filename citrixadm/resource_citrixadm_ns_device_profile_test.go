@@ -41,7 +41,7 @@ func TestAccNsDeviceProfile_basic(t *testing.T) {
 func testAccCheckNsDeviceProfileExists(n string, id *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// retrieve the resource by name from state
-		log.Println("[DEBUG] sumanth testAccCheckNsDeviceProfileExists")
+		log.Println("[DEBUG] testAccCheckNsDeviceProfileExists")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
@@ -51,12 +51,10 @@ func testAccCheckNsDeviceProfileExists(n string, id *string) resource.TestCheckF
 			return fmt.Errorf("No NS Device Profile ID is set")
 		}
 
-		// FIXME: Understand this block
 		if id != nil {
 			if *id != "" && *id != rs.Primary.ID {
 				return fmt.Errorf("Resource ID has changed")
 			}
-
 			*id = rs.Primary.ID
 		}
 

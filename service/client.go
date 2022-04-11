@@ -29,6 +29,7 @@ var URLResourceToBodyResource = map[string]string{
 	"jobs":        "job",
 }
 
+// NitroRequestParams is a struct to hold the parameters for a Nitro request
 type NitroRequestParams struct {
 	ResourcePath       string
 	Method             string
@@ -219,7 +220,7 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 	}
 
 	// Authenticate
-	// if v1 in url, use Authorization header elif v2 in url, use sessionId header
+	// For stylebook APIs use Cookie in Header else use Authorization header
 	if strings.Contains(urlstr, "stylebook") {
 		req.Header.Set("Cookie", fmt.Sprintf("SESSID=%s", c.sessionID))
 		req.Header.Set("sessionId", fmt.Sprintf("%s", c.sessionID))
@@ -262,6 +263,7 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 		log.Println("MakeNitroRequest resopnse", n.Method, "url:", urlstr, "status:", resp.StatusCode)
 		return body, nil
 	}
+	log.Println("MakeNitroRequest resopnse", n.Method, "url:", urlstr, "status:", resp.StatusCode)
 	body, _ = ioutil.ReadAll(resp.Body)
 	return []byte{}, errors.New("failed: " + resp.Status + " (" + string(body) + ")")
 }
@@ -339,7 +341,19 @@ func (c *NitroClient) WaitForStylebookJobCompletion(jobID string, timeout time.D
 			return nil
 		} else if jobStatus == "failed" {
 			log.Println("Job Status", toJSONIndent(returnData))
-			return errors.New("Stylebook JobID" + jobID + "FAILED")
+
+			progressInfo := returnData["job"].(map[string]interface{})["progress_info"].([]interface{})
+			// collect all the "message" from "progress_info" array when "status" is "failed"
+			// and concatenate them into one string
+
+			var failedMessage string
+			for _, progress := range progressInfo {
+				progressMap := progress.(map[string]interface{})
+				if progressMap["status"].(string) == "failed" {
+					failedMessage = failedMessage + "\n" + progressMap["message"].(string)
+				}
+			}
+			return errors.New(failedMessage)
 		}
 	}
 }
@@ -524,6 +538,7 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 	return returnData, nil
 }
 
+// GetAllResource returns all resources
 func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, error) {
 	log.Println("GetAllResource method:", resource)
 	var returnData map[string]interface{}

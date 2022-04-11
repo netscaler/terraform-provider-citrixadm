@@ -340,7 +340,7 @@ func resourceNsDeviceProfileUpdate(ctx context.Context, d *schema.ResourceData, 
 	resourceID := d.Id()
 	endpoint := "ns_device_profile"
 
-	_, err := c.UpdateResource(endpoint, getManagedDevicePayload(d), resourceID)
+	_, err := c.UpdateResource(endpoint, getNsDeviceProfilePayload(d), resourceID)
 
 	if err != nil {
 		return diag.FromErr(err)

@@ -10,6 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// Assumption before running this test:
+// 1. There is a ADM agent with IP `10.0.1.91` already registered with CitrixADM, OR change the IP address in the test
+// 2. the ns device profile is already present with name `nsroot_verysecretpassword_profile`
 const testAccManagedDeviceAdd = `
 
 data "citrixadm_mps_agent" "agent1" {
@@ -17,8 +20,8 @@ data "citrixadm_mps_agent" "agent1" {
   }
 
 resource "citrixadm_managed_device" "device1" {
-	ip_address    = "10.0.1.166"
-	profile_name  = "nsroot_notnsroot_profile"
+	ip_address    = "10.0.1.165"
+	profile_name  = "nsroot_verysecretpassword_profile"
 	datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
 	agent_id      = data.citrixadm_mps_agent.agent1.id
 }
@@ -46,7 +49,7 @@ func TestAccManagedDevice_basic(t *testing.T) {
 func testAccCheckManagedDeviceExists(n string, id *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// retrieve the resource by name from state
-		log.Println("[DEBUG] sumanth testAccCheckManagedDeviceExists")
+		log.Println("[DEBUG] testAccCheckManagedDeviceExists")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
@@ -56,7 +59,6 @@ func testAccCheckManagedDeviceExists(n string, id *string) resource.TestCheckFun
 			return fmt.Errorf("No Managed Device ID is set")
 		}
 
-		// FIXME: Understand this block
 		if id != nil {
 			if *id != "" && *id != rs.Primary.ID {
 				return fmt.Errorf("Resource ID has changed")

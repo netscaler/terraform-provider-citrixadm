@@ -6,7 +6,7 @@ data "citrixadm_mps_agent" "agent1" {
 resource "citrixadm_ns_device_profile" "profile1" {
   name       = "sample_profile"
   username   = "nsroot"
-  password   = "notnsroot" #FIXME: make this a secret
+  password   = "verysecretpassword"
   http_port  = "80"
   https_port = "443"
 }
@@ -35,5 +35,5 @@ data "citrixadm_managed_device" "device2" {
 resource "citrixadm_managed_device_allocate_license" "lic2" {
   managed_device_id = data.citrixadm_managed_device.device2.id
   license_edition   = "Platinum"
-  plt_bw_config     = 60 # in Mbps
+  plt_bw_config     = 600 # in Mbps
 }

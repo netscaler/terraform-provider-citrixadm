@@ -40,82 +40,6 @@ func resourceManagedDevice() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-
-			// "std_bw_config": {
-			// 	Description: "Standard Bandwidth running",
-			// 	Type:        schema.TypeInt,
-			// 	Optional:    true,
-			// },
-			// "description": {
-			// 	Description: "Description of managed device",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "vcpu_config": {
-			// 	Description: "Number of vCPU allocated for the device",
-			// 	Type:        schema.TypeInt,
-			// 	Optional:    true,
-			// },
-			// "ent_bw_config": {
-			// 	Description: "Enterprise Bandwidth configured",
-			// 	Type:        schema.TypeInt,
-			// 	Optional:    true,
-			// },
-			// "instance_config": {
-			// 	Description: "Instance license running",
-			// 	Type:        schema.TypeInt,
-			// 	Optional:    true,
-			// },
-			// "is_managed": {
-			// 	Description: "Is Managed",
-			// 	Type:        schema.TypeBool,
-			// 	Optional:    true,
-			// },
-			// "servicepackage": {
-			// 	Description: "Service Package Name of the device",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "license_edition": {
-			// 	Description: "Edition of instance",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "isolation_policy": {
-			// 	Description: "Isolation Policy of the Device",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "plt_bw_config": {
-			// 	Description: "Platinum Bandwidth configured",
-			// 	Type:        schema.TypeInt,
-			// 	Optional:    true,
-			// },
-			// "peer_device_ip": {
-			// 	Description: "Peer Device IP address for instance of type BLX ADC.",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "file_name": {
-			// 	Description: "File name which contains comma separated instances to be  discovered",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "file_location_path": {
-			// 	Description: "File Location on Client for upload/download",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "peer_host_device_ip": {
-			// 	Description: "Peer Host Device IP Address for instance of type BLX ADC.",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
-			// "device_host_ip": {
-			// 	Description: "Device Host IP Address for instance of type BLX ADC.",
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// },
 			"entity_tag": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -147,63 +71,9 @@ func getManagedDevicePayload(d *schema.ResourceData) interface{} {
 
 	data["datacenter_id"] = d.Get("datacenter_id").(string)
 	data["agent_id"] = d.Get("agent_id").(string)
-
-	// if v, ok := d.GetOk("std_bw_config"); ok {
-	// 	data["std_bw_config"] = v.(int)
-	// }
-
-	// if v, ok := d.GetOk("description"); ok {
-	// 	data["description"] = v.(string)
-	// }
-
-	// if v, ok := d.GetOk("vcpu_config"); ok {
-	// 	data["vcpu_config"] = v.(int)
-	// }
-	// if v, ok := d.GetOk("ent_bw_config"); ok {
-	// 	data["ent_bw_config"] = v.(int)
-	// }
-
-	// if v, ok := d.GetOk("instance_config"); ok {
-	// 	data["instance_config"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("is_managed"); ok {
-	// 	data["is_managed"] = v.(bool)
-	// }
-
-	// if v, ok := d.GetOk("servicepackage"); ok {
-	// 	data["servicepackage"] = v.(string)
-	// }
-
-	// if v, ok := d.GetOk("license_edition"); ok {
-	// 	data["license_edition"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("isolation_policy"); ok {
-	// 	data["isolation_policy"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("plt_bw_config"); ok {
-	// 	data["plt_bw_config"] = v.(int)
-	// }
-	// if v, ok := d.GetOk("peer_device_ip"); ok {
-	// 	data["peer_device_ip"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("file_name"); ok {
-	// 	data["file_name"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("file_location_path"); ok {
-	// 	data["file_location_path"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("peer_host_device_ip"); ok {
-	// 	data["peer_host_device_ip"] = v.(string)
-	// }
-	// if v, ok := d.GetOk("device_host_ip"); ok {
-	// 	data["device_host_ip"] = v.(string)
-	// }
 	if v, ok := d.GetOk("entity_tag"); ok {
 		data["entity_tag"] = v.([]interface{})
 	}
-
-	// var payload []interface{}
-	// payload = append(payload, data)
 
 	return data
 }
