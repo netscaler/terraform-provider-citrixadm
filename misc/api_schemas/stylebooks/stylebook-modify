@@ -1,0 +1,15 @@
+POST: https://cocoa.adm.cloud.com/stylebook/nitro/v2/config/stylebooks/com.example.stylebooks/0.1/basic-lb-config/actions/update?mode=async
+
+POST Request:
+{
+	"update": {
+		"source": "name: basic-lb-config\nnamespace: com.example.stylebooks\nversion: \"0.1\"\ndisplay-name: Load Balancing Configuration\ndescription: This StyleBook defines a simple load balancing configuration.\nschema-version: \"1.0\"\nimport-stylebooks:\n  -\n    namespace: netscaler.nitro.config\n    version: \"10.5\"\n    prefix: ns\nparameters:\n  -\n    name: name\n    type: string\n    label: Application Name\n    description: Give a name to the application configuration.\n    required: true\n  -\n    name: ip\n    type: ipaddress\n    label: Application Virtual IP (VIP)\n    description: The Application VIP that clients access\n    required: true\n  -\n    name: lb-alg1\n    type: string\n    label: LoadBalancing Algorithm\n    description: Choose the loadbalancing algorithm (method) used for loadbalancing client requests between the application servers.\n    allowed-values:\n    - ROUNDROBIN\n    - LEASTCONNECTION\n    default: ROUNDROBIN\n  -\n    name: svc-servers\n    type: ipaddress[]\n    label: Application Server IPs\n    description: The IP addresses of all the servers of this application\n    required: true\n  -\n    name: svc-port\n    type: tcp-port\n    label: Server Port\n    description: The TCP port open on the Application Servers to receive requests.\n    default: 80\ncomponents:\n  -\n    name: lbvserver-comp\n    type: ns::lbvserver\n    properties:\n      name: $parameters.name + \"-lb\"\n      servicetype: HTTP\n      ipv46: $parameters.ip\n      port: 80\n      lbmethod: $parameters.lb-alg\n    components:\n      -\n        name: svcg-comp\n        type: ns::servicegroup\n        properties:\n          servicegroupname: $parameters.name + \"-svcgrp\"\n          servicetype: HTTP\n        components:\n          -\n            name: lbvserver-svg-binding-comp\n            type: ns::lbvserver_servicegroup_binding\n            properties:\n              name: $parent.parent.properties.name\n              servicegroupname: $parent.properties.servicegroupname\n          -\n            name: members-svcg-comp\n            type: ns::servicegroup_servicegroupmember_binding\n            repeat: $parameters.svc-servers\n            repeat-item: srv\n            properties:\n              ip: $srv\n              port: $parameters.svc-port\n              servicegroupname: $parent.properties.servicegroupname\noutputs:\n  -\n    name: lbvserver-comp\n    value: $components.lbvserver-comp\n    description: The component that builds the Nitro lbvserver configuration object\n  -\n    name: servicegroup-comp\n    value: $components.lbvserver-comp.components.svcg-comp\n    description: The component that builds the Nitro servicegroup configuration object"
+	}
+}
+
+POST Response:
+{
+	"job": {
+		"job_id": "1402581003"
+	}
+}

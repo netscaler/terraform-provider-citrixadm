@@ -18,6 +18,7 @@ import (
 
 // create a list of stylebook endpoints
 var stylebookEndpoints = []string{
+	"stylebooks",
 	"configpacks",
 	"jobs",
 }
@@ -25,6 +26,7 @@ var stylebookEndpoints = []string{
 // URLResourceToBodyResource map of urlResource to bodyResource
 var URLResourceToBodyResource = map[string]string{
 	// FIXME: API Problem: Some API resources do not exactly match with that of body resources, esp., stylebook APIs
+	"stylebooks":  "stylebook",
 	"configpacks": "configpack",
 	"jobs":        "job",
 }
@@ -372,6 +374,74 @@ func toJSONIndent(v interface{}) string {
 	return string(b)
 }
 
+// GetResource returns a resource
+func (c *NitroClient) GetResource(resource string, resourceID string) (map[string]interface{}, error) {
+	log.Println("GetResource method:", resource, resourceID)
+	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
+	}
+
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       resourcePath,
+		Method:             "GET",
+		SuccessStatusCodes: []int{200},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("GetResource response %v", toJSONIndent(returnData))
+	}
+	return returnData, nil
+}
+
+// GetAllResource returns all resources
+func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, error) {
+	log.Println("GetAllResource method:", resource)
+	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(stylebookEndpoints, resource) {
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	} else {
+		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
+	}
+
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       resourcePath,
+		Method:             "GET",
+		SuccessStatusCodes: []int{200},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("GetAllResource response %v", toJSONIndent(returnData))
+	}
+	return returnData, nil
+}
+
 // AddResource adds a resource
 func (c *NitroClient) AddResource(resource string, resourceData interface{}) (map[string]interface{}, error) {
 	log.Println("AddResource method:", resource, resourceData)
@@ -399,11 +469,13 @@ func (c *NitroClient) AddResource(resource string, resourceData interface{}) (ma
 		return returnData, err
 	}
 
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return returnData, err
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("AddResource response %v", toJSONIndent(returnData))
 	}
-	log.Printf("AddResource response %v", toJSONIndent(returnData))
 	return returnData, nil
 }
 
@@ -413,8 +485,12 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 	var returnData map[string]interface{}
 
 	var resourcePath string
-	if contains(stylebookEndpoints, resource) {
-		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
+	if contains(stylebookEndpoints, resource) || strings.Contains(resource, "stylebook") {
+		// https://adm.cloud.com/stylebook/nitro/v2/config/stylebooks/actions/import
+		// https://adm.cloud.com/stylebook/nitro/v2/config/stylebooks/{{stylebook_namespace}}/{{stylebook_version}}/{{stylebook_name}}/actions/update
+		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/actions/%s", resource, actionParam)
+		resource = actionParam
+		actionParam = "" // reset actionParam so that it is not added to the requestPayload in MakeNitroRequest()
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
@@ -433,11 +509,13 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 		return returnData, err
 	}
 
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return returnData, err
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("AddResourceWithActionParams response %v", toJSONIndent(returnData))
 	}
-	log.Printf("AddResourceWithActionParams response %v", toJSONIndent(returnData))
 	return returnData, nil
 }
 
@@ -466,11 +544,13 @@ func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, 
 		return returnData, err
 	}
 
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return returnData, err
+	if len(body) == 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("UpdateResource response %v", toJSONIndent(returnData))
 	}
-	log.Printf("UpdateResource response %v", toJSONIndent(returnData))
 	return returnData, nil
 }
 
@@ -497,75 +577,14 @@ func (c *NitroClient) DeleteResource(resource string, resourceID string) (map[st
 	if err != nil {
 		return returnData, err
 	}
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return returnData, err
+
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		// log.Printf("delete response %v", deleteResponse)
+		log.Printf("DeleteResource response %v", toJSONIndent(returnData))
 	}
-	// log.Printf("delete response %v", deleteResponse)
-	log.Printf("DeleteResource response %v", toJSONIndent(returnData))
-	return returnData, nil
-}
-
-// GetResource returns a resource
-func (c *NitroClient) GetResource(resource string, resourceID string) (map[string]interface{}, error) {
-	log.Println("GetResource method:", resource, resourceID)
-	var returnData map[string]interface{}
-
-	var resourcePath string
-	if contains(stylebookEndpoints, resource) {
-		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
-	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
-	}
-
-	n := NitroRequestParams{
-		Resource:           resource,
-		ResourcePath:       resourcePath,
-		Method:             "GET",
-		SuccessStatusCodes: []int{200},
-	}
-
-	body, err := c.MakeNitroRequest(n)
-	if err != nil {
-		return returnData, err
-	}
-
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return returnData, err
-	}
-	log.Printf("GetResource response %v", toJSONIndent(returnData))
-	return returnData, nil
-}
-
-// GetAllResource returns all resources
-func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, error) {
-	log.Println("GetAllResource method:", resource)
-	var returnData map[string]interface{}
-
-	var resourcePath string
-	if contains(stylebookEndpoints, resource) {
-		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
-	} else {
-		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
-	}
-
-	n := NitroRequestParams{
-		Resource:           resource,
-		ResourcePath:       resourcePath,
-		Method:             "GET",
-		SuccessStatusCodes: []int{200},
-	}
-
-	body, err := c.MakeNitroRequest(n)
-	if err != nil {
-		return returnData, err
-	}
-
-	err = json.Unmarshal(body, &returnData)
-	if err != nil {
-		return returnData, err
-	}
-	log.Printf("GetAllResource response %v", toJSONIndent(returnData))
 	return returnData, nil
 }
