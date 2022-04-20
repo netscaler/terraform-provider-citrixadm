@@ -1,4 +1,4 @@
-TEST?=$$(go list ./... | grep -v 'vendor')
+TEST?=$$(go list ./citrixadm/... | grep -v 'vendor')
 HOSTNAME=registry.terraform.io
 NAMESPACE=citrix
 NAME=citrixadm
@@ -24,7 +24,7 @@ release:
 fmt:
 	go fmt ./...
 
-tf-fmt:
+tffmt:
 	terraform fmt -list=true -recursive examples
 
 
@@ -32,12 +32,10 @@ install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
-test:
-	go test -i $(TEST) || exit 1
-	echo $(TEST) | xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
-
 testacc:
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m
+	# Usage: make testacc VPX_IP=10.0.1.76 VPX_USER=nsroot VPX_PASSWORD=verysecretpassword AGENT_IP=10.0.1.91
+	rm -i citrixadm/citrixadm.acctest.log
+	TF_ACC=1 TF_ACC_LOG_PATH=./citrixadm.acctest.log TF_LOG=TRACE VPX_IP=$(VPX_IP) VPX_USER=$(VPX_USER) VPX_PASSWORD=$(VPX_PASSWORD) AGENT_IP=$(AGENT_IP) go test terraform-provider-citrixadm/citrixadm -v
 
 start-debug: debug-build
 	~/go/bin/dlv exec --accept-multiclient --continue --headless ./${BINARY} -- -debug

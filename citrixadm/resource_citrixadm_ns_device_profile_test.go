@@ -15,8 +15,6 @@ const testAccNsDeviceProfileAdd = `
 		name     = "tf_acc_test_profile"
 		username = "nsroot"
 		password = "verysecretpassword"
-		http_port = "80"
-		https_port = "443"
 	}
 `
 

@@ -3,6 +3,7 @@ package citrixadm
 import (
 	"fmt"
 	"log"
+	"os"
 	"terraform-provider-citrixadm/service"
 	"testing"
 
@@ -11,33 +12,52 @@ import (
 )
 
 // Assumption before running this test:
-// 1. There is a managed device with IP 10.0.1.42 already registered with CitrixADM, OR change the IP address in the test
-// 2. There is no lb vserver with name "tf-acc-lb" with VIP IP "4.4.4.4"
+// 1. There is a ADM agent with IP `AGENT_IP` already registered with CitrixADM
+const (
+	testAccStylebookConfigpackPlaceholder = `
+		data "citrixadm_mps_agent" "agent1" {
+			name = "%s"
+		}
 
-const testAccStylebookConfigpackAdd = `
+		resource "citrixadm_ns_device_profile" "profile1" {
+			name     = "tf_acc_test_profile"
+			username = "%s"
+			password = "%s"
+		}
 
-data "citrixadm_managed_device" "device1" {
-  ip_address = "10.0.1.42"
-}
+		resource "citrixadm_managed_device" "device1" {
+			ip_address    = "%s"
+			profile_name  = citrixadm_ns_device_profile.profile1.name
+			datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+			agent_id      = data.citrixadm_mps_agent.agent1.id
+		}
 
-resource "citrixadm_stylebook_configpack" "cfgpack1" {
-  stylebook {
-    name      = "lb"
-    namespace = "com.citrix.adc.stylebooks"
-    version   = "1.1"
-  }
-  parameters = {
-    lb-appname       = "tf-acc-lb"
-    lb-service-type  = "HTTP"
-    lb-virtual-ip    = "4.4.4.4"
-    lb-virtual-port  = "80"
-    svc-service-type = "HTTP"
-  }
-  targets {
-    instance_id = data.citrixadm_managed_device.device1.id
-  }
-}
-`
+		resource "citrixadm_stylebook_configpack" "cfgpack1" {
+			stylebook {
+				name      = "lb"
+				namespace = "com.citrix.adc.stylebooks"
+				version   = "1.1"
+			}
+			parameters = {
+				lb-appname       = "tf-acc-lb"
+				lb-service-type  = "HTTP"
+				lb-virtual-ip    = "4.4.4.4"
+				lb-virtual-port  = "80"
+				svc-service-type = "HTTP"
+			}
+			targets {
+				instance_id = citrixadm_managed_device.device1.id
+			}
+		}
+	`
+)
+
+var testAccStylebookConfigpackAdd = fmt.Sprintf(testAccStylebookConfigpackPlaceholder,
+	os.Getenv("AGENT_IP"),
+	os.Getenv("VPX_USER"),
+	os.Getenv("VPX_PASSWORD"),
+	os.Getenv("VPX_IP"),
+)
 
 // example.Widget represents a concrete Go type that represents an API resource
 func TestAccStylebookConfigpack_basic(t *testing.T) {

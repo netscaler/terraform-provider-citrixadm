@@ -3,6 +3,7 @@ package citrixadm
 import (
 	"fmt"
 	"log"
+	"os"
 	"terraform-provider-citrixadm/service"
 	"testing"
 
@@ -11,21 +12,34 @@ import (
 )
 
 // Assumption before running this test:
-// 1. There is a ADM agent with IP `10.0.1.91` already registered with CitrixADM, OR change the IP address in the test
-// 2. the ns device profile is already present with name `nsroot_verysecretpassword_profile`
-const testAccManagedDeviceAdd = `
+// 1. There is a ADM agent with IP `AGENT_IP` already registered with CitrixADM
+const (
+	testAccManagedDevicePlaceholder = `
+		data "citrixadm_mps_agent" "agent1" {
+			name = "%s"
+		}
 
-data "citrixadm_mps_agent" "agent1" {
-	name = "10.0.1.91"
-  }
+		resource "citrixadm_ns_device_profile" "profile1" {
+			name     = "tf_acc_test_profile"
+			username = "%s"
+			password = "%s"
+		}
 
-resource "citrixadm_managed_device" "device1" {
-	ip_address    = "10.0.1.166"
-	profile_name  = "nsroot_verysecretpassword_profile"
-	datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
-	agent_id      = data.citrixadm_mps_agent.agent1.id
-}
-`
+		resource "citrixadm_managed_device" "device1" {
+			ip_address    = "%s"
+			profile_name  = citrixadm_ns_device_profile.profile1.name
+			datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+			agent_id      = data.citrixadm_mps_agent.agent1.id
+		}
+	`
+)
+
+var testAccManagedDeviceAdd = fmt.Sprintf(testAccManagedDevicePlaceholder,
+	os.Getenv("AGENT_IP"),
+	os.Getenv("VPX_USER"),
+	os.Getenv("VPX_PASSWORD"),
+	os.Getenv("VPX_IP"),
+)
 
 // example.Widget represents a concrete Go type that represents an API resource
 func TestAccManagedDevice_basic(t *testing.T) {

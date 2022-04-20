@@ -29,7 +29,7 @@ func resourceManagedDeviceAllocateLicense() *schema.Resource {
 				Required:    true,
 			},
 			"plt_bw_config": {
-				Description: "Platinum Bandwidth configured",
+				Description: "Platinum Bandwidth configured in Mbps",
 				Type:        schema.TypeInt,
 				Required:    true,
 			},
