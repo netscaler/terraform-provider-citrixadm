@@ -20,7 +20,7 @@ data "citrixadm_mps_agent" "agent1" {
   }
 
 resource "citrixadm_managed_device" "device1" {
-	ip_address    = "10.0.1.165"
+	ip_address    = "10.0.1.166"
 	profile_name  = "nsroot_verysecretpassword_profile"
 	datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
 	agent_id      = data.citrixadm_mps_agent.agent1.id
