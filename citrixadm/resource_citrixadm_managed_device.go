@@ -162,21 +162,6 @@ func resourceManagedDeviceUpdate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	// if license_edition or plt_bw_config has changed then allocate_license
-	if d.HasChange("license_edition") || d.HasChange("plt_bw_config") {
-		data := make(map[string]interface{})
-		data["id"] = resourceID
-		data["license_edition"] = d.Get("license_edition").(string)
-		data["plt_bw_config"] = d.Get("plt_bw_config").(int)
-		var payload []interface{}
-		payload = append(payload, data)
-
-		_, err = c.AddResourceWithActionParams(endpoint, payload, "allocate_license")
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
 	return resourceManagedDeviceRead(ctx, d, m)
 }
 
