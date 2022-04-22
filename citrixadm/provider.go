@@ -84,8 +84,5 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.FromErr(err)
 	}
 
-	if err != nil {
-		return nil, diag.FromErr(err)
-	}
 	return c, diags
 }
