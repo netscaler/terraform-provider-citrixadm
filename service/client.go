@@ -190,7 +190,6 @@ func (c *NitroClient) setNewToken() error {
 
 // MakeNitroRequest makes a API request to the NetScaler
 func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
-	log.Println("MakeNitroRequest", n)
 	var buff []byte
 	var err error
 
@@ -209,7 +208,9 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		log.Println("MakeNitroRequest payload", toJSONIndent(payload)) // print json converted payload
+		if n.Resource != "login" {
+			log.Println("MakeNitroRequest payload", toJSONIndent(payload)) // print json converted payload
+		}
 	} else if n.Method == "GET" || n.Method == "DELETE" {
 		buff = []byte{}
 	}
@@ -245,7 +246,9 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 		req.Header.Set(k, v)
 	}
 
-	log.Printf("MakeNitroRequest request:%s, url:%s, headers:%v", req.Method, req.URL, toJSONIndent(req.Header))
+	if n.Resource != "login" {
+		log.Printf("MakeNitroRequest request:%s, url:%s, headers:%v", req.Method, req.URL, toJSONIndent(req.Header))
+	}
 	// log.Println("MakeNitroRequest payload", string(buff)) // print json converted payload
 
 	resp, err := c.client.Do(req)
