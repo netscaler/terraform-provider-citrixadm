@@ -13,7 +13,7 @@ import (
 
 func dataSourceMpsAgent() *schema.Resource {
 	return &schema.Resource{
-		Description: "Configuration for MPS Agent information data source.",
+		Description: "Get a mps agent ID and Datacenter ID by MPS Agent IP address",
 		ReadContext: dataSourceMpsAgentRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
