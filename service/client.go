@@ -447,7 +447,9 @@ func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, e
 
 // AddResource adds a resource
 func (c *NitroClient) AddResource(resource string, resourceData interface{}) (map[string]interface{}, error) {
-	log.Println("AddResource method:", resource, resourceData)
+	if resource != "login" {
+		log.Println("AddResource method:", resource, resourceData)
+	}
 	var returnData map[string]interface{}
 
 	var resourcePath string
