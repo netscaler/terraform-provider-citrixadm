@@ -178,7 +178,7 @@ func (c *NitroClient) setNewToken() error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("NewToken details", string(body))
+	// log.Println("NewToken details", string(body))
 	response := map[string]interface{}{}
 	if err := json.Unmarshal([]byte(body), &response); err != nil {
 		panic(err)
@@ -246,9 +246,9 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 		req.Header.Set(k, v)
 	}
 
-	if n.Resource != "login" {
-		log.Printf("MakeNitroRequest request:%s, url:%s, headers:%v", req.Method, req.URL, toJSONIndent(req.Header))
-	}
+	// if n.Resource != "login" {
+	// 	log.Printf("MakeNitroRequest request:%s, url:%s, headers:%v", req.Method, req.URL, toJSONIndent(req.Header))
+	// }
 	// log.Println("MakeNitroRequest payload", string(buff)) // print json converted payload
 
 	resp, err := c.client.Do(req)
@@ -265,7 +265,7 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 
 	if statusCodeSuccess(n.SuccessStatusCodes, resp.StatusCode) {
 		body, _ = ioutil.ReadAll(resp.Body)
-		log.Println("MakeNitroRequest resopnse", n.Method, "url:", urlstr, "status:", resp.StatusCode)
+		log.Println("MakeNitroRequest response", n.Method, "url:", urlstr, "status:", resp.StatusCode)
 		return body, nil
 	}
 	log.Println("MakeNitroRequest resopnse", n.Method, "url:", urlstr, "status:", resp.StatusCode)
@@ -479,7 +479,9 @@ func (c *NitroClient) AddResource(resource string, resourceData interface{}) (ma
 		if err != nil {
 			return returnData, err
 		}
-		log.Printf("AddResource response %v", toJSONIndent(returnData))
+		if resource != "login" {
+			log.Printf("AddResource response %v", toJSONIndent(returnData))
+		}
 	}
 	return returnData, nil
 }
