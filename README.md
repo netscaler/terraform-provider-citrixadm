@@ -1,11 +1,11 @@
 # Terraform `Citrix ADM Service` Provider
 
-- Website: https://www.terraform.io
+Terraform provider for [Citrix ADM Service](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/citrix-application-delivery-management-service.html) provides [Infrastructure as Code (IaC)](https://en.wikipedia.org/wiki/Infrastructure_as_code) to manage your ADCs via ADM. Using the terraform provider you can onboard ADCs in ADM, assign licenses, create and trigger stylebooks, run configpacks etc.
 
 ## Requirements
 
-- [Terraform](https://www.terraform.io/downloads.html) 1.0.x
-- [Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
+- [Terraform](https://www.terraform.io/downloads.html) 1.x.x
+- [Go](https://golang.org/doc/install) 1.11+ (to build the provider plugin)
 
 ## Building The Provider
 
