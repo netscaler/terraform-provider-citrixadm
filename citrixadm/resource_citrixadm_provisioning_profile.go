@@ -16,8 +16,8 @@ func resourceProvisioningProfile() *schema.Resource {
 		Description:   "Configuration for Device profile for  Citrix ADC(MPX/VPX/CPX/Gateway) instances  resource",
 		CreateContext: resourceProvisioningProfileCreate,
 		ReadContext:   resourceProvisioningProfileRead,
-		// UpdateContext: resourceProvisioningProfileUpdate,
-		// DeleteContext: resourceProvisioningProfileDelete,
+		// UpdateContext: resourceProvisioningProfileUpdate, // TODO: For now, UPDATE was using different API and was giving error. Hence going with forced re-creation.
+		// DeleteContext: resourceProvisioningProfileDelete, // TODO: For now, DELETE is effective as prescribed by NITRO documentation
 		DeleteContext: schema.NoopContext,
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -193,6 +193,7 @@ func flattenProvisioningInstanceCapacityDetails(instanceCapacityDetails map[stri
 	return []interface{}{s}
 }
 
+// TODO: For now, UPDATE was using different API and was giving error. Hence going with forced re-creation.
 // func resourceProvisioningProfileUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 // 	log.Printf("In resourceProvisioningProfileUpdate")
 // 	c := m.(*service.NitroClient)
@@ -210,6 +211,7 @@ func flattenProvisioningInstanceCapacityDetails(instanceCapacityDetails map[stri
 
 // }
 
+// TODO: For now, DELETE is effective as prescribed by NITRO documentation
 // func resourceProvisioningProfileDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 // 	log.Printf("In resourceProvisioningProfileDelete")
 // 	var diags diag.Diagnostics
