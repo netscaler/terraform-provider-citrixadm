@@ -3,12 +3,12 @@
 page_title: "citrixadm_mps_agent Data Source - terraform-provider-citrixadm"
 subcategory: ""
 description: |-
-  Configuration for MPS Agent information data source.
+  Get a mps agent ID and Datacenter ID by MPS Agent IP address
 ---
 
 # citrixadm_mps_agent (Data Source)
 
-Configuration for MPS Agent information data source.
+Get a mps agent ID and Datacenter ID by MPS Agent IP address
 
 ## Example Usage
 

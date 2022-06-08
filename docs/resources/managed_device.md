@@ -32,11 +32,11 @@ resource "citrixadm_managed_device" "device1" {
   agent_id      = data.citrixadm_mps_agent.agent1.id
 
   entity_tag {
-    prop_key = "project"
+    prop_key   = "project"
     prop_value = "demo"
   }
   entity_tag {
-    prop_key = "environment"
+    prop_key   = "environment"
     prop_value = "test"
   }
 }
