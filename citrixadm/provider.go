@@ -53,6 +53,12 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_CUSTOMER_ID", ""),
 				Description: "Citrix Adm customer/tenant id. Can be specified with `CITRIXADM_CUSTOMER_ID` environment variable.",
 			},
+			"fail_on_stall": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CITRIXADM_FAIL_ON_STALL", false),
+				Description: "Boolean flag. Set to true for the module to fail when a status of job stalled is reported. Can be specified with `CITRIXADM_FAIL_ON_STALL` environment variable.",
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"citrixadm_managed_device":                  resourceManagedDevice(),
@@ -60,10 +66,13 @@ func Provider() *schema.Provider {
 			"citrixadm_managed_device_allocate_license": resourceManagedDeviceAllocateLicense(),
 			"citrixadm_stylebook_configpack":            resourceStylebookConfigpack(),
 			"citrixadm_stylebook":                       resourceStylebook(),
+			"citrixadm_provisioning_profile":            resourceProvisioningProfile(),
+			"citrixadm_provision_vpx":                   resourceProvisionVpx(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"citrixadm_mps_agent":      dataSourceMpsAgent(),
-			"citrixadm_managed_device": dataSourceManagedDevice(),
+			"citrixadm_mps_agent":           dataSourceMpsAgent(),
+			"citrixadm_managed_device":      dataSourceManagedDevice(),
+			"citrixadm_config_job_template": dataSourceConfigJobTemplate(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

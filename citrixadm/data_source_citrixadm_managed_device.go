@@ -12,7 +12,7 @@ import (
 
 func dataSourceManagedDevice() *schema.Resource {
 	return &schema.Resource{
-		Description: "Configuration for MPS Agent information data source.",
+		Description: "Get a managed device ID by IP address",
 		ReadContext: dataSourceManagedDeviceRead,
 		Schema: map[string]*schema.Schema{
 			"ip_address": {

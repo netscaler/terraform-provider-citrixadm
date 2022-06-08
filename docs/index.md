@@ -36,5 +36,6 @@ provider "citrixadm" {
 - `client_id` (String) Citrix Adm client id. Can be specified with `CITRIXADM_CLIENT_ID` environment variable.
 - `client_secret` (String, Sensitive) Citrix Adm client secret. Can be specified with `CITRIXADM_CLIENT_SECRET` environment variable.
 - `customer_id` (String) Citrix Adm customer/tenant id. Can be specified with `CITRIXADM_CUSTOMER_ID` environment variable.
+- `fail_on_stall` (Boolean) Boolean flag. Set to true for the module to fail when a status of job stalled is reported. Can be specified with `CITRIXADM_FAIL_ON_STALL` environment variable.
 - `host` (String) Citrix Adm host. Can be specified with `CITRIXADM_HOST` environment variable. This has to start with https://
 - `host_location` (String) Citrix Adm host location, e.g. `us`, `eu`. Can be specified with `CITRIXADM_HOST_LOCATION` environment variable.

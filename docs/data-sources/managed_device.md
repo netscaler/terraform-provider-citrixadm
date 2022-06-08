@@ -3,12 +3,12 @@
 page_title: "citrixadm_managed_device Data Source - terraform-provider-citrixadm"
 subcategory: ""
 description: |-
-  Configuration for MPS Agent information data source.
+  Get a managed device ID by IP address
 ---
 
 # citrixadm_managed_device (Data Source)
 
-Configuration for MPS Agent information data source.
+Get a managed device ID by IP address
 
 ## Example Usage
 
