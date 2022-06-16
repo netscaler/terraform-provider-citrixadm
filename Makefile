@@ -39,3 +39,6 @@ testacc:
 
 start-debug: debug-build
 	~/go/bin/dlv exec --accept-multiclient --continue --headless ./${BINARY} -- -debug
+
+release:
+	goreleaser release --rm-dist
