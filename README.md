@@ -7,6 +7,11 @@ Terraform provider for [Citrix ADM Service](https://docs.citrix.com/en-us/citrix
 * [Terraform](https://www.terraform.io/downloads.html) 1.x.x
 * [Go](https://golang.org/doc/install) 1.11+ (to build the provider plugin)
 
+
+## Examples
+
+Example terrform scripts can be found in [examples](./examples/) folder
+
 ## Installing The Provider
 
 Till the provider is available in terraform registry, you can install the provider via the following steps:
