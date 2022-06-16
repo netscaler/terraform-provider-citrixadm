@@ -11,3 +11,5 @@
 # logs and plan
 *.plan
 *.log
+
+dist/
