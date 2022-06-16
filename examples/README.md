@@ -1,5 +1,7 @@
 # Usage of the examples
 
+> Installation, Validation of the provider can be found at [README.md](./README.md)
+
 > You can find the setting up of the provider in the [PROVIDER_USAGE.md](./PROVIDER_USAGE.md) file.
 
 Below is the table showing the usecase you would like to achieve and where you can find the respective example.
