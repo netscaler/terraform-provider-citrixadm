@@ -68,6 +68,7 @@ func Provider() *schema.Provider {
 			"citrixadm_stylebook":                       resourceStylebook(),
 			"citrixadm_provisioning_profile":            resourceProvisioningProfile(),
 			"citrixadm_provision_vpx":                   resourceProvisionVpx(),
+			"citrixadm_api_definition":                  resourceApiDefinition(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"citrixadm_mps_agent":           dataSourceMpsAgent(),
