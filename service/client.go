@@ -32,6 +32,7 @@ var provisioningEndpoints = []string{
 var apiGwEndpoints = []string{
 	"apidefs",
 	"deployments",
+	"routes",
 }
 
 // URLResourceToBodyResource map of urlResource to bodyResource
@@ -41,6 +42,7 @@ var URLResourceToBodyResource = map[string]string{
 	"configpacks": "configpack",
 	"jobs":        "job",
 	"apidefs":     "apidef",
+	"routes":      "route",
 	// "instances":   "instance",
 }
 
@@ -624,6 +626,42 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 			return returnData, err
 		}
 		log.Printf("AddResourceWithActionParams response %v", toJSONIndent(returnData))
+	}
+	return returnData, nil
+}
+
+// AddChildResource adds a child resource with parents ID
+func (c *NitroClient) AddChildResource(resource string, resourceData interface{}, parentName string, parentId string) (map[string]interface{}, error) {
+	log.Println("AddChildResource method:", resource, resourceData, parentId)
+	var returnData map[string]interface{}
+
+	var resourcePath string
+	if contains(apiGwEndpoints, resource) {
+		// https://adm.cloud.com/massvc/{{customerID}}/apisec/nitro/v1/config/{{parentName}}/{{parentId}}/{{resource}}
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/%s", c.customerID, parentName, parentId, resource)
+	} else {
+		return returnData, fmt.Errorf("use AddResource Function")
+	}
+
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       resourcePath,
+		ResourceData:       resourceData,
+		Method:             "POST",
+		SuccessStatusCodes: []int{200, 201},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("AddChildResource response %v", toJSONIndent(returnData))
 	}
 	return returnData, nil
 }
