@@ -28,12 +28,18 @@ var provisioningEndpoints = []string{
 	"instances",
 }
 
+// create a list of APISec/APIGW endpoints
+var apiSecEndpoints = []string{
+	"apidefs",
+}
+
 // URLResourceToBodyResource map of urlResource to bodyResource
 var URLResourceToBodyResource = map[string]string{
 	// FIXME: API Problem: Some API resources do not exactly match with that of body resources, esp., stylebook APIs
 	"stylebooks":  "stylebook",
 	"configpacks": "configpack",
 	"jobs":        "job",
+	"apidefs":     "apidef",
 	// "instances":   "instance",
 }
 
@@ -467,6 +473,8 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
 	} else if contains(provisioningEndpoints, resource) {
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s/%s", resource, resourceID)
+	} else if contains(apiSecEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
@@ -544,6 +552,8 @@ func (c *NitroClient) AddResource(resource string, resourceData interface{}) (ma
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s", resource)
 	} else if contains(provisioningEndpoints, resource) {
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s", resource)
+	} else if contains(apiSecEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s", c.customerID, resource)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
@@ -625,6 +635,8 @@ func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, 
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
 	} else if contains(provisioningEndpoints, resource) {
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s/%s", resource, resourceID)
+	} else if contains(apiSecEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
@@ -662,6 +674,8 @@ func (c *NitroClient) DeleteResource(resource string, resourceID string) (map[st
 		resourcePath = fmt.Sprintf("stylebook/nitro/v2/config/%s/%s", resource, resourceID)
 	} else if contains(provisioningEndpoints, resource) {
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s/%s", resource, resourceID)
+	} else if contains(apiSecEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
