@@ -74,6 +74,7 @@ func Provider() *schema.Provider {
 			"citrixadm_mps_agent":           dataSourceMpsAgent(),
 			"citrixadm_managed_device":      dataSourceManagedDevice(),
 			"citrixadm_config_job_template": dataSourceConfigJobTemplate(),
+			"citrixadm_apigw_deployment":    dataSourceApigwDeployment(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
