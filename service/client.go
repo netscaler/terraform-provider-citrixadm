@@ -33,16 +33,18 @@ var apiGwEndpoints = []string{
 	"apidefs",
 	"deployments",
 	"routes",
+	"upstreamservices",
 }
 
 // URLResourceToBodyResource map of urlResource to bodyResource
 var URLResourceToBodyResource = map[string]string{
 	// FIXME: API Problem: Some API resources do not exactly match with that of body resources, esp., stylebook APIs
-	"stylebooks":  "stylebook",
-	"configpacks": "configpack",
-	"jobs":        "job",
-	"apidefs":     "apidef",
-	"routes":      "route",
+	"stylebooks":       "stylebook",
+	"configpacks":      "configpack",
+	"jobs":             "job",
+	"apidefs":          "apidef",
+	"routes":           "route",
+	"upstreamservices": "upstreamservice",
 	// "instances":   "instance",
 }
 

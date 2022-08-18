@@ -70,6 +70,7 @@ func Provider() *schema.Provider {
 			"citrixadm_provision_vpx":                   resourceProvisionVpx(),
 			"citrixadm_api_definition":                  resourceApiDefinition(),
 			"citrixadm_apigw_route":                     resourceApiGwRoute(),
+			"citrixadm_apigw_upstream_service":          resourceApigwUpstreamService(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"citrixadm_mps_agent":           dataSourceMpsAgent(),
