@@ -34,6 +34,15 @@ var apiGwEndpoints = []string{
 	"deployments",
 	"routes",
 	"upstreamservices",
+	"apiproxies",
+}
+
+var directPayload = []string{
+	"apiproxies",
+}
+
+var deployingEndpoints = []string{
+	"apiproxiesdeploy",
 }
 
 // URLResourceToBodyResource map of urlResource to bodyResource
@@ -220,19 +229,31 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 		if bodyResource, ok := URLResourceToBodyResource[n.Resource]; ok {
 			n.Resource = bodyResource
 		}
-		payload := map[string]interface{}{n.Resource: n.ResourceData}
-		if n.ActionParams != "" {
-			payload["params"] = map[string]interface{}{
-				"action": n.ActionParams,
+		if contains(directPayload, n.Resource) {
+			payload := n.ResourceData
+			buff, err = JSONMarshal(payload)
+			if err != nil {
+				return nil, err
+			}
+			if n.Resource != "login" {
+				log.Println("MakeNitroRequest payload", toJSONIndent(payload)) // print json converted payload
+			}
+		} else {
+			payload := map[string]interface{}{n.Resource: n.ResourceData}
+			if n.ActionParams != "" {
+				payload["params"] = map[string]interface{}{
+					"action": n.ActionParams,
+				}
+			}
+			buff, err = JSONMarshal(payload)
+			if err != nil {
+				return nil, err
+			}
+			if n.Resource != "login" {
+				log.Println("MakeNitroRequest payload", toJSONIndent(payload)) // print json converted payload
 			}
 		}
-		buff, err = JSONMarshal(payload)
-		if err != nil {
-			return nil, err
-		}
-		if n.Resource != "login" {
-			log.Println("MakeNitroRequest payload", toJSONIndent(payload)) // print json converted payload
-		}
+
 	} else if n.Method == "GET" || n.Method == "DELETE" {
 		buff = []byte{}
 	}
@@ -338,6 +359,33 @@ func (c *NitroClient) WaitForActivityCompletion(activityID string, timeout time.
 				if activity.(map[string]interface{})["status"].(string) == "Failed" {
 					return fmt.Errorf(activity.(map[string]interface{})["status"].(string) + ": " + activity.(map[string]interface{})["message"].(string))
 				}
+			}
+		}
+	}
+}
+func (c *NitroClient) WaitForDeplymentCompletion(resource string, resourceID string, timeout time.Duration, action string) error {
+	start := time.Now()
+	for {
+		if time.Since(start) > timeout {
+			return errors.New("TIMEOUT: WaitForDeplymentCompletion ActivityID: " + resource)
+		}
+		time.Sleep(time.Second * 5)
+		returnData, err := c.GetResource(resource, resourceID)
+		if err != nil {
+			return err
+		}
+		status := returnData["configstatus"].(map[string]interface{})["status"].(string)
+		if action == "applyconfig" {
+			if status == "Applied" {
+				return nil
+			} else if status == "Failed" {
+				return fmt.Errorf("Deployment Failed")
+			}
+		} else {
+			if status == "Indraft" {
+				return nil
+			} else if status == "Failed" {
+				return fmt.Errorf("UnDeployment Failed")
 			}
 		}
 	}
@@ -480,6 +528,8 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s/%s", resource, resourceID)
 	} else if contains(apiGwEndpoints, resource) {
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
+	} else if contains(deployingEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/status", c.customerID, resource[:len(resource)-6], resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
@@ -604,6 +654,9 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 		actionParam = "" // reset actionParam so that it is not added to the requestPayload in MakeNitroRequest()
 	} else if contains(provisioningEndpoints, resource) {
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s", resource)
+	} else if contains(apiGwEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/actions/%s", c.customerID, resource, resourceData.(string), actionParam)
+		resourceData = "" //TO-DO : Find Better Approach
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
