@@ -35,6 +35,7 @@ var apiGwEndpoints = []string{
 	"routes",
 	"upstreamservices",
 	"apiproxies",
+	"policies",
 }
 
 var directPayload = []string{
@@ -43,6 +44,7 @@ var directPayload = []string{
 
 var deployingEndpoints = []string{
 	"apiproxiesdeploy",
+	"policiesdeploy",
 }
 
 // URLResourceToBodyResource map of urlResource to bodyResource
@@ -54,6 +56,7 @@ var URLResourceToBodyResource = map[string]string{
 	"apidefs":          "apidef",
 	"routes":           "route",
 	"upstreamservices": "upstreamservice",
+	"policies":			"policy",
 	// "instances":   "instance",
 }
 
@@ -590,6 +593,41 @@ func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, e
 			return returnData, err
 		}
 		log.Printf("GetAllResource response %v", toJSONIndent(returnData))
+	}
+	return returnData, nil
+}
+
+// GetAllChildResource returns all resources under the given parent 
+func (c *NitroClient) GetAllChildResource(resource string, parentName string, parentId string) (map[string]interface{}, error) {
+	log.Println("GetAllChildResource method:", resource)
+	var returnData map[string]interface{}
+
+	var resourcePath string
+
+	if contains(apiGwEndpoints, resource) {
+		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/%s", c.customerID, parentName, parentId, resource)
+	} else {
+		return returnData, fmt.Errorf("Not Implemented Yet")
+	}
+
+	n := NitroRequestParams{
+		Resource:           resource,
+		ResourcePath:       resourcePath,
+		Method:             "GET",
+		SuccessStatusCodes: []int{200},
+	}
+
+	body, err := c.MakeNitroRequest(n)
+	if err != nil {
+		return returnData, err
+	}
+
+	if len(body) > 0 {
+		err = json.Unmarshal(body, &returnData)
+		if err != nil {
+			return returnData, err
+		}
+		log.Printf("GetAllChildResource response %v", toJSONIndent(returnData))
 	}
 	return returnData, nil
 }
