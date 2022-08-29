@@ -72,12 +72,14 @@ func Provider() *schema.Provider {
 			"citrixadm_apigw_route":                     resourceApiGwRoute(),
 			"citrixadm_apigw_upstream_service":          resourceApigwUpstreamService(),
 			"citrixadm_apigw_proxy":                     resourceApiGwProxy(),
+			"citrixadm_apigw_policy":					 resourceApiGwPolicy(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"citrixadm_mps_agent":           dataSourceMpsAgent(),
 			"citrixadm_managed_device":      dataSourceManagedDevice(),
 			"citrixadm_config_job_template": dataSourceConfigJobTemplate(),
 			"citrixadm_apigw_deployment":    dataSourceApigwDeployment(),
+			"citrixadm_apigw_upstream_service":    dataSourceApigwUpstreamService(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
