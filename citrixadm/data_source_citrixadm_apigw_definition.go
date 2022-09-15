@@ -11,10 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceApigwDefinition() *schema.Resource {
+func dataSourceApiGwDefinition() *schema.Resource {
 	return &schema.Resource{
 		Description: "Get an API Definition Id by name",
-		ReadContext: dataSourceApigwDefinitionRead,
+		ReadContext: dataSourceApiGwDefinitionRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "Name of an API Definition instance",
@@ -26,8 +26,8 @@ func dataSourceApigwDefinition() *schema.Resource {
 	}
 }
 
-func dataSourceApigwDefinitionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In dataSourceApigwDefinitionRead")
+func dataSourceApiGwDefinitionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In dataSourceApiGwDefinitionRead")
 	var diags diag.Diagnostics
 	c := m.(*service.NitroClient)
 

@@ -63,7 +63,7 @@ resource "citrixadm_managed_device_allocate_license" "lic2" {
 - `managed_device_id` (String) ID of the managed device to which license is to be allocated
 - `plt_bw_config` (Number) Platinum Bandwidth configured in Mbps
 
-### Optional
+### Read-Only
 
 - `id` (String) The ID of this resource.
 

@@ -29,7 +29,7 @@ output "template_id" {
 
 - `name` (String) Configuration Job Template Name
 
-### Optional
+### Read-Only
 
 - `id` (String) The ID of this resource.
 

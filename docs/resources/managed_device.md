@@ -55,6 +55,9 @@ resource "citrixadm_managed_device" "device1" {
 ### Optional
 
 - `entity_tag` (Block List) (see [below for nested schema](#nestedblock--entity_tag))
+
+### Read-Only
+
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--entity_tag"></a>

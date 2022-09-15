@@ -69,8 +69,11 @@ resource "citrixadm_stylebook_configpack" "cfgpack1" {
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `targets` (Block List) A dictionary specifying the devices to which the configpack is applied. The key of each item in the dictionary is the device's IP address and the value is a dictionary that contains one item which corresponds to the devices's ID in ADM in the form 'id':'<id-value>' (see [below for nested schema](#nestedblock--targets))
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--stylebook"></a>
 ### Nested Schema for `stylebook`

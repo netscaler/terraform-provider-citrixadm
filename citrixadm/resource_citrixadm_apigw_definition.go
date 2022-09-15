@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceApiDefinition() *schema.Resource {
+func resourceApiGwDefinition() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Create and Manage API Definition",
-		CreateContext: resourceApiDefinitionCreate,
-		ReadContext:   resourceApiDefinitionRead,
-		UpdateContext: resourceApiDefinitionUpdate,
-		DeleteContext: resourceApiDefinitionDelete,
+		CreateContext: resourceApiGwDefinitionCreate,
+		ReadContext:   resourceApiGwDefinitionRead,
+		UpdateContext: resourceApiGwDefinitionUpdate,
+		DeleteContext: resourceApiGwDefinitionDelete,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "API Definition name",
@@ -75,7 +75,7 @@ func resourceApiDefinition() *schema.Resource {
 	}
 }
 
-func getApiDefinitionPayload(d *schema.ResourceData) interface{} {
+func getApiGwDefinitionPayload(d *schema.ResourceData) interface{} {
 	data := make(map[string]interface{})
 
 	data["name"] = d.Get("name").(string)
@@ -96,14 +96,14 @@ func getApiDefinitionPayload(d *schema.ResourceData) interface{} {
 
 }
 
-func resourceApiDefinitionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApiDefinitionCreate")
+func resourceApiGwDefinitionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwDefinitionCreate")
 
 	c := m.(*service.NitroClient)
 
 	endpoint := "apidefs"
 
-	returnData, err := c.AddResource(endpoint, getApiDefinitionPayload(d))
+	returnData, err := c.AddResource(endpoint, getApiGwDefinitionPayload(d))
 
 	if err != nil {
 		return diag.Errorf("error creating apidef: %s", err.Error())
@@ -114,11 +114,11 @@ func resourceApiDefinitionCreate(ctx context.Context, d *schema.ResourceData, m 
 
 	d.SetId(resourceID)
 
-	return resourceApiDefinitionRead(ctx, d, m)
+	return resourceApiGwDefinitionRead(ctx, d, m)
 }
 
-func resourceApiDefinitionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApiDefinitionRead")
+func resourceApiGwDefinitionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwDefinitionRead")
 	var diags diag.Diagnostics
 	c := m.(*service.NitroClient)
 
@@ -145,14 +145,14 @@ func resourceApiDefinitionRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func resourceApiDefinitionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApiDefinitionUpdate")
+func resourceApiGwDefinitionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwDefinitionUpdate")
 	c := m.(*service.NitroClient)
 
 	resourceID := d.Id()
 	endpoint := "apidefs"
 
-	payload := getApiDefinitionPayload(d)
+	payload := getApiGwDefinitionPayload(d)
 	payload_id := payload.(map[string]interface{})
 	payload_id["id"] = resourceID
 	_, err := c.UpdateResource(endpoint, payload_id, resourceID)
@@ -161,12 +161,12 @@ func resourceApiDefinitionUpdate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	return resourceApiDefinitionRead(ctx, d, m)
+	return resourceApiGwDefinitionRead(ctx, d, m)
 
 }
 
-func resourceApiDefinitionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApiDefinitionDelete")
+func resourceApiGwDefinitionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwDefinitionDelete")
 	var diags diag.Diagnostics
 
 	c := m.(*service.NitroClient)

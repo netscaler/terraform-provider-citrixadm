@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-const testAccApigwUpstreamServiceAdd = `
+const testAccApiGwUpstreamServiceAdd = `
 	data "citrixadm_apigw_deployment" "demo" {
 		name = "deploy"
 	}
@@ -27,18 +27,18 @@ const testAccApigwUpstreamServiceAdd = `
 	}  
 `
 
-func TestAccApigwUpstreamService_basic(t *testing.T) {
+func TestAccApiGwUpstreamService_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		IsUnitTest: false,
 		PreCheck:   func() { testAccPreCheck(t) },
 		// ProviderFactories: providerFactories,
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckApigwUpstreamServiceDestroy,
+		CheckDestroy: testAccCheckApiGwUpstreamServiceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApigwUpstreamServiceAdd,
+				Config: testAccApiGwUpstreamServiceAdd,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckApigwUpstreamServiceExists("citrixadm_apigw_upstream_service.service1", nil),
+					testAccCheckApiGwUpstreamServiceExists("citrixadm_apigw_upstream_service.service1", nil),
 					resource.TestCheckResourceAttr("citrixadm_apigw_upstream_service.service1", "name", "tf_upstream_service"),
 					resource.TestCheckResourceAttr("citrixadm_apigw_upstream_service.service1", "scheme", "http"),
 					resource.TestCheckResourceAttr("citrixadm_apigw_upstream_service.service1", "service_fqdn", "www.example.com"),
@@ -48,17 +48,17 @@ func TestAccApigwUpstreamService_basic(t *testing.T) {
 	})
 }
 
-func testAccCheckApigwUpstreamServiceExists(n string, id *string) resource.TestCheckFunc {
+func testAccCheckApiGwUpstreamServiceExists(n string, id *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// retrieve the resource by name from state
-		log.Println("[DEBUG] testAccCheckApigwUpstreamServiceExists")
+		log.Println("[DEBUG] testAccCheckApiGwUpstreamServiceExists")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No ApigwUpstreamService ID is set")
+			return fmt.Errorf("No ApiGwUpstreamService ID is set")
 		}
 
 		if id != nil {
@@ -84,7 +84,7 @@ func testAccCheckApigwUpstreamServiceExists(n string, id *string) resource.TestC
 	}
 }
 
-func testAccCheckApigwUpstreamServiceDestroy(s *terraform.State) error {
+func testAccCheckApiGwUpstreamServiceDestroy(s *terraform.State) error {
 	c := testAccProvider.Meta().(*service.NitroClient)
 
 	for _, rs := range s.RootModule().Resources {

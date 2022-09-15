@@ -20,7 +20,7 @@ output "demoId" {
   value = data.citrixadm_apigw_deployment.demo.id
 }
 data "citrixadm_apigw_upstream_service" "upstreamdemo" {
-  name = "sdf"
+  name          = "sdf"
   deployment_id = data.citrixadm_apigw_deployment.demo.id
 }
 output "demoId1" {

@@ -38,7 +38,6 @@ resource "citrixadm_ns_device_profile" "profile1" {
 - `host_username` (String) Host User Name for this profile.Used for BLX form factor of ADC
 - `http_port` (String) HTTP port to connect to the device
 - `https_port` (String) HTTPS port to connect to the device
-- `id` (String) The ID of this resource.
 - `max_wait_time_reboot` (String) Max waiting time to reboot Citrix ADC
 - `ns_profile_name` (String) Profile Name, This is one of the already created Citrix ADC profiles
 - `passphrase` (String, Sensitive) Passphrase with which private key is encrypted
@@ -56,5 +55,9 @@ resource "citrixadm_ns_device_profile" "profile1" {
 - `svm_ns_comm` (String) Communication protocol (http or https) with Instances
 - `type` (String) Profile Type, This must be with in specified supported instance types: blx,sdvanvw,ns,nssdx,cbwanopt,cpx
 - `use_global_setting_for_communication_with_ns` (String) True, if the communication with Instance needs to be global and not device specific
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 

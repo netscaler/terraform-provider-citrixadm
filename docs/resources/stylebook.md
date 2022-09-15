@@ -31,7 +31,7 @@ resource "citrixadm_stylebook" "stylebook1" {
 - `source` (String) The YAML contents of the StyleBook
 - `version` (String) Version of the StyleBook
 
-### Optional
+### Read-Only
 
 - `id` (String) The ID of this resource.
 

@@ -102,10 +102,13 @@ resource "citrixadm_provisioning_profile" "profile1" {
 ### Optional
 
 - `deployment_details` (String) Deployment Details
-- `id` (String) The ID of this resource.
 - `instance_capacity_details` (Block List, Max: 1) Instance Capacity Details (see [below for nested schema](#nestedblock--instance_capacity_details))
 - `mas_registration_details` (Block List, Max: 1) MAS Registration Details (see [below for nested schema](#nestedblock--mas_registration_details))
 - `platform_type` (String) Platform type
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--instance_capacity_details"></a>
 ### Nested Schema for `instance_capacity_details`
