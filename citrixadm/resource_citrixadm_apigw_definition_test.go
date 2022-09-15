@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-const testAccApiDefinitionAdd = `
-	resource "citrixadm_api_definition" "tf_def1" {
+const testAccApiGwDefinitionAdd = `
+	resource "citrixadm_apigw_definition" "tf_def1" {
 		name     = "tf-def"
 		version  = "V2"
 		title    = "my_tf_api"
@@ -29,28 +29,28 @@ const testAccApiDefinitionAdd = `
 	}  
 `
 
-func TestAccApiDefinition_basic(t *testing.T) {
+func TestAccApiGwDefinition_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		IsUnitTest: false,
 		PreCheck:   func() { testAccPreCheck(t) },
 		// ProviderFactories: providerFactories,
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckApiDefinitionDestroy,
+		CheckDestroy: testAccCheckApiGwDefinitionDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccApiDefinitionAdd,
+				Config: testAccApiGwDefinitionAdd,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckApiDefinitionExists("citrixadm_api_definition.tf_def1", nil),
+					testAccCheckApiGwDefinitionExists("citrixadm_apigw_definition.tf_def1", nil),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckApiDefinitionExists(n string, id *string) resource.TestCheckFunc {
+func testAccCheckApiGwDefinitionExists(n string, id *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// retrieve the resource by name from state
-		log.Println("[DEBUG] testAccCheckApiDefinitionExists")
+		log.Println("[DEBUG] testAccCheckApiGwDefinitionExists")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
@@ -83,11 +83,11 @@ func testAccCheckApiDefinitionExists(n string, id *string) resource.TestCheckFun
 	}
 }
 
-func testAccCheckApiDefinitionDestroy(s *terraform.State) error {
+func testAccCheckApiGwDefinitionDestroy(s *terraform.State) error {
 	c := testAccProvider.Meta().(*service.NitroClient)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "citrixadm_api_definition" {
+		if rs.Type != "citrixadm_apigw_definition" {
 			continue
 		}
 

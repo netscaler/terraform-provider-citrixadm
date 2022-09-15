@@ -11,10 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceApigwDeployment() *schema.Resource {
+func dataSourceApiGwDeployment() *schema.Resource {
 	return &schema.Resource{
 		Description: "Get a Deployment Id by name",
-		ReadContext: dataSourceApigwDeploymentRead,
+		ReadContext: dataSourceApiGwDeploymentRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "Name of the Deployment instance",
@@ -26,8 +26,8 @@ func dataSourceApigwDeployment() *schema.Resource {
 	}
 }
 
-func dataSourceApigwDeploymentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In dataSourceApigwDeploymentRead")
+func dataSourceApiGwDeploymentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In dataSourceApiGwDeploymentRead")
 	var diags diag.Diagnostics
 	c := m.(*service.NitroClient)
 

@@ -11,10 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceApigwUpstreamService() *schema.Resource {
+func dataSourceApiGwUpstreamService() *schema.Resource {
 	return &schema.Resource{
 		Description: "Get a Upstream Service Id by name",
-		ReadContext: dataSourceApigwUpstreamServiceRead,
+		ReadContext: dataSourceApiGwUpstreamServiceRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "Name of the Upstream Service instance",
@@ -32,8 +32,8 @@ func dataSourceApigwUpstreamService() *schema.Resource {
 	}
 }
 
-func dataSourceApigwUpstreamServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In dataSourceApigwUpstreamServiceRead")
+func dataSourceApiGwUpstreamServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In dataSourceApiGwUpstreamServiceRead")
 	var diags diag.Diagnostics
 	c := m.(*service.NitroClient)
 
@@ -50,10 +50,10 @@ func dataSourceApigwUpstreamServiceRead(ctx context.Context, d *schema.ResourceD
 	log.Printf("Datatata %v",returnData)
 	// Find the correct resource with the given name and store id from the object
 	for _, v := range returnData[endpoint].([]interface{}) {
-		ApigwUpstreamService := v.(map[string]interface{})
-		if ApigwUpstreamService["name"].(string) == upstreamServiceName {
-			d.SetId(ApigwUpstreamService["id"].(string))
-			d.Set("name", ApigwUpstreamService["name"].(string))
+		apigwUpstreamService := v.(map[string]interface{})
+		if apigwUpstreamService["name"].(string) == upstreamServiceName {
+			d.SetId(apigwUpstreamService["id"].(string))
+			d.Set("name", apigwUpstreamService["name"].(string))
 			break
 		}
 	}

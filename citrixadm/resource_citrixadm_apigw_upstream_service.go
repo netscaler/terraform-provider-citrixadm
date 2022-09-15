@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceApigwUpstreamService() *schema.Resource {
+func resourceApiGwUpstreamService() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Configure Upstream service for the provided API Deployment Id",
-		CreateContext: resourceApigwUpstreamServiceCreate,
-		ReadContext:   resourceApigwUpstreamServiceRead,
-		UpdateContext: resourceApigwUpstreamServiceUpdate,
-		DeleteContext: resourceApigwUpstreamServiceDelete,
+		CreateContext: resourceApiGwUpstreamServiceCreate,
+		ReadContext:   resourceApiGwUpstreamServiceRead,
+		UpdateContext: resourceApiGwUpstreamServiceUpdate,
+		DeleteContext: resourceApiGwUpstreamServiceDelete,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "Upstream Service Name",
@@ -72,7 +72,7 @@ func resourceApigwUpstreamService() *schema.Resource {
 	}
 }
 
-func getApigwUpstreamServicePayload(d *schema.ResourceData) interface{} {
+func getApiGwUpstreamServicePayload(d *schema.ResourceData) interface{} {
 	data := make(map[string]interface{})
 
 	data["name"] = d.Get("name").(string)
@@ -93,8 +93,8 @@ func getApigwUpstreamServicePayload(d *schema.ResourceData) interface{} {
 
 }
 
-func resourceApigwUpstreamServiceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApigwUpstreamServiceCreate")
+func resourceApiGwUpstreamServiceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwUpstreamServiceCreate")
 
 	c := m.(*service.NitroClient)
 
@@ -102,7 +102,7 @@ func resourceApigwUpstreamServiceCreate(ctx context.Context, d *schema.ResourceD
 	parent_name := "deployments"
 	parent_id := d.Get("deployment_id").(string)
 
-	returnData, err := c.AddChildResource(endpoint, getApigwUpstreamServicePayload(d), parent_name, parent_id)
+	returnData, err := c.AddChildResource(endpoint, getApiGwUpstreamServicePayload(d), parent_name, parent_id)
 	if err != nil {
 		return diag.Errorf("error creating upstream_service: %s", err.Error())
 	}
@@ -112,11 +112,11 @@ func resourceApigwUpstreamServiceCreate(ctx context.Context, d *schema.ResourceD
 
 	d.SetId(resourceID)
 
-	return resourceApigwUpstreamServiceRead(ctx, d, m)
+	return resourceApiGwUpstreamServiceRead(ctx, d, m)
 }
 
-func resourceApigwUpstreamServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApigwUpstreamServiceRead")
+func resourceApiGwUpstreamServiceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwUpstreamServiceRead")
 	var diags diag.Diagnostics
 	c := m.(*service.NitroClient)
 
@@ -146,13 +146,13 @@ func resourceApigwUpstreamServiceRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func resourceApigwUpstreamServiceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApigwUpstreamServiceUpdate")
+func resourceApiGwUpstreamServiceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwUpstreamServiceUpdate")
 	c := m.(*service.NitroClient)
 
 	resourceID := d.Id()
 	endpoint := "upstreamservices"
-	get_payload := getApigwUpstreamServicePayload(d).(map[string](interface{}))
+	get_payload := getApiGwUpstreamServicePayload(d).(map[string](interface{}))
 	get_payload["id"] = resourceID
 	_, err := c.UpdateResource(endpoint, get_payload, resourceID)
 
@@ -160,12 +160,12 @@ func resourceApigwUpstreamServiceUpdate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
-	return resourceApigwUpstreamServiceRead(ctx, d, m)
+	return resourceApiGwUpstreamServiceRead(ctx, d, m)
 
 }
 
-func resourceApigwUpstreamServiceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	log.Printf("In resourceApigwUpstreamServiceDelete")
+func resourceApiGwUpstreamServiceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	log.Printf("In resourceApiGwUpstreamServiceDelete")
 	var diags diag.Diagnostics
 
 	c := m.(*service.NitroClient)

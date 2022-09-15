@@ -1,4 +1,4 @@
-resource "citrixadm_api_definition" "tf_def1" {
+resource "citrixadm_apigw_definition" "tf_def1" {
   name     = "tf-def"
   version  = "V2"
   title    = "my_tf_api"

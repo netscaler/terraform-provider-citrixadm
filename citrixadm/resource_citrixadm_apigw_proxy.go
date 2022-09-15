@@ -236,14 +236,14 @@ func resourceApiGwProxyRead(ctx context.Context, d *schema.ResourceData, m inter
 	d.Set("service_fqdns", getResponseData["service_fqdns"].([]interface{}))
 	d.Set("tls_security_profile", getResponseData["tls_security_profile"].(string))
 	if _, ok := getResponseData["tls_certkey_objref"]; ok {
-		d.Set("tls_certkey_objref", flattenApigwProxyAttribute(getResponseData["tls_certkey_objref"].(map[string]interface{})))
+		d.Set("tls_certkey_objref", flattenApiGwProxyAttribute(getResponseData["tls_certkey_objref"].(map[string]interface{})))
 	}
-	d.Set("target_apigw", flattenApigwProxyAttribute(returnData["target_apigw"].(map[string]interface{})))
+	d.Set("target_apigw", flattenApiGwProxyAttribute(returnData["target_apigw"].(map[string]interface{})))
 
 	return diags
 }
 
-func flattenApigwProxyAttribute(attribute map[string]interface{}) []interface{} {
+func flattenApiGwProxyAttribute(attribute map[string]interface{}) []interface{} {
 	s := make(map[string]interface{})
 	a := make(map[string]interface{})
 	var b string
