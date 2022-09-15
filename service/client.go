@@ -601,7 +601,7 @@ func (c *NitroClient) GetAllResource(resource string) (map[string]interface{}, e
 	return returnData, nil
 }
 
-// GetAllChildResource returns all resources under the given parent 
+// GetAllChildResource returns all resources under the given parent
 func (c *NitroClient) GetAllChildResource(resource string, parentName string, parentId string) (map[string]interface{}, error) {
 	log.Println("GetAllChildResource method:", resource)
 	var returnData map[string]interface{}

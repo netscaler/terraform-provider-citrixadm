@@ -198,7 +198,7 @@ func resourceApiGwProxyCreate(ctx context.Context, d *schema.ResourceData, m int
 		}
 
 	}
-	
+
 	return resourceApiGwProxyRead(ctx, d, m)
 }
 

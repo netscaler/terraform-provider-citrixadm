@@ -132,7 +132,6 @@ func resourceApiGwUpstreamServiceRead(ctx context.Context, d *schema.ResourceDat
 
 	log.Println("getResponseData", getResponseData)
 
-	
 	if _, ok := d.GetOk("service_fqdn"); ok {
 		d.Set("service_fqdn", getResponseData["service_fqdn"].(string))
 	}

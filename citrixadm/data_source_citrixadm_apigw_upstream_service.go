@@ -47,7 +47,6 @@ func dataSourceApiGwUpstreamServiceRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	log.Printf("Datatata %v",returnData)
 	// Find the correct resource with the given name and store id from the object
 	for _, v := range returnData[endpoint].([]interface{}) {
 		apigwUpstreamService := v.(map[string]interface{})

@@ -34,8 +34,8 @@ func resourceApiGwDeployment() *schema.Resource {
 			},
 			"deploy": {
 				Description: "Flag to deply/undeploy the API Deployment Resource",
-				Type:     schema.TypeBool,
-				Required: true,
+				Type:        schema.TypeBool,
+				Required:    true,
 			},
 			"target_apigw": {
 				Description: "Details of Target ADC instance acting as API Gateway",
@@ -195,8 +195,6 @@ func getApiGwDeploymentPayload(d *schema.ResourceData) interface{} {
 	if _, ok := d.GetOk("upstreamservices"); ok {
 		data["upstreamservices"] = d.Get("upstreamservices").([]interface{})
 	}
-
-	log.Printf("The data is %v", data)
 
 	return data
 
