@@ -80,6 +80,7 @@ func Provider() *schema.Provider {
 			"citrixadm_config_job_template": dataSourceConfigJobTemplate(),
 			"citrixadm_apigw_deployment":    dataSourceApigwDeployment(),
 			"citrixadm_apigw_upstream_service":    dataSourceApigwUpstreamService(),
+			"citrixadm_apigw_proxy":               dataSourceApiGwProxy(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
