@@ -103,7 +103,7 @@ resource "citrixadm_provisioning_profile" "profile1" {
 - `name` (String) Name of the instance to be provisioned.
 - `provisioning_profile_id` (String) Provisioning Profile Id used to provision instance.
 
-### Optional
+### Read-Only
 
 - `id` (String) The ID of this resource.
 

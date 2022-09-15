@@ -29,7 +29,7 @@ output "device1_id" {
 
 - `ip_address` (String) IP Address for this managed device
 
-### Optional
+### Read-Only
 
 - `id` (String) The ID of this resource.
 

@@ -36,6 +36,9 @@ output "datacenter_id" {
 ### Optional
 
 - `datacenter_id` (String) Datacenter Id is system generated key for data center
+
+### Read-Only
+
 - `id` (String) The ID of this resource.
 
 
