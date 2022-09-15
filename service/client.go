@@ -31,7 +31,6 @@ var provisioningEndpoints = []string{
 // create a list of APISec/APIGW endpoints
 var apiGwEndpoints = []string{
 	"apidefs",
-	"deployments",
 	"routes",
 	"upstreamservices",
 	"apiproxies",
@@ -40,6 +39,7 @@ var apiGwEndpoints = []string{
 
 var directPayload = []string{
 	"apiproxies",
+	"deployments",
 }
 
 var deployingEndpoints = []string{
@@ -56,7 +56,7 @@ var URLResourceToBodyResource = map[string]string{
 	"apidefs":          "apidef",
 	"routes":           "route",
 	"upstreamservices": "upstreamservice",
-	"policies":			"policy",
+	"policies":         "policy",
 	// "instances":   "instance",
 }
 
@@ -270,7 +270,7 @@ func (c *NitroClient) MakeNitroRequest(n NitroRequestParams) ([]byte, error) {
 
 	// Authenticate
 	// For stylebook APIs use Cookie in Header else use Authorization header
-	if strings.Contains(urlstr, "stylebook") || strings.Contains(urlstr, "provisioning") {
+	if strings.Contains(urlstr, "stylebook") || strings.Contains(urlstr, "provisioning") || n.Resource == "deployments" || n.Resource == "deploymentsdeploy" {
 		req.Header.Set("Cookie", fmt.Sprintf("SESSID=%s", c.sessionID))
 		req.Header.Set("sessionId", fmt.Sprintf("%s", c.sessionID))
 		req.Header.Set("isCloud", "true")
@@ -533,6 +533,10 @@ func (c *NitroClient) GetResource(resource string, resourceID string) (map[strin
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
 	} else if contains(deployingEndpoints, resource) {
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/status", c.customerID, resource[:len(resource)-6], resourceID)
+	} else if resource == "deployments" {
+		resourcePath = fmt.Sprintf("apisec/nitro/v1/config/%s/%s", resource, resourceID)
+	} else if resource == "deploymentsdeploy" {
+		resourcePath = fmt.Sprintf("apisec/nitro/v1/config/deployments/%s/status", resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
@@ -695,6 +699,9 @@ func (c *NitroClient) AddResourceWithActionParams(resource string, resourceData 
 	} else if contains(apiGwEndpoints, resource) {
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/actions/%s", c.customerID, resource, resourceData.(string), actionParam)
 		resourceData = "" //TO-DO : Find Better Approach
+	} else if resource == "deployments" {
+		resourcePath = fmt.Sprintf("apisec/nitro/v1/config/%s/%s/actions/%s", resource, resourceData.(string), actionParam)
+		resourceData = "" //TO-DO : Find Better Approach
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s", c.customerID, resource)
 	}
@@ -732,6 +739,8 @@ func (c *NitroClient) AddChildResource(resource string, resourceData interface{}
 	if contains(apiGwEndpoints, resource) {
 		// https://adm.cloud.com/massvc/{{customerID}}/apisec/nitro/v1/config/{{parentName}}/{{parentId}}/{{resource}}
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s/%s", c.customerID, parentName, parentId, resource)
+	} else if resource == "deployments" {
+		resourcePath = fmt.Sprintf("apisec/nitro/v1/config/%s/%s/%s", parentName, parentId, resource)
 	} else {
 		return returnData, fmt.Errorf("use AddResource Function")
 	}
@@ -771,6 +780,8 @@ func (c *NitroClient) UpdateResource(resource string, resourceData interface{}, 
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s/%s", resource, resourceID)
 	} else if contains(apiGwEndpoints, resource) {
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
+	} else if resource == "deployments" {
+		resourcePath = fmt.Sprintf("apisec/nitro/v1/config/%s/%s", resource, resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
@@ -810,6 +821,8 @@ func (c *NitroClient) DeleteResource(resource string, resourceID string) (map[st
 		resourcePath = fmt.Sprintf("provisioning/nitro/v1/config/%s/%s", resource, resourceID)
 	} else if contains(apiGwEndpoints, resource) {
 		resourcePath = fmt.Sprintf("massvc/%s/apisec/nitro/v1/config/%s/%s", c.customerID, resource, resourceID)
+	} else if resource == "deployments" {
+		resourcePath = fmt.Sprintf("apisec/nitro/v1/config/%s/%s?deep_del=true", resource, resourceID)
 	} else {
 		resourcePath = fmt.Sprintf("massvc/%s/nitro/v2/config/%s/%s", c.customerID, resource, resourceID)
 	}
