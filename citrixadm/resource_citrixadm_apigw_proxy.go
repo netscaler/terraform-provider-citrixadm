@@ -192,7 +192,7 @@ func resourceApiGwProxyCreate(ctx context.Context, d *schema.ResourceData, m int
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		err1 := c.WaitForDeplymentCompletion(endpoint, resourceID, time.Duration(c.ActivityTimeout)*time.Second, "applyconfig")
+		err1 := c.WaitForDeplymentCompletion("apiproxiesdeploy", resourceID, time.Duration(c.ActivityTimeout)*time.Second, "applyconfig")
 		if err1 != nil {
 			return diag.FromErr(err1)
 		}
@@ -286,7 +286,7 @@ func resourceApiGwProxyUpdate(ctx context.Context, d *schema.ResourceData, m int
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		err1 := c.WaitForDeplymentCompletion(endpoint, resourceID, time.Duration(c.ActivityTimeout)*time.Second, "applyconfig")
+		err1 := c.WaitForDeplymentCompletion("apiproxiesdeploy", resourceID, time.Duration(c.ActivityTimeout)*time.Second, "applyconfig")
 		if err1 != nil {
 			return diag.FromErr(err1)
 		}
@@ -296,7 +296,7 @@ func resourceApiGwProxyUpdate(ctx context.Context, d *schema.ResourceData, m int
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		err1 := c.WaitForDeplymentCompletion(endpoint, resourceID, time.Duration(c.ActivityTimeout)*time.Second, "undeployconfig")
+		err1 := c.WaitForDeplymentCompletion("apiproxiesdeploy", resourceID, time.Duration(c.ActivityTimeout)*time.Second, "undeployconfig")
 		if err1 != nil {
 			return diag.FromErr(err1)
 		}
