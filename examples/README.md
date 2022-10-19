@@ -14,3 +14,9 @@ Below is the table showing the usecase you would like to achieve and where you c
 | Upload a Stylebook to ADM | [resources/citrixadm_stylebook](./resources/citrixadm_stylebook) | [HERE](../docs/resources/stylebook.md)| [HERE](https://youtu.be/uAOu7CtZuXE) |
 | Apply an existing Stylebook (by creating a config-pack) in ADM and optionally apply the stylebook config to one or more ADC targets | [resources/citrixadm_stylebook_configpack](./resources/citrixadm_stylebook_configpack) | [HERE](../docs/resources/stylebook_configpack.md)| [HERE](https://youtu.be/sN1uYKZo9eM) |
 | Provision VPX on SDX from ADM | [examples/resources/citrixadm_provision_vpx](./resources/citrixadm_provision_vpx) | [HERE](../docs/resources/provision_vpx.md)|  |
+| Manage APIGw Definition in ADM | [examples/resources/citrixadm_apigw_definition](./resources/citrixadm_apigw_definition/) | [HERE](../docs/resources/apigw_definition.md) | [HERE](https://youtu.be/kPsEMduVCok) |
+| Manage APIGw Proxy in ADM | [examples/resources/citrixadm_apigw_proxy](./resources/citrixadm_apigw_proxy/) | [HERE](../docs/resources/apigw_proxy.md) | |
+| Manage APIGw Deployment in ADM | [examples/resources/citrixadm_apigw_deployment](./resources/citrixadm_apigw_deployment/) | [HERE](../docs/resources/deployment.md) | |
+| Manage APIGw UpstreamService in ADM | [examples/resources/citrixadm_apigw_upstreamservice](./resources/citrixadm_apigw_upstreamservice/) | [HERE](../docs/resources/apigw_upstreamservice.md) | |
+| Manage APIGw Route in ADM | [examples/resources/citrixadm_apigw_route](./resources/citrixadm_apigw_route/) | [HERE](../docs/resources/apigw_route.md) | |
+| Manage APIGw Policy in ADM | [examples/resources/citrixadm_apigw_policy](./resources/citrixadm_apigw_policy/) | [HERE](../docs/resources/apigw_policy.md) | |
