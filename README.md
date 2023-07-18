@@ -25,24 +25,27 @@ Click below against your operationg system to know how to install the provider.
 <details>
   <summary>Linux</summary>
 
-  1. Extract the zip file and copy the binary to `~/.terraform.d/plugins/registry.terraform.io/citrix/citrixadm/<VERSION>/linux_amd64`
-    1. where `<VERSION>` is the version of the provider you have downloaded.
+  1. Extract the zip file and copy the binary to `~/.terraform.d/plugins/registry.terraform.io/citrix/citrixadm/<VERSION>/linux_amd64` directory. Create the directory if this is not already present.
+
+    1. where `<VERSION>` is the version of the provider you have downloaded.  Eg: `0.5.0`
 
 </details>
 
 <details>
   <summary>MacOS</summary>
 
-  1. Extract the zip file and copy the binary to `~/.terraform.d/plugins/registry.terraform.io/citrix/citrixadm/<VERSION>/darwin_amd64`
-    1. where `<VERSION>` is the version of the provider you have downloaded.
+  1. Extract the zip file and copy the binary to `~/.terraform.d/plugins/registry.terraform.io/citrix/citrixadm/<VERSION>/darwin_amd64` directory. Create the directory if this is not already present.
+
+    1. where `<VERSION>` is the version of the provider you have downloaded. Eg: `0.5.0`
 
 </details>
 
 <details>
   <summary>Windows</summary>
 
-  1. Extract the zip file and copy the `.exe` file to `%APPDATA%/terraform.d/plugins/registry.terraform.io/citrix/citrixadm/<version>/<OSARCH>/` directory.
-     1. Where, `<version>` is the version of the provider, `<OSARCH>` is the operating system and architecture. Eg: `windows_amd64`(usually this will be the one) or `windows_386`
+  1. Extract the zip file and copy the `.exe` file to `%APPDATA%/terraform.d/plugins/registry.terraform.io/citrix/citrixadm/<version>/<OSARCH>/` directory. Create the directory if this is not already present.
+
+     1. Where, `<version>` is the version of the provider, Eg: `0.5.0`, `<OSARCH>` is the operating system and architecture. Eg: `windows_amd64`(usually this will be the one) or `windows_386`
      2. ![](./media/windows-custom-terraform-provider-plugin-installation/plugin_location.png)
      3. You can check the location of APPDATA by running `echo %APPDATA%` in a command prompt.
      4. ![](./media/windows-custom-terraform-provider-plugin-installation/appdata_location.png)
