@@ -71,7 +71,7 @@ type NitroRequestParams struct {
 	ActionParams       string
 }
 
-//NitroParams encapsulates options to create a NitroClient
+// NitroParams encapsulates options to create a NitroClient
 type NitroParams struct {
 	Host         string
 	HostLocation string
@@ -88,8 +88,8 @@ type NitroParams struct {
 	JSONLogFormat bool
 }
 
-//NitroClient has methods to configure the NetScaler
-//It abstracts the REST operations of the NITRO API
+// NitroClient has methods to configure the NetScaler
+// It abstracts the REST operations of the NITRO API
 type NitroClient struct {
 	host         string
 	hostLocation string
@@ -110,7 +110,7 @@ type NitroClient struct {
 	// ProvisioningJobTimeout int
 }
 
-//NewNitroClientFromParams returns a usable NitroClient. Does not check validity of supplied parameters
+// NewNitroClientFromParams returns a usable NitroClient. Does not check validity of supplied parameters
 func NewNitroClientFromParams(params NitroParams) (*NitroClient, error) {
 	u, err := url.Parse(params.Host)
 	if err != nil {

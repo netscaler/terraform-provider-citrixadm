@@ -25,3 +25,23 @@ resource "citrixadm_managed_device" "device1" {
     prop_value = "test"
   }
 }
+
+# Below resource will register ADC with NS Console by handling force password change. 
+# After successful registration, ADC will have desired password(captured in device_profile) configured.
+#resource "citrixadm_managed_device" "device1" {
+#  ip_address    = "10.0.1.166"
+#  profile_name  = citrixadm_ns_device_profile.profile1.name
+#  datacenter_id = data.citrixadm_mps_agent.agent1.datacenter_id
+#  agent_id      = data.citrixadm_mps_agent.agent1.id
+#  default_password = "<DefaultPassword>"
+#  force_password_change = true
+#  entity_tag {
+#    prop_key   = "project"
+#    prop_value = "demo"
+#  }
+#  entity_tag {
+#    prop_key   = "environment"
+#    prop_value = "test"
+#  }
+#}
+
