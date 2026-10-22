@@ -162,7 +162,7 @@ func getApiGwProxyPayload(d *schema.ResourceData) interface{} {
 
 }
 
-//To convert the map[string]interface{} to string
+// To convert the map[string]interface{} to string
 func mapToString(a map[string]interface{}) string {
 	b, _ := json.Marshal(a)
 	c := string(b)

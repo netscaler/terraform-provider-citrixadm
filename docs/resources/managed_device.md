@@ -54,7 +54,9 @@ resource "citrixadm_managed_device" "device1" {
 
 ### Optional
 
+- `default_password` (String, Sensitive) Default password of the managed device
 - `entity_tag` (Block List) (see [below for nested schema](#nestedblock--entity_tag))
+- `force_password_change` (Boolean) Force password change for the managed device
 
 ### Read-Only
 

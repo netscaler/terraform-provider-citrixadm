@@ -4,7 +4,7 @@ NAMESPACE=citrix
 NAME=citrixadm
 BINARY=terraform-provider-${NAME}
 VERSION=0.1.0
-OS_ARCH=darwin_amd64
+OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 
 default: install
 

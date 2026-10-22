@@ -40,6 +40,12 @@ func resourceManagedDevice() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"default_password": {
+				Description: "Default password of the managed device",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+			},
 			"entity_tag": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -58,6 +64,11 @@ func resourceManagedDevice() *schema.Resource {
 					},
 				},
 			},
+			"force_password_change": {
+				Description: "Force password change for the managed device",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 		},
 	}
 }
@@ -71,8 +82,15 @@ func getManagedDevicePayload(d *schema.ResourceData) interface{} {
 
 	data["datacenter_id"] = d.Get("datacenter_id").(string)
 	data["agent_id"] = d.Get("agent_id").(string)
+	if v, ok := d.GetOk("default_password"); ok {
+		data["default_password"] = v.(string)
+	}
 	if v, ok := d.GetOk("entity_tag"); ok {
 		data["entity_tag"] = v.([]interface{})
+	}
+	// GetOk treats false as unset, so also send on change to propagate true -> false
+	if v, ok := d.GetOk("force_password_change"); ok || d.HasChange("force_password_change") {
+		data["force_password_change"] = v.(bool)
 	}
 
 	return data
@@ -145,6 +163,7 @@ func resourceManagedDeviceRead(ctx context.Context, d *schema.ResourceData, m in
 	d.Set("profile_name", getResponseData["profile_name"].(string))
 	d.Set("datacenter_id", getResponseData["datacenter_id"].(string))
 	d.Set("entity_tag", getResponseData["entity_tag"].([]interface{}))
+	// default_password and force_password_change are not set from the GET response; the configured values are retained in state
 
 	return diags
 }
@@ -159,6 +178,8 @@ func resourceManagedDeviceUpdate(ctx context.Context, d *schema.ResourceData, m 
 	_, err := c.UpdateResource(endpoint, getManagedDevicePayload(d), resourceID)
 
 	if err != nil {
+		// Preserve prior state so a failed update does not persist default_password/force_password_change, which Read cannot refresh
+		d.Partial(true)
 		return diag.FromErr(err)
 	}
 
